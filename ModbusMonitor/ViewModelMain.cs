@@ -686,11 +686,12 @@ namespace ModbusMonitor
             {
                 return;
             }
-                if (e.PropertyName.Equals(nameof(CanDisablePoll)))
-                {
+            //Foo(CanDisablePoll, disablePollCommand, e);
+            if (e.PropertyName.Equals(nameof(CanDisablePoll)))
+            {
                 disablePollCommand.RaiseCanExecuteChanged();
-                }
-                if (e.PropertyName.Equals(nameof(CanOpenLog)))
+            }
+            if (e.PropertyName.Equals(nameof(CanOpenLog)))
                 {
                     openLogCommand.RaiseCanExecuteChanged();
                 }
@@ -710,8 +711,15 @@ namespace ModbusMonitor
                 {
                     listenPortCommand.RaiseCanExecuteChanged();
                     sendRequestCommand.RaiseCanExecuteChanged();
-                }
-            
+                }            
+        }
+
+        private void Foo<T>(T obj, Command command ,PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(nameof(obj)))
+            {
+                command.RaiseCanExecuteChanged();
+            }
         }
         /// <summary>
         /// Настройка изменяющихся свойств.
