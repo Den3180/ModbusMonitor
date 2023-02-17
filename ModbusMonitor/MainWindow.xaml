@@ -31,9 +31,7 @@
             <MenuItem Header="Вид" VerticalAlignment="Center">
                 <MenuItem Header="Таблица" Command="{Binding TableCommand}"/>
                 <MenuItem Header="Текст" Command="{Binding TextCommand}"/>
-                <MenuItem Header="Просмотр пакетов" Command="{Binding ViewingPackagesCommand}"/>
-                <MenuItem Header="Слушать порт" Command="{Binding ListenPortCommand}"/>
-                <Separator/>
+                <MenuItem Header="Просмотр пакетов" Command="{Binding ViewingPackagesCommand}"/>               
                 <MenuItem Header="Коэффициенты" IsCheckable="True" Command="{Binding RatioCommand}"/>
                 <MenuItem Header="Формат" IsCheckable="True" Command="{Binding FormatCommand}"/>
                 <MenuItem Header="Цвета для типов" IsCheckable="True" Command="{Binding ColorTypeCommand}"/>
@@ -41,8 +39,12 @@
                 <MenuItem Header="Сброс ширины столбцов" Command="{Binding ResetColCommand}"/>
             </MenuItem>
             <MenuItem Header="Инструменты" VerticalAlignment="Center">
-                <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
-                <MenuItem Header="Запрос данных" Command="{Binding SendRequestCommand}"/>
+                    <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
+                    <MenuItem Header="Устройство" VerticalAlignment="center">                    
+                        <MenuItem Header="Запрос данных" Command="{Binding SendRequestCommand}"/>
+                        <MenuItem Header="Включить опрос" Command="{Binding ListenPortCommand}"/>
+                        <MenuItem Header="Отключить опрос" Command="{Binding DisablePollCommand}"/>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Открыть лог ошибок" Command="{Binding OpenLogErrCommand}"/>
                 <MenuItem Header="Очистить лог ошибок" Command="{Binding ClearLogErrCommand}"/>

@@ -46,12 +46,13 @@ namespace ModbusMonitor
         private readonly Command viewingPackagesCommand;//Паказать пакеты.
         private readonly Command writeRegisterCommand;//Записать регистр.
         private readonly Command searchAddressCommand;
+        private readonly Command disablePollCommand;
         private bool canConnection;
         private bool canCreateConnect;
         private bool canDisconnection;
         private bool canOpenLog;
         private bool canRequest;
-        private bool canListenPort;
+        private bool canDisablePoll;
         private bool answerRequest = false;//Флаг завершения опроса.        
         private int numInOrder;//Номера регистров по порядку не зависимо от типа.
         private int regAddress;
@@ -92,6 +93,7 @@ namespace ModbusMonitor
             connectionCommand = new Command(Connection, () => canConnection);
             disconnectionCommand = new Command(Disconnection, () => canDisconnection);
             searchAddressCommand = new Command(SearchAddress);
+            disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
 
             userControl = new UserControlDevices(new List<CellData>());
             modbusRTU = new ModbusRTU();
@@ -112,12 +114,10 @@ namespace ModbusMonitor
         public ICommand SaveMapcomman => saveMapCommand;
         public ICommand OpenLogCommand => openLogCommand;
         public ICommand ExitCommand => exitCommand;
-        public ICommand SearchAddressCommand => searchAddressCommand;
         //Комманды.Вкладка "Вид".
         public ICommand TableCommand => tableCommand;
         public ICommand TextCommand => textCommand;
         public ICommand ViewingPackagesCommand => viewingPackagesCommand;
-        public ICommand ListenPortCommand => listenPortCommand;
         public ICommand RatioCommand => ratioCommand;
         public ICommand FormatCommand => formatCommand;
         public ICommand ColorTypeCommand => colorTypeCommand;
@@ -127,6 +127,9 @@ namespace ModbusMonitor
         public ICommand SendRequestCommand => sendRequestCommand;
         public ICommand OpenLogErrCommand => openLogErrCommand;
         public ICommand ClearLogErrCommand => clearLogErrCommand;
+        public ICommand ListenPortCommand => listenPortCommand;
+        public ICommand SearchAddressCommand => searchAddressCommand;
+        public ICommand DisablePollCommand => disablePollCommand;
         //Команды.Вкладка "Сервис".
         public ICommand ParamCommand => paramCommand;
         //Команды.Вкладка "Справка".
@@ -138,6 +141,16 @@ namespace ModbusMonitor
         public ICommand DisconnectionCommand => disconnectionCommand;
 
         #region[Обработчики комманд]
+        private void DisablePoll()
+        {
+            if (timerPoll.IsEnabled)
+            {
+                timerPoll.Stop();
+            }
+            CanRequest = true;
+            CanDisablePoll = false;
+        }
+
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -245,8 +258,10 @@ namespace ModbusMonitor
         {
             answerRequest = false;
             CanRequest = false;
+            CanDisablePoll = true;
             timerPoll.Start();
         }
+
         /// <summary>
         /// Коэффициенты.
         /// </summary>
@@ -526,10 +541,10 @@ namespace ModbusMonitor
         /// <summary>
         /// Доступность опроса порта.
         /// </summary>
-        public bool CanListenPort
+        public bool CanDisablePoll
         {
-            get => canListenPort;
-            set => SetOptions(nameof(CanListenPort), ref canListenPort, value);
+            get => canDisablePoll;
+            set => SetOptions(nameof(CanDisablePoll), ref canDisablePoll, value);
         }
         /// <summary>
         /// Доступность лога. 
@@ -671,8 +686,10 @@ namespace ModbusMonitor
             {
                 return;
             }
-            
-
+                if (e.PropertyName.Equals(nameof(CanDisablePoll)))
+                {
+                disablePollCommand.RaiseCanExecuteChanged();
+                }
                 if (e.PropertyName.Equals(nameof(CanOpenLog)))
                 {
                     openLogCommand.RaiseCanExecuteChanged();
