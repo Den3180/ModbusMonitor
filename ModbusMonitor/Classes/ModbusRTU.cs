@@ -1,0 +1,302 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO.Ports;
+using Modbus.Device;
+using Modbus.Utility;
+using Modbus.Data;
+using ModbusMonitor.Controls;
+using System.Windows;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Data;
+using System.Threading;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using System.ComponentModel;
+
+namespace ModbusMonitor.Classes
+{
+    public class ModbusRTU
+    {
+        public delegate void PortErrorEventHandler(Exception ex);//Делегат метода ошибки.
+        public event PortErrorEventHandler PortErrorEvent; //Событие ошибки.
+        private SerialPort serialPort;//Создание порта.       
+        private ModbusSerialMaster masterRTU;
+
+        public enum eMode
+        {
+            None = 0,
+            PortOpen
+        }
+        //TODO: Счетчики запроса сделать для класса Modbus.
+        public ModbusRTU()
+        {
+            serialPort = new SerialPort();
+            PortErrorEvent += MessageError;
+            PortsEnabled = new List<string>();
+        }
+
+        public eMode Mode { get; set; }
+        public string TextMessage { get; set; } = string.Empty;
+        public int AdressSearch { get; set; } = 0;
+        public static List<string> PortsEnabled { get; set; } //Список портов доступных
+                                                              //для передачи данных.
+        public ModbusSerialMaster MasterRTU => masterRTU;
+
+        /// <summary>
+        /// Открытие порта Modbus.
+        /// </summary>
+        /// <param name="port">Порт</param>
+        /// <param name="baudRate">Скорость</param>
+        /// <param name="dataBit"></param>
+        /// <param name="parity"></param>
+        /// <param name="stopBit">Стоп-бит</param>
+        public void PortOpen(string port, int baudRate, int dataBit, int parity, int stopBit)
+        {
+            serialPort ??= new SerialPort();
+            try
+            {
+                if (serialPort.IsOpen && Mode == eMode.PortOpen)
+                {
+                    serialPort.Close();
+                    Mode = eMode.None;
+
+                }
+                serialPort.PortName = port;
+                serialPort.BaudRate = baudRate;
+                serialPort.DataBits = dataBit;
+                serialPort.Parity = (Parity)parity;
+                serialPort.StopBits = (StopBits)stopBit;
+                serialPort.ReadTimeout = 1000;
+                serialPort.WriteTimeout = 1000;
+                if (!serialPort.IsOpen && Mode == eMode.None)
+                {
+                    serialPort.Open();
+                    Mode = eMode.PortOpen;
+                    masterRTU = ModbusSerialMaster.CreateRtu(serialPort);
+                }
+            }
+            catch (Exception ex)
+            {
+                PortErrorEvent?.Invoke(ex);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Закрытие порта.
+        /// </summary>
+        public void PortClose()
+        {
+            if (serialPort != null && serialPort.IsOpen)
+            {
+                serialPort?.Close();
+                serialPort = null;
+                Mode = eMode.None;
+            }
+        }
+
+        /// <summary>
+        /// Сообщение об ошибке.
+        /// </summary>
+        /// <param name="ex"></param>
+        public void MessageError(Exception ex)
+        {
+            MessageBox.Show("Ошибка порта!\n" + ex.Message);
+        }
+
+        /// <summary>
+        /// Чтение группы регистров типа АО.
+        /// </summary>
+        /// <param name="adresDevice"></param>
+        /// <param name="startAdress"></param>
+        /// <param name="numOfPoint"></param>
+        public ushort[] ReadHoldingRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
+        {
+            try
+            {
+                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
+                return tempData;
+            }
+            catch (Exception ex)
+            {
+                //Mode = eMode.None;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Чтение группы регистров типа DO.
+        /// </summary>
+        /// <param name="adresDevice"></param>
+        /// <param name="startAdress"></param>
+        /// <param name="numOfPoint"></param>
+        /// <returns></returns>
+        public string[] ReadCoilRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
+        {
+            try
+            {
+                bool[] tempcoil = MasterRTU.ReadCoils(adresDevice, startAdress, numOfPoint);
+                string[] dataCoils = new string[tempcoil.Length];
+                for (int i = 0; i < tempcoil.Length; i++)
+                {
+                    dataCoils[i] = Convert.ToUInt16(tempcoil[i]).ToString();
+                }
+                return dataCoils;
+            }
+            catch (Exception ex)
+            {
+                //Mode = eMode.None;               
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Чтение группы регистров типа DI.
+        /// </summary>
+        /// <param name="adresDevice"></param>
+        /// <param name="startAdress"></param>
+        /// <param name="numOfPoint"></param>
+        /// <returns></returns>
+        public string[] ReadInputs(byte adresDevice, ushort startAdress, ushort numOfPoint)
+        {
+            try
+            {
+                bool[] tempcoil = MasterRTU.ReadInputs(adresDevice, startAdress, numOfPoint);
+
+                string[] dataCoils = new string[tempcoil.Length];
+                for (int i = 0; i < tempcoil.Length; i++)
+                {
+                    dataCoils[i] = Convert.ToUInt16(tempcoil[i]).ToString();
+                }
+                return dataCoils;
+            }
+            catch (Exception ex)
+            {
+                //Mode = eMode.None;               
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Прослушивание ответов.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            int n = serialPort.BytesToRead;
+            byte[] mess = new byte[n];
+            serialPort.Read(mess, 0, mess.Length);
+            //Если хоть что-то пришло в ответ - заносим порт в список.
+            if (mess.Length > 0)
+            {
+                if (!PortsEnabled.Contains(serialPort.PortName))
+                {
+                    PortsEnabled.Add(serialPort.PortName);
+                    AdressSearch = mess[0];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Отправка запроса на устройство.
+        /// </summary>
+        /// <param name="adress"></param>
+        public void SendResponsePort(int adress = 1, int baudRate = 9600, int dataBit = 8,
+                                      int parity = 0, int stopBit = 1)
+        {
+            serialPort ??= new SerialPort();
+            if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
+            {
+                PortsEnabled.Clear();
+            }
+            serialPort.DataReceived += Port_DataReceived;//Включение прослушки.
+            string[] ports = SerialPort.GetPortNames(); //Получить доступные порты компьютера.
+            foreach (var port in ports)                 //Пробуем подключиться на каждом порту.
+            {
+                PortOpen(port, baudRate, dataBit, parity, stopBit);
+                byte[] b = new byte[6];
+                b[0] = (byte)adress;//Адрес устройства.
+                b[1] = 0x3C;        //Команда 60.
+                b[2] = 0x13;        //Адрес регистра.
+                b[3] = 0x88;        //Адрес регистра.
+                b[4] = 0;           //Количество регистров.
+                b[5] = 0x1;         //Количество регистров.
+                byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high
+                byte[] mes = new byte[b.Length + crc.Length];
+                b.CopyTo(mes, 0);
+                crc.CopyTo(mes, mes.Length - crc.Length);
+                try
+                {
+                    serialPort.Write(mes, 0, mes.Length);
+                }
+                catch (Exception ex)
+                {
+                    serialPort.Close();
+                    Mode = eMode.None;
+                }
+            }
+            Thread.Sleep(800);
+            serialPort.DataReceived -= Port_DataReceived;
+        }
+
+        /// <summary>
+        /// Поиск адреса устройства.
+        /// </summary>
+        /// <param name="baudRate"></param>
+        /// <param name="dataBit"></param>
+        /// <param name="parity"></param>
+        /// <param name="stopBit"></param>
+        public void SearchAddress(int baudRate = 9600, int dataBit = 8, int parity = 0, int stopBit = 1)
+        {
+            string port = "COM5";
+            serialPort ??= new SerialPort();
+            if (AdressSearch > 0)
+            {
+                AdressSearch = 0;
+            }
+            if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
+            {
+                PortsEnabled.Clear();
+            }
+            PortOpen(port, baudRate, dataBit, parity, stopBit);
+            serialPort.DataReceived += Port_DataReceived;
+            for (int i = 1; i < 248; i++)
+            {
+                byte[] b = new byte[6];
+                b[0] = (byte)i;     //Адрес устройства.
+                b[1] = 0x3C;        //Команда 60.
+                b[2] = 0x0;         //Адрес регистра.
+                b[3] = 0x0;         //Адрес регистра.
+                b[4] = 0;           //Количество регистров.
+                b[5] = 0x1;         //Количество регистров.
+                byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high
+                byte[] mes = new byte[b.Length + crc.Length];
+                b.CopyTo(mes, 0);
+                crc.CopyTo(mes, mes.Length - crc.Length);
+                try
+                {
+                    serialPort.Write(mes, 0, mes.Length);
+                    if (AdressSearch > 0)
+                    {
+                        MessageBox.Show($"Адрес устройства {AdressSearch}");
+                        serialPort.DataReceived -= Port_DataReceived;
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    serialPort.Close();
+                    Mode = eMode.None;
+                }
+                Thread.Sleep(100);
+            }
+            MessageBox.Show($"Устройств не обнаружено");
+            serialPort.DataReceived -= Port_DataReceived;
+        }
+    }
+}

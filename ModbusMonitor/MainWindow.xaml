@@ -1,0 +1,192 @@
+﻿<Window x:Class="ModbusMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModbusMonitor"
+        xmlns:src="clr-namespace:ModbusMonitor.Classes"
+        d:DataContext="{d:DesignInstance Type=local:ViewModelMain}"
+        mc:Ignorable="d"
+        Title="ModbusMonitor" Height="450" Width="1000" WindowStyle="ThreeDBorderWindow"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <!--Меню-->
+        <Menu DockPanel.Dock="Top" VerticalAlignment="Top">
+            <MenuItem Header="Файл" VerticalAlignment="Center">
+                <MenuItem Header="Загрузить карту регистров" Command="{Binding LoadMapCommand}"/>
+                <Separator/>
+                <MenuItem Header="Сохранить карту регистров" Command="{Binding SaveMapcomman}"/>
+                <Separator/>
+                <MenuItem Header="Поиск адреса" Command="{Binding SearchAddressCommand}"/>
+                <Separator/>
+                <MenuItem Header="Открыть лог" Command="{Binding OpenLogCommand}"/>
+                <Separator/>
+                <MenuItem Header="Выход" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Вид" VerticalAlignment="Center">
+                <MenuItem Header="Таблица" Command="{Binding TableCommand}"/>
+                <MenuItem Header="Текст" Command="{Binding TextCommand}"/>
+                <MenuItem Header="Просмотр пакетов" Command="{Binding ViewingPackagesCommand}"/>
+                <MenuItem Header="Слушать порт" Command="{Binding ListenPortCommand}"/>
+                <Separator/>
+                <MenuItem Header="Коэффициенты" IsCheckable="True" Command="{Binding RatioCommand}"/>
+                <MenuItem Header="Формат" IsCheckable="True" Command="{Binding FormatCommand}"/>
+                <MenuItem Header="Цвета для типов" IsCheckable="True" Command="{Binding ColorTypeCommand}"/>
+                <Separator/>
+                <MenuItem Header="Сброс ширины столбцов" Command="{Binding ResetColCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Инструменты" VerticalAlignment="Center">
+                <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
+                <MenuItem Header="Запрос данных" Command="{Binding SendRequestCommand}"/>
+                <Separator/>
+                <MenuItem Header="Открыть лог ошибок" Command="{Binding OpenLogErrCommand}"/>
+                <MenuItem Header="Очистить лог ошибок" Command="{Binding ClearLogErrCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Сервис" VerticalAlignment="Center">
+                <MenuItem Header="Параметры" Command="{Binding ParamCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Справка" VerticalAlignment="Center" Command="{Binding HelpCommand}">
+                <MenuItem Header="Справка" InputGestureText="F1" Command="{Binding AboutCommand}"/>
+                <Separator/>
+                <MenuItem Header="О программе"/>
+            </MenuItem>
+        </Menu>
+        <!--Статус бар-->
+        <StatusBar DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" Content="Время запроса= 0 мс" />
+            <Separator Grid.Column="1"/>
+            <Separator Grid.Column="3"/>
+            <StatusBarItem Grid.Column="4" Content="Запросы: 0"/>
+            <Separator Grid.Column="5"/>
+            <StatusBarItem Grid.Column="6" Content="Корректные ответы: 0"/>
+        </StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" MinWidth="300" MaxWidth="500"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" HorizontalAlignment="Stretch" Margin="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="140"/>
+                </Grid.RowDefinitions>
+                <!--Подключения-->
+                <GroupBox Header="Подключения" Grid.Row="0" Margin="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <UniformGrid Grid.Row="0" Columns="3">
+                            <Button Command="{Binding CreateConnectCommand}" Content="Создать" Margin="2"/>
+                            <Button Command="{Binding ConnectionCommand}" Content="Подключение" Margin="2"/>
+                            <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
+                        </UniformGrid>
+                        <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="IsExpanded" Value="True" />
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Path=SubGroups}" >
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Порт:  "/>
+                                        <TextBlock Text="{Binding NameCOM}"/>
+                                    </StackPanel>
+                                    <HierarchicalDataTemplate.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ContentClass}"/>
+                                        </DataTemplate>
+                                    </HierarchicalDataTemplate.ItemTemplate>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </Grid>
+                </GroupBox>
+                <!--Добавление регистров-->
+                <GroupBox Grid.Row="1" Header="Добавление регистров" Margin="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Подключение" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="2"
+                                  Text="Выберите тип" IsEditable="True" IsReadOnly="True" MaxHeight="22"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Адрес и имя устройства:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DeviceAddress}" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding DeviceName}" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Тип и формат регистра:" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding DataFormat}" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="Добавить данные" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                        <Button Grid.Row="3" Grid.Column="2" Margin="2" Content="Добавить"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+            <GridSplitter Grid.Column="1" Width="2" HorizontalAlignment="Stretch"/>
+            <!--Окно данных, лист логов и кнопки-->
+            <Border Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto" MinHeight="80"/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="0" Columns="2">
+                        <Button Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2"/>
+                        <DockPanel Width="auto">
+                            <Button DockPanel.Dock="Right" Content="@" HorizontalAlignment="Right" Margin="2"/>
+                            <Button DockPanel.Dock="Right" Content="Очистить" HorizontalAlignment="Right" Margin="2"/>
+                        </DockPanel>
+                    </UniformGrid>
+                    <Border Grid.Row="1" Background="#FFDDD6D6">
+                        <!--Окно данных-->
+                        <ContentControl x:Name="ContentArea" Content="{Binding Usercontrol}"/>
+                    </Border>
+                    <GridSplitter Grid.Row="2" Height="2" 
+                                  HorizontalAlignment="Stretch"/>
+                    <ListBox x:Name="TestList" Grid.Row="3" VerticalAlignment="Stretch" 
+                             HorizontalAlignment="Stretch"
+                             MinHeight="80">
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

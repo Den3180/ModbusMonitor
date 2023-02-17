@@ -1,0 +1,106 @@
+﻿<Window x:Class="ModbusMonitor.Windows.ConnectSettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModbusMonitor.Windows" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:ConnectViewModel}"
+        mc:Ignorable="d"
+        Title="Настройка подключения" Height="auto" Width="500" SizeToContent="Height">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Подключение" Margin="5">
+            <StackPanel Orientation="Vertical">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Устройство:" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding DeviceName_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </Grid>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding SourceTypeConnect}" 
+                              Text="{Binding HeaderCombobox}"
+                              SelectedItem="{Binding SelectedItem}"
+                              VerticalAlignment="Center" 
+                              IsReadOnly="True"  
+                              IsEditable="False" Margin="0,0,80,0"/>
+                </Grid>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="239*"/>
+                        <ColumnDefinition Width="60*"/>
+                        <ColumnDefinition Width="179*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="IP-адрес/Хост:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding AdressIP_VM}" IsEnabled="{Binding CanTextIP}" 
+                             VerticalAlignment="Center" Margin="0,0,80,0" Grid.ColumnSpan="2"/>
+                </Grid>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="COM-порт:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding Port_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Параметры COM-порта" Margin="5">
+            <StackPanel Orientation="Vertical">
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Скорость порта (бод):" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding SpeedPort_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Четность:" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding Parity_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Стоп-биты:" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding StopBits_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Длина слова:" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding WordLength_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Header="Дополнительные параметры" Margin="5">
+            <StackPanel Orientation="Vertical">
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Таймаут чтения (мс):" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding TimeoutRead_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+                <UniformGrid Columns="2" Rows="1">
+                    <Label Grid.Column="0" Content="Таймаут записи (мс):" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding TimeoutWrite_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
+        <UniformGrid Grid.Row="3" Rows="0" Columns="3" Margin="10">
+            <Button Grid.Column="0" Command="{Binding AddConnectCommand}" Content="Добавить и Подключить" HorizontalAlignment="Right"/>
+            <Button Grid.Column="1" Command="{Binding AddCommand}" Content="Добавить" HorizontalAlignment="Right" Width="100"/>
+            <Button Grid.Column="2" Command="{Binding CanselCommand}" Content="Отмена" HorizontalAlignment="Center" Width="100"/>
+        </UniformGrid>
+    </Grid>
+</Window>

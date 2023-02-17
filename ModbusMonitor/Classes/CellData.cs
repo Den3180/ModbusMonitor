@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ModbusMonitor.Classes
+{
+    #region[Классы обработки данных подключения карт регистров]
+    public class Device
+    {
+        public string Adress { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class Devices
+    {
+        public Device Device { get; set; }
+        public Devices()
+        {
+            Device = new Device();
+        }
+    }
+
+    public class AdapterData
+    {
+        public string FullAdapterInf { get; set; } = string.Empty;
+        public Devices Devices { get; set; } = new Devices();
+        public string DefaultDeviceAdress { get; set; } = string.Empty;
+        public AdapterData()
+        {
+        }
+    }
+
+    public class AdaptersArray
+    {
+        public AdapterData AdapterData { get; set; }
+        public AdaptersArray()
+        {
+            AdapterData = new AdapterData();
+        }
+    }
+    #endregion
+
+    /// <summary>
+    /// Класс ячеек для регистров из карты TikModbus.
+    /// </summary>
+    public class CellData : INotifyPropertyChanged
+    {
+        private int adress;//Адрес регистра.
+        private string numberReg = string.Empty;//Номер по порядку.
+        private string nameDevice = string.Empty;//Имя устройства.
+        private string name = "None";//Имя-описание регистра.
+        private string _value = string.Empty;//Значение регистра.
+        public string Type { get; set; } = string.Empty;//Тип регистра.
+        public string Format { get; set; } = string.Empty;//Формат регистра.
+        public string Represent { get; set; } = string.Empty;//Первичный тип регистра(не обработанный)
+        public string AdapterId { get; set; } = string.Empty;//Данные в карте.
+        public string DeviceAdress { get; set; } = string.Empty;//Адрес устройства.
+        public string isHaveData { get; set; } = string.Empty;//Если есть данные в карте.
+
+        /// <summary>
+        /// Номер регистра по порядку списка.
+        /// </summary>
+        public string NumberReg
+        {
+            get => numberReg;
+            set
+            {
+                SetOptions<string>(nameof(NumberReg), ref numberReg, value);
+            }
+        }
+
+        /// <summary>
+        /// Имя устройства.
+        /// </summary>
+        public string NameDevice
+        {
+            get => nameDevice;
+            set
+            {
+                SetOptions<string>(nameof(NameDevice), ref nameDevice, value);
+            }
+        }
+
+        /// <summary>
+        /// Имя регистра.
+        /// </summary>
+        public string Name
+        {
+            get => name;
+            set
+            {
+                SetOptions<string>(nameof(Name), ref name, value);
+            }
+
+        }
+
+        /// <summary>
+        /// Значение регистра.
+        /// </summary>
+        public string Value
+        {
+            get => _value;
+            set
+            {
+                SetOptions<string>(nameof(Value), ref _value, value);
+            }
+        }
+
+        /// <summary>
+        /// Адрес регистра.
+        /// </summary>
+        public int Adress
+        {
+            get => adress;
+            set =>  SetOptions<int>(nameof(Adress), ref adress, value);
+            
+        }
+
+        private void SetOptions<T>(string Property, ref T variable, T value)
+        {            
+            if (variable!=null && !variable.Equals(value))
+            {
+                variable = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(Property));
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
+        }
+    }
+}

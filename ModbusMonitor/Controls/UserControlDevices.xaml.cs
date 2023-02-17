@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using ModbusMonitor;
+using ModbusMonitor.ViewModel;
+using ModbusMonitor.Classes;
+
+namespace ModbusMonitor.Controls
+{
+    /// <summary>
+    /// Логика взаимодействия для UserControlDevices.xaml
+    /// </summary>
+    public partial class UserControlDevices : UserControl
+    {
+        public UserControlDevices(List<CellData> Cell)
+        {
+            InitializeComponent();
+            DataContext = new ControlDeviceView(Cell);
+        }
+    }
+}
