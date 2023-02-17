@@ -13,7 +13,7 @@ namespace ModbusMonitor.Classes
     {
         public string FilePath { get; set; } = string.Empty;
 
-        public DeviceClass OpenFileDialog()
+        public DeviceClass OpenFileDialog()//fff.
         {
             FileInfo file = new FileInfo("ModbusMonitor.exe");
             string dir = file.DirectoryName + @"\Maps";
