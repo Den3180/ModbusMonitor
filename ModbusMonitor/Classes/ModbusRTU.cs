@@ -215,7 +215,7 @@ namespace ModbusMonitor.Classes
                 PortsEnabled.Clear();
             }
             serialPort.DataReceived += Port_DataReceived;//Включение прослушки.
-            string[] ports = SerialPort.GetPortNames(); //Получить доступные порты компьютера.
+            string[] ports = GetListPorts(); //Получить доступные порты компьютера.
             foreach (var port in ports)                 //Пробуем подключиться на каждом порту.
             {
                 PortOpen(port, baudRate, dataBit, parity, stopBit);
@@ -251,9 +251,10 @@ namespace ModbusMonitor.Classes
         /// <param name="dataBit"></param>
         /// <param name="parity"></param>
         /// <param name="stopBit"></param>
-        public void SearchAddress(int baudRate = 9600, int dataBit = 8, int parity = 0, int stopBit = 1)
+        public void SearchAddress(int addressStart, int addressEnd, string namePort="COM5", 
+            int baudRate = 9600, int dataBit = 8, int parity = 0, int stopBit = 1)
         {
-            string port = "COM5";
+            string port = namePort;
             serialPort ??= new SerialPort();
             if (AdressSearch > 0)
             {
@@ -265,7 +266,7 @@ namespace ModbusMonitor.Classes
             }
             PortOpen(port, baudRate, dataBit, parity, stopBit);
             serialPort.DataReceived += Port_DataReceived;
-            for (int i = 1; i < 248; i++)
+            for (int i = addressStart; i <=addressEnd; i++)
             {
                 byte[] b = new byte[6];
                 b[0] = (byte)i;     //Адрес устройства.
@@ -298,5 +299,15 @@ namespace ModbusMonitor.Classes
             MessageBox.Show($"Устройств не обнаружено");
             serialPort.DataReceived -= Port_DataReceived;
         }
+    
+        /// <summary>
+        /// Поиск портов на компе.
+        /// </summary>
+        /// <returns></returns>
+        public static string[] GetListPorts()
+        {
+            return SerialPort.GetPortNames();
+        }
+    
     }
 }

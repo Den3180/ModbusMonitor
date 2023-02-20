@@ -3,9 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ModbusMonitor.Windows"
+        xmlns:local="clr-namespace:ModbusMonitor.Windows" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:SearchAddrViewMod}"
         mc:Ignorable="d"
-        Title="Поиск адреса устройства" Height="auto" Width="auto" WindowStartupLocation="CenterScreen"
+        Title="Поиск адреса устройства" Height="auto" Width="740" 
+        MinHeight="475" MinWidth="740"
+        WindowStartupLocation="CenterScreen" 
         SizeToContent="WidthAndHeight">
     <Window.Resources>
         <Style TargetType="GroupBox">
@@ -21,91 +25,108 @@
         </Style>
         <Style TargetType="RadioButton">
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="2"/>
-        </Style>
+            <Setter Property="Margin" Value="2"/>            
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">                 
+                    <Setter Property="Background" Value="red"/>                   
+                </Trigger>               
+            </Style.Triggers>
+        </Style>       
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.8*"/>
+            <ColumnDefinition Width="0.8*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Background="#FFF9F5F5" Margin="5">
             <GroupBox Header="COM порт">
-                <ComboBox IsReadOnly="True" IsEditable="False" VerticalAlignment="Center" Margin="5" />
+                <ComboBox ItemsSource="{Binding SourceNamePort}" IsReadOnly="True" 
+                          IsEditable="False" VerticalAlignment="Center" 
+                          SelectedValue="{Binding SourceNamePort[0]}" 
+                          SelectedItem="{Binding CurrentPort}" Margin="5"/>
             </GroupBox>
-            <Button Content="Поиск" Margin="15" FontSize="16" HorizontalAlignment="Center" FontWeight="Bold" Padding="7"/>
+            <Button Command="{Binding SearchCommand}" Content="Поиск" Margin="15" 
+                    FontSize="16" HorizontalAlignment="Center" FontWeight="Bold" Padding="7"/>
             <GroupBox  Header="Параметры подключения">
                 <UniformGrid Rows="5" Columns="2">
                     <TextBlock Text="Speed: "/>
-                    <TextBlock Text="no" />
+                    <TextBlock Text="{Binding Speed}" />
                     <TextBlock Text="DataBits: "/>
-                    <TextBlock Text="no" />
+                    <TextBlock Text="{Binding DataBits}" />
                     <TextBlock Text="Parity: "/>
-                    <TextBlock Text="no" />
+                    <TextBlock Text="{Binding Parity}" />
                     <TextBlock Text="StopBits: "/>
-                    <TextBlock Text="no" />
+                    <TextBlock Text="{Binding StopBits}" />
                     <TextBlock Text="Address: "/>
-                    <TextBlock Text="no" />
+                    <TextBlock Text="{Binding Address}" />
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Время" VerticalAlignment="Bottom">
-                <TextBlock Text="00:00:00" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
+                <TextBlock Text="{Binding CurrentPort}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
             </GroupBox>
         </StackPanel>
         <StackPanel  Grid.Row="0" Grid.Column="1" Background="#FFF9F5F5" Margin="5">
-            <GroupBox Header="Скорость (бод)">
-                <StackPanel Margin="2" Background="#FFF9F5F5">
-                    <RadioButton Content="300"/>
-                    <RadioButton Content="600"/>
-                    <RadioButton Content="1200"/>
-                    <RadioButton Content="2400"/>
-                    <RadioButton Content="4800"/>
-                    <RadioButton Content="7200"/>
-                    <RadioButton Content="9600" IsChecked="True"/>
-                    <RadioButton Content="14400"/>
-                    <RadioButton Content="19200"/>
-                    <RadioButton Content="38400"/>
-                    <RadioButton Content="56000"/>
-                    <RadioButton Content="57600"/>
-                    <RadioButton Content="115200"/>
-                    <RadioButton Content="128000"/>
-                    <RadioButton Content="14400"/>
-                    <RadioButton Content="256000"/>
+            <GroupBox Header="Скорость(бод)">
+                <StackPanel Margin="2" Background="#FFF9F5F5" >
+                    <RadioButton Content="300" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="600" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="1200" Checked="RadioButtonSpeed_Checked" />
+                    <RadioButton Content="2400" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="4800" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="7200" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="9600" Checked="RadioButtonSpeed_Checked" IsChecked="True"/>
+                    <RadioButton Content="14400" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="19200" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="38400" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="56000" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="57600" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="115200" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="128000" Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="14400"  Checked="RadioButtonSpeed_Checked"/>
+                    <RadioButton Content="256000" Checked="RadioButtonSpeed_Checked"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="2" Background="#FFF9F5F5" Margin="5">
             <GroupBox Header="DataBits">
                 <StackPanel>
-                    <RadioButton Content="7"/>
-                    <RadioButton Content="8" IsChecked="True"/>
+                    <RadioButton Content="7" Checked="RadioButtonDataBits_Checked"/>
+                    <RadioButton Content="8" Checked="RadioButtonDataBits_Checked" IsChecked="True" />
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Parity">
                 <StackPanel>
-                    <RadioButton Content="None" IsChecked="True"/>
-                    <RadioButton Content="Odd"/>
-                    <RadioButton Content="Even"/>
+                    <RadioButton Content="None" Checked="RadioButtonParity_Checked" IsChecked="True"/>
+                    <RadioButton Content="Odd" Checked="RadioButtonParity_Checked"/>
+                    <RadioButton Content="Even" Checked="RadioButtonParity_Checked"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="StopBits">
                 <StackPanel>
-                    <RadioButton Content="1" IsChecked="True"/>
-                    <RadioButton Content="2"/>
+                    <RadioButton Content="1" Checked="RadioButtonStopBits_Checked" IsChecked="True"/>
+                    <RadioButton Content="2" Checked="RadioButtonStopBits_Checked"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Диапазон адресов">
                 <UniformGrid VerticalAlignment="Top">
                     <TextBlock Text="Начало"/>
-                    <TextBox Text="0" VerticalContentAlignment="Center"/>
+                    <TextBox Text="{Binding AddressStart}" VerticalContentAlignment="Center"/>
                     <TextBlock Text="Конец"/>
-                    <TextBox Text="0" VerticalContentAlignment="Center"/>
+                    <TextBox Text="{Binding AddressEnd}" VerticalContentAlignment="Center"/>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox Header="TimeOut">
+                <UniformGrid VerticalAlignment="Top">
+                    <TextBlock Text="Write"/>
+                    <TextBox Text="{Binding TimeOutWrite}" VerticalContentAlignment="Center"/>
+                    <TextBlock Text="Read"/>
+                    <TextBox Text="{Binding TimeOutRead}" VerticalContentAlignment="Center"/>
                 </UniformGrid>
             </GroupBox>
         </StackPanel>
@@ -123,7 +144,7 @@
                          Background="LightCyan" Foreground="#FF222DDC"/>
         </Border>
         <Border Grid.Row="1" Grid.Column="3" Background="#FFF9F5F5">
-            <Button Content="Выход" Margin="20,5" FontSize="18" FontWeight="Bold"/>
+            <Button Content="Выход" Margin="20,5" FontSize="18" FontWeight="Bold" IsCancel="True"/>
         </Border>
     </Grid>
 </Window>

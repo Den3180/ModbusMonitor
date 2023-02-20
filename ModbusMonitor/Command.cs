@@ -11,7 +11,7 @@ namespace ModbusMonitor
     {
         private static readonly Func<bool> defaultCanExecuteMethod = () => true;
 
-        private readonly Action executeMethod;
+        private readonly Action executeMethod;        
         private readonly Func<bool> canExecuteMethod;
 
         public Command(Action executeMethod) :
@@ -22,7 +22,7 @@ namespace ModbusMonitor
         {
             this.canExecuteMethod = canExecuteMethod;
             this.executeMethod = executeMethod;
-        }
+        }       
         public bool CanExecute(object parameter)
         {
             return canExecuteMethod();
@@ -30,7 +30,7 @@ namespace ModbusMonitor
 
         public void Execute(object parameter)
         {
-            executeMethod();
+            executeMethod();            
         }
         public event EventHandler CanExecuteChanged;
 

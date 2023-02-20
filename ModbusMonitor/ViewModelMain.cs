@@ -141,6 +141,9 @@ namespace ModbusMonitor
         public ICommand DisconnectionCommand => disconnectionCommand;
 
         #region[Обработчики комманд]
+        /// <summary>
+        /// Обработчик команнды "Отключить опрос".
+        /// </summary>
         private void DisablePoll()
         {
             if (timerPoll.IsEnabled)
@@ -156,7 +159,7 @@ namespace ModbusMonitor
         /// </summary>
         private void SearchAddress()
         {
-            SearchAddressWindow searchAddress = new SearchAddressWindow();
+            SearchAddressWindow searchAddress = new SearchAddressWindow(modbusRTU);
             searchAddress.ShowDialog();
             //modbusRTU.SearchAddress();
         }
@@ -685,13 +688,12 @@ namespace ModbusMonitor
             if (e.PropertyName == null)
             {
                 return;
-            }
-            //Foo(CanDisablePoll, disablePollCommand, e);
-            if (e.PropertyName.Equals(nameof(CanDisablePoll)))
-            {
-                disablePollCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanOpenLog)))
+            }           
+                if (e.PropertyName.Equals(nameof(CanDisablePoll)))
+                {
+                    disablePollCommand.RaiseCanExecuteChanged();
+                }
+                if (e.PropertyName.Equals(nameof(CanOpenLog)))
                 {
                     openLogCommand.RaiseCanExecuteChanged();
                 }
@@ -713,14 +715,7 @@ namespace ModbusMonitor
                     sendRequestCommand.RaiseCanExecuteChanged();
                 }            
         }
-
-        private void Foo<T>(T obj, Command command ,PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals(nameof(obj)))
-            {
-                command.RaiseCanExecuteChanged();
-            }
-        }
+       
         /// <summary>
         /// Настройка изменяющихся свойств.
         /// </summary>
