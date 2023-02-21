@@ -16,6 +16,8 @@ using System.Threading;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Windows.Media;
+using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor.Classes
 {
@@ -41,7 +43,7 @@ namespace ModbusMonitor.Classes
 
         public eMode Mode { get; set; }
         public string TextMessage { get; set; } = string.Empty;
-        public int AdressSearch { get; set; } = 0;
+        public int AdressSearch { get; set; } = 0; //Найденый адрес устройства.
         public static List<string> PortsEnabled { get; set; } //Список портов доступных
                                                               //для передачи данных.
         public ModbusSerialMaster MasterRTU => masterRTU;
@@ -54,7 +56,7 @@ namespace ModbusMonitor.Classes
         /// <param name="dataBit"></param>
         /// <param name="parity"></param>
         /// <param name="stopBit">Стоп-бит</param>
-        public void PortOpen(string port, int baudRate, int dataBit, int parity, int stopBit)
+        public void PortOpen(SettingPortStart portStart)
         {
             serialPort ??= new SerialPort();
             try
@@ -65,13 +67,13 @@ namespace ModbusMonitor.Classes
                     Mode = eMode.None;
 
                 }
-                serialPort.PortName = port;
-                serialPort.BaudRate = baudRate;
-                serialPort.DataBits = dataBit;
-                serialPort.Parity = (Parity)parity;
-                serialPort.StopBits = (StopBits)stopBit;
-                serialPort.ReadTimeout = 1000;
-                serialPort.WriteTimeout = 1000;
+                serialPort.PortName = portStart.PortType;
+                serialPort.BaudRate = portStart.BaudRate;
+                serialPort.DataBits = portStart.DataBit;
+                serialPort.Parity = portStart.ParitySet;
+                serialPort.StopBits = (StopBits)portStart.StopBit;
+                serialPort.ReadTimeout = portStart.TimeOutRead;
+                serialPort.WriteTimeout = portStart.TimeOutWrite;
                 if (!serialPort.IsOpen && Mode == eMode.None)
                 {
                     serialPort.Open();
@@ -206,8 +208,7 @@ namespace ModbusMonitor.Classes
         /// Отправка запроса на устройство.
         /// </summary>
         /// <param name="adress"></param>
-        public void SendResponsePort(int adress = 1, int baudRate = 9600, int dataBit = 8,
-                                      int parity = 0, int stopBit = 1)
+        public void SendResponsePort(int adress, SettingPortStart settingPort)
         {
             serialPort ??= new SerialPort();
             if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
@@ -218,7 +219,8 @@ namespace ModbusMonitor.Classes
             string[] ports = GetListPorts(); //Получить доступные порты компьютера.
             foreach (var port in ports)                 //Пробуем подключиться на каждом порту.
             {
-                PortOpen(port, baudRate, dataBit, parity, stopBit);
+                settingPort.PortType = port;
+                PortOpen(settingPort);
                 byte[] b = new byte[6];
                 b[0] = (byte)adress;//Адрес устройства.
                 b[1] = 0x3C;        //Команда 60.
@@ -251,10 +253,9 @@ namespace ModbusMonitor.Classes
         /// <param name="dataBit"></param>
         /// <param name="parity"></param>
         /// <param name="stopBit"></param>
-        public void SearchAddress(int addressStart, int addressEnd, string namePort="COM5", 
-            int baudRate = 9600, int dataBit = 8, int parity = 0, int stopBit = 1)
-        {
-            string port = namePort;
+        public int SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
+            SearchAddrViewMod obj=null)
+        {           
             serialPort ??= new SerialPort();
             if (AdressSearch > 0)
             {
@@ -264,10 +265,12 @@ namespace ModbusMonitor.Classes
             {
                 PortsEnabled.Clear();
             }
-            PortOpen(port, baudRate, dataBit, parity, stopBit);
+            PortOpen(settingPortStart);
             serialPort.DataReceived += Port_DataReceived;
             for (int i = addressStart; i <=addressEnd; i++)
             {
+                obj.Address = i;
+                obj.ProgBarValue++;
                 byte[] b = new byte[6];
                 b[0] = (byte)i;     //Адрес устройства.
                 b[1] = 0x3C;        //Команда 60.
@@ -284,9 +287,9 @@ namespace ModbusMonitor.Classes
                     serialPort.Write(mes, 0, mes.Length);
                     if (AdressSearch > 0)
                     {
-                        MessageBox.Show($"Адрес устройства {AdressSearch}");
+                        //MessageBox.Show($"Адрес устройства {AdressSearch}");
                         serialPort.DataReceived -= Port_DataReceived;
-                        return;
+                        //return AdressSearch;
                     }
                 }
                 catch (Exception ex)
@@ -296,8 +299,9 @@ namespace ModbusMonitor.Classes
                 }
                 Thread.Sleep(100);
             }
-            MessageBox.Show($"Устройств не обнаружено");
+            //MessageBox.Show($"Устройств не обнаружено");
             serialPort.DataReceived -= Port_DataReceived;
+            return AdressSearch > 0 ? AdressSearch : -1; 
         }
     
         /// <summary>

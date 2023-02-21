@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,5 +68,16 @@ namespace ModbusMonitor.Classes
         public int LenghtWord { get; set; }
         public int TimeOutRead { get; set; }
         public int TimeOutWrite { get; set; }
+    }
+    
+    public class SettingPortStart
+    {
+        public string PortType { get; set; } = string.Empty;
+        public int BaudRate { get; set; } = 9600;
+        public int DataBit { get; set; } = 8;
+        public Parity ParitySet { get; set; } = Parity.None;
+        public int StopBit { get; set; } = 1;
+        public int TimeOutWrite { get; set; } = 1000;
+        public int TimeOutRead { get; set; } = 1000;
     }
 }

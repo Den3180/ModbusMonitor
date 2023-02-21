@@ -108,6 +108,7 @@ namespace ModbusMonitor
         }
 
         public List<CellData> Cells { get; set; }
+        public SettingPortStart SettingPortStart { get; set; }
         public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.
         //Комманды.Вкладка "Файл".
         public ICommand LoadMapCommand => loadMapCommand;
@@ -160,8 +161,7 @@ namespace ModbusMonitor
         private void SearchAddress()
         {
             SearchAddressWindow searchAddress = new SearchAddressWindow(modbusRTU);
-            searchAddress.ShowDialog();
-            //modbusRTU.SearchAddress();
+            searchAddress.ShowDialog();            
         }
 
         /// <summary>
@@ -184,15 +184,11 @@ namespace ModbusMonitor
         /// Подключение карты.
         /// </summary>
         private void Connection()
-        {
-            modbusRTU.PortOpen(device.ConnectFromMap.PortType,
-                               device.ConnectFromMap.SpeedPort,
-                               device.ConnectFromMap.LenghtWord,
-                               device.ConnectFromMap.Parity,
-                               device.ConnectFromMap.Stop_Bit);//подключение порта.            
+        {           
+            modbusRTU.PortOpen(SettingPortStart);  //Подключение порта.            
             CanDisconnection = true;
             CanRequest = true;
-            device.Link = EnumLink.LinkYes;//Статус подключения.
+            device.Link = EnumLink.LinkYes;        //Статус подключения.
             if (treeNode is not null)
                 treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
         }
@@ -476,15 +472,17 @@ namespace ModbusMonitor
             }
             Cells = device.CellsArray;
             Usercontrol = new UserControlDevices(Cells);
-            DeviceName = device.DeviceName_DC;
-            DeviceAddress = device.DeviceAdress_DC;
+            DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
+            DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
             CanCreateConnect = true;
-            Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC,
-                                       device.ConnectFromMap.SpeedPort,
-                                       device.ConnectFromMap.LenghtWord,
-                                       device.ConnectFromMap.Parity,
-                                       device.ConnectFromMap.Stop_Bit
-                                       ));
+            SettingPortStart = new SettingPortStart()
+            {               
+                BaudRate = device.ConnectFromMap.SpeedPort,
+                DataBit = device.ConnectFromMap.LenghtWord,
+                ParitySet = (Parity)device.ConnectFromMap.Parity,
+                StopBit = device.ConnectFromMap.Stop_Bit
+            };
+            Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, SettingPortStart));
         }
 
         /// <summary>
@@ -506,9 +504,7 @@ namespace ModbusMonitor
                 timerPoll.Stop();
             }
             App.Current.Shutdown();
-        }
-
-        // int count;
+        }       
 
         /// <summary>
         /// Обработчик таймера.
@@ -516,11 +512,7 @@ namespace ModbusMonitor
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private async void TimerSec_Tick(object sender, EventArgs e)
-        {
-            //if (count++ > 999)
-            //{
-            //    count = 2;
-            //}           
+        {            
             if (modbusRTU.Mode == ModbusRTU.eMode.None)
             {
                 CanConnection = false;
@@ -532,7 +524,7 @@ namespace ModbusMonitor
                 MessageBox.Show("Потеря соединения!");
                 return;
             }
-            if (answerRequest == false/* || count ==1*/)
+            if (answerRequest == false)
             {
                 answerRequest = true;
                 await Task.Run(() => SendRequest());

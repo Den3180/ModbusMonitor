@@ -33,7 +33,7 @@ namespace ModbusMonitor.Windows
             {
                 Speed = _speed,
                 DataBits=_dataBits,
-                Parity=_parity,
+                ParityS=_parity,
                 StopBits=_stopBits
             };            
         }
@@ -81,7 +81,7 @@ namespace ModbusMonitor.Windows
             RadioButton radioButton = sender as RadioButton;
             if (DataContext != null)
             {
-                ((SearchAddrViewMod)DataContext).Parity = radioButton.Content.ToString();
+                ((SearchAddrViewMod)DataContext).ParityS = radioButton.Content.ToString();
             }
             else
             {
