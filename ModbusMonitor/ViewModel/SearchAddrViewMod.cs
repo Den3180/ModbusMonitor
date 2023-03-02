@@ -10,6 +10,7 @@ using ModbusMonitor.Classes;
 using System.Windows.Input;
 using System.IO.Ports;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -30,10 +31,14 @@ namespace ModbusMonitor.ViewModel
         private TimeOnly timeCurrent;
         private readonly Command searchCommand;
         private readonly Command clearResaultCommand;
+        private readonly Command closeCommand;
+        private readonly Command breakCommand;
         private bool canSearch;
         private bool canClearResault;
+        private bool canBreakCommand;
+        private bool flagSearchMethod = false;
         public ICollection<string> sourceNamePort = new ObservableCollection<string>();
-        //private readonly SearchAddressWindow window;
+        private readonly SearchAddressWindow window;
         private readonly ModbusRTU modbusRTU;
         private SettingPortStart settingPort;
         private readonly DispatcherTimer timer;
@@ -42,22 +47,26 @@ namespace ModbusMonitor.ViewModel
 
         public SearchAddrViewMod(ModbusRTU modbusRTU ,SearchAddressWindow window)
         {
-            //this.window = window;
-            for(int i = 0; i < 248; i++)
-            {
-                addressList.Add(i);
-            }
-            this.modbusRTU = modbusRTU;
+            this.window = window;
+            this.modbusRTU = modbusRTU;            
             progBarValue = 0;
             timeCount = new TimeOnly(0, 0, 0).ToLongTimeString();
             timeOutWrite = 1000;
             timeOutRead = 1000;
             addressStart = 0;
-            addressEnd = 247;
+            addressEnd = 255;
             address = 0;
             searchCommand = new Command(SearchAddress,()=>CanSearch);
             clearResaultCommand = new Command(ClearResault,()=>CanClearResault);
-            sourceNamePort = ModbusRTU.GetListPorts();
+            closeCommand = new Command(CloseSearch);
+            breakCommand = new Command(BreakSearch,()=>CanBreakCommand);
+            sourceNamePort = ModbusRTU.GetListPorts();//Список доступных портов.
+            //Заполнение диапазона адресов устройств.
+            for(int i = 1; i <= addressEnd; i++)
+            {
+                addressList.Add(i);
+            }
+            //Отображение порта в комбобоксе портов.
             if (sourceNamePort.Count > 0)
             {
                 canSearch = true;
@@ -76,8 +85,35 @@ namespace ModbusMonitor.ViewModel
         public IEnumerable<int> AddressList => addressList;
         public ICommand SearchCommand => searchCommand;
         public ICommand ClearResaultCommand => clearResaultCommand;
+        public ICommand CloseCommand => closeCommand;
+        public ICommand BreakCommand => breakCommand;
 
         #region[Обработчики команд]
+
+        /// <summary>
+        /// Прервать сканирование.
+        /// </summary>
+        private void BreakSearch() 
+        {           
+            if (resault.Count > 0)
+            {
+                CanClearResault = true;
+            }
+            modbusRTU.AdressSearch.Clear();
+            CanSearch = true;
+            flagSearchMethod = false;
+            AddressStart = Address;
+            CanBreakCommand = false;
+            timer.Stop();
+        }
+        /// <summary>
+        /// Закрыть окно поиска адресов.
+        /// </summary>
+        private void CloseSearch()
+        {
+            modbusRTU.PortClose();
+            window.Close();
+        }
         /// <summary>
         /// Очистка результатов, сброс прогрессбара, отключение кнопки очистить.
         /// </summary>
@@ -85,43 +121,59 @@ namespace ModbusMonitor.ViewModel
         {
             if (resault.Count > 0)
             {
-                resault.Clear();
-                ProgBarValue = 0;
+                modbusRTU.PortClose();//Закрытие порта.
+                resault.Clear();//Очистка списка окна результатов.
+                ProgBarValue = 0;//Сброс прогрессбара.
+                modbusRTU.AdressSearch.Clear();//Очитска списка адресов.
+                Address = 0;
                 TimeCount = new TimeOnly(0, 0, 0).ToLongTimeString();
                 CanClearResault = false;
+                CanSearch = true;
+                CanBreakCommand = false;
+                flagSearchMethod = false;
             }
         }
+
         /// <summary>
         /// Обработчик таймера и запуск поиска адресов.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Timer_Tick(object sender, EventArgs e)
-        {
-            int? temp = null;           
-            timeCurrent = timeCurrent.Add(new TimeSpan(0, 0, 1));
-            TimeCount = timeCurrent.ToLongTimeString();            
-            if (timeCurrent.Second == 1)
+        private void Timer_Tick(object sender, EventArgs e)
+        {           
+            if (!flagSearchMethod)
             {
-                temp = await Task.Run(() => modbusRTU.SearchAddress(AddressStart, AddressEnd, 
+                Task.Run(() => modbusRTU.SearchAddress(AddressStart, AddressEnd,
                     settingPort, this));
+                flagSearchMethod = true;
             }
-            if (temp >= 0)
+            if (modbusRTU.AdressSearch.Count > 0 && !modbusRTU.AdressSearch.Contains(-1))
             {
-                resault.Add($"Порт: {CurrentPort}\n" +
-                            $"Адрес: {temp}\n"+
-                            $"Скорость: {Speed}\n" +
-                            $"DataBits: {DataBits}\n" +
-                            $"Четность: {ParityS}\n" +
-                            $"Стопбит: {StopBits}");                                                  
+                foreach (var item in modbusRTU.AdressSearch)
+                {                  
+                        resault.Add($"Порт: {CurrentPort}\n" +
+                                    $"Адрес: {item}\n" +
+                                    $"Скорость: {Speed}\n" +
+                                    $"DataBits: {DataBits}\n" +
+                                    $"Четность: {ParityS}\n" +
+                                    $"Стопбит: {StopBits}");                    
+                }
+                modbusRTU.AdressSearch.Clear();
             }
-            else if (temp == -1)
+            else if (resault.Count == 0 && Address == AddressEnd)
             {
-                resault.Add("Устройств не обнаружено");                
+                resault.Add("Устройств не обнаружено");
             }
-            if (resault.Count > 0)
+            if (Address == AddressEnd)
             {
-                CanClearResault = true;
+                if (resault.Count > 0)
+                {
+                    CanClearResault = true;
+                }
+                modbusRTU.AdressSearch.Clear();
+                flagSearchMethod = false;
+                CanSearch = true;
+                CanBreakCommand = false;
                 timer.Stop();
             }             
         }
@@ -133,15 +185,14 @@ namespace ModbusMonitor.ViewModel
         {
             ClearResault();
             ProgBarValue = AddressStart;
-            timeCurrent = new TimeOnly(0, 0, 0);
+            TimeCount = new TimeOnly(0, 0, 0).ToLongTimeString();
             int parity_s = ParityS switch
             {
                 "None" => 0,
                 "Odd" => 1,
                 "Even" =>2,
                 _ => 0
-            };            
-           
+            };     
             settingPort = new SettingPortStart
             {
                 PortType=CurrentPort,
@@ -152,12 +203,17 @@ namespace ModbusMonitor.ViewModel
                 TimeOutWrite=TimeOutWrite,
                 TimeOutRead=TimeOutRead
             };
-            timer.Start();           
+            timer.Start();
+            CanBreakCommand = true;
+            CanSearch = false;
         }       
         #endregion
 
-        #region[Свойства-привязки]
+        #region[Свойства-привязки]      
 
+        /// <summary>
+        /// Изменение величины прогрессбара.
+        /// </summary>
         public double ProgBarValue
         {
             get => progBarValue;
@@ -271,6 +327,14 @@ namespace ModbusMonitor.ViewModel
         #region[Флаги доступности]
 
         /// <summary>
+        /// Включение кнопки "Прервать".
+        /// </summary>
+        public bool CanBreakCommand
+        {
+            get => canBreakCommand;
+            set => SetOptions(nameof(CanBreakCommand), ref canBreakCommand, value);
+        }
+        /// <summary>
         /// Флаг доступности команды "Очистить".
         /// </summary>
         public bool CanClearResault
@@ -288,6 +352,11 @@ namespace ModbusMonitor.ViewModel
         }
         #endregion
 
+        /// <summary>
+        /// Изменение доступности команд.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SearchAddrViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(nameof(CanSearch)))
@@ -297,6 +366,10 @@ namespace ModbusMonitor.ViewModel
             if (e.PropertyName.Equals(nameof(CanClearResault)))
             {
                 clearResaultCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanBreakCommand)))
+            {
+                breakCommand.RaiseCanExecuteChanged();
             }
         }
         /// <summary>

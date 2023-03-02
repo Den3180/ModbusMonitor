@@ -675,6 +675,11 @@ namespace ModbusMonitor
         }
         #endregion
 
+        /// <summary>
+        /// Изменение доступности команд.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewModelMain_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == null)

@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using System.ComponentModel;
 using System.Windows.Media;
 using ModbusMonitor.ViewModel;
+using Modbus.Message;
 
 namespace ModbusMonitor.Classes
 {
@@ -39,11 +40,12 @@ namespace ModbusMonitor.Classes
             serialPort = new SerialPort();
             PortErrorEvent += MessageError;
             PortsEnabled = new List<string>();
+            AdressSearch = new List<int>();           
         }
 
         public eMode Mode { get; set; }
         public string TextMessage { get; set; } = string.Empty;
-        public int AdressSearch { get; set; } = 0; //Найденый адрес устройства.
+        public List<int> AdressSearch { get; set; } //Найденый адрес устройства.
         public static List<string> PortsEnabled { get; set; } //Список портов доступных
                                                               //для передачи данных.
         public ModbusSerialMaster MasterRTU => masterRTU;
@@ -58,7 +60,7 @@ namespace ModbusMonitor.Classes
         /// <param name="stopBit">Стоп-бит</param>
         public void PortOpen(SettingPortStart portStart)
         {
-            serialPort ??= new SerialPort();
+            serialPort ??= new SerialPort();//Создание пустого объекта порта, если его нет.
             try
             {
                 if (serialPort.IsOpen && Mode == eMode.PortOpen)
@@ -199,10 +201,14 @@ namespace ModbusMonitor.Classes
                 if (!PortsEnabled.Contains(serialPort.PortName))
                 {
                     PortsEnabled.Add(serialPort.PortName);
-                    AdressSearch = mess[0];
                 }
-            }
-        }
+                if (mess[0] == tempAdr && !AdressSearch.Contains(mess[0]))
+                {
+                    AdressSearch.Add(mess[0]);
+                }                
+            }            
+            //serialPort.DataReceived -= Port_DataReceived;
+        }        
 
         /// <summary>
         /// Отправка запроса на устройство.
@@ -216,8 +222,8 @@ namespace ModbusMonitor.Classes
                 PortsEnabled.Clear();
             }
             serialPort.DataReceived += Port_DataReceived;//Включение прослушки.
-            string[] ports = GetListPorts(); //Получить доступные порты компьютера.
-            foreach (var port in ports)                 //Пробуем подключиться на каждом порту.
+            string[] ports = GetListPorts();             //Получить доступные порты компьютера.
+            foreach (var port in ports)                  //Пробуем подключиться на каждом порту.
             {
                 settingPort.PortType = port;
                 PortOpen(settingPort);
@@ -244,8 +250,10 @@ namespace ModbusMonitor.Classes
             }
             Thread.Sleep(800);
             serialPort.DataReceived -= Port_DataReceived;
-        }
-
+        }  
+        
+        int tempAdr;
+       
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -253,27 +261,34 @@ namespace ModbusMonitor.Classes
         /// <param name="dataBit"></param>
         /// <param name="parity"></param>
         /// <param name="stopBit"></param>
-        public int SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
-            SearchAddrViewMod obj=null)
-        {           
+        public void SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
+            SearchAddrViewMod windowSearch=null)
+        {
+            //obj1 = windowSearch;
             serialPort ??= new SerialPort();
-            if (AdressSearch > 0)
+            if (AdressSearch.Count > 0)
             {
-                AdressSearch = 0;
+                AdressSearch.Clear();
             }
             if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
             {
                 PortsEnabled.Clear();
             }
-            PortOpen(settingPortStart);
-            serialPort.DataReceived += Port_DataReceived;
+                PortOpen(settingPortStart);            
+                serialPort.DataReceived += Port_DataReceived;            
             for (int i = addressStart; i <=addressEnd; i++)
             {
-                obj.Address = i;
-                obj.ProgBarValue++;
+                if (windowSearch.CanSearch)
+                {
+                    break;
+                }
+                windowSearch.Address = i;
+                windowSearch.TimeCount = new TimeOnly(0, 0, i+1-addressStart).ToLongTimeString();// Увеличивает время.
+                tempAdr = i;//Временно
+                windowSearch.ProgBarValue++;
                 byte[] b = new byte[6];
                 b[0] = (byte)i;     //Адрес устройства.
-                b[1] = 0x3C;        //Команда 60.
+                b[1] = 0x3;         //Команда 60.
                 b[2] = 0x0;         //Адрес регистра.
                 b[3] = 0x0;         //Адрес регистра.
                 b[4] = 0;           //Количество регистров.
@@ -284,24 +299,16 @@ namespace ModbusMonitor.Classes
                 crc.CopyTo(mes, mes.Length - crc.Length);
                 try
                 {
-                    serialPort.Write(mes, 0, mes.Length);
-                    if (AdressSearch > 0)
-                    {
-                        //MessageBox.Show($"Адрес устройства {AdressSearch}");
-                        serialPort.DataReceived -= Port_DataReceived;
-                        //return AdressSearch;
-                    }
+                    serialPort.Write(mes, 0, mes.Length);                    
                 }
                 catch (Exception ex)
                 {
                     serialPort.Close();
                     Mode = eMode.None;
-                }
-                Thread.Sleep(100);
-            }
-            //MessageBox.Show($"Устройств не обнаружено");
-            serialPort.DataReceived -= Port_DataReceived;
-            return AdressSearch > 0 ? AdressSearch : -1; 
+                }               
+                Thread.Sleep(settingPortStart.TimeOutWrite);
+            }           
+                serialPort.DataReceived -= Port_DataReceived;//Отключить прослушку порта.
         }
     
         /// <summary>

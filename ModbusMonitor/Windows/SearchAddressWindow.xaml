@@ -7,7 +7,7 @@
         xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:SearchAddrViewMod}"
         mc:Ignorable="d"
-        Title="Поиск адреса устройства" Height="auto" MinHeight="475" MinWidth="760" MaxWidth="760"
+        Title="Поиск адреса устройства" MaxHeight="475" MinHeight="475" MinWidth="760" MaxWidth="760"
         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None"
         SizeToContent="WidthAndHeight">
     <Window.Resources>
@@ -71,6 +71,8 @@
                            VerticalAlignment="Center"
                            FontWeight="Bold" FontSize="18" />
             </GroupBox>
+            <Button Command="{Binding BreakCommand}" Content="Прервать" FontSize="16" FontWeight="Bold"
+                    VerticalAlignment="Center" Margin="40,20"/>
         </StackPanel>
         <StackPanel  Grid.Row="0" Grid.Column="1" Background="#FFF9F5F5" Margin="5">
             <GroupBox Header="Скорость(бод)">
@@ -140,8 +142,8 @@
         <StackPanel  Grid.Row="0" Grid.Column="3" Background="#FFF9F5F5" Margin="5">
             <GroupBox Header="Результаты сканирования">
                 <StackPanel>
-                    <ListBox ItemsSource="{Binding Resault}" Background="White"
-                             MinHeight="316" MinWidth="200"/>
+                    <ListBox ItemsSource="{Binding Resault}" Background="White" 
+                             MaxHeight="316" MaxWidth="200" Height="316" Width="200"/>
                     <Button  Command="{Binding ClearResaultCommand}" Content="Очистить" Margin="5"/>
                 </StackPanel>
             </GroupBox>
@@ -154,7 +156,8 @@
                          Value="{Binding ProgBarValue}"/>
         </Border>
         <Border Grid.Row="1" Grid.Column="3" Margin="5" Background="#FFF9F5F5">
-            <Button Content="Выход" Margin="20,5" FontSize="18" FontWeight="Bold" IsCancel="True"/>
+            <Button Content="Выход" Command="{Binding CloseCommand}" Margin="20,5" FontSize="16" 
+                    FontWeight="Bold"/>
         </Border>
     </Grid>
 </Window>
