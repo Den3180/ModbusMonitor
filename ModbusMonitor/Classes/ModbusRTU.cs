@@ -206,12 +206,11 @@ namespace ModbusMonitor.Classes
                 {
                     AdressSearch.Add(mess[0]);
                 }                
-            }            
-            //serialPort.DataReceived -= Port_DataReceived;
+            }      
         }        
 
         /// <summary>
-        /// Отправка запроса на устройство.
+        /// Отправка запроса на устройство для поиска рабочего порта.
         /// </summary>
         /// <param name="adress"></param>
         public void SendResponsePort(int adress, SettingPortStart settingPort)
@@ -263,8 +262,7 @@ namespace ModbusMonitor.Classes
         /// <param name="stopBit"></param>
         public void SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
             SearchAddrViewMod windowSearch=null)
-        {
-            //obj1 = windowSearch;
+        {           
             serialPort ??= new SerialPort();
             if (AdressSearch.Count > 0)
             {

@@ -219,7 +219,6 @@ namespace ModbusMonitor.ViewModel
             get => progBarValue;
             set => SetOptions(nameof(ProgBarValue), ref progBarValue, value);
         }
-
         /// <summary>
         /// Свойство счетчика времени.
         /// </summary>
@@ -228,7 +227,6 @@ namespace ModbusMonitor.ViewModel
             get => timeCount;
             set => SetOptions(nameof(TimeCount), ref timeCount, value);
         }
-
         /// <summary>
         /// Выбранный порт.
         /// </summary>
@@ -291,6 +289,7 @@ namespace ModbusMonitor.ViewModel
                 if (value < 0 || value > 247) return;
                 SetOptions(nameof(AddressStart), ref addressStart, value);
                 Address = value;
+                ProgBarValue = 0;
             }
         }
         /// <summary>

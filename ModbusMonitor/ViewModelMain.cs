@@ -61,6 +61,8 @@ namespace ModbusMonitor
         private string dataFormat = "нет данных";
         private string regName = "нет данных";
         private string regValue = "нет данных";
+        private string correctRequest = "0"; //Корректные запросы.
+        private string numberRequest = "0";  //Общее количество запросов.
         private UserControlDevices userControl;
         private DeviceClass device;
         private readonly ModbusRTU modbusRTU;
@@ -299,11 +301,13 @@ namespace ModbusMonitor
 
         }
 
+        int countReqTot =0, countReqgood=0;
         /// <summary>
         /// отправка запроса.
         /// </summary>
         private void SendRequest()
-        {
+        {           
+            NumberRequest = (++countReqTot).ToString();
             byte adressDev = Convert.ToByte(device.DeviceAdress_DC);
             short startAdressDI = -1;
             short startAdressDO = -1;
@@ -311,7 +315,7 @@ namespace ModbusMonitor
             ushort numOfDI = device.NumOfDI;
             ushort numOfDO = device.NumOfDO;
             ushort numOfAO = device.NumOfAO;
-            string[] tempDI=null;
+            string[] tempDI = null;
             string[] tempDO = null; 
             ushort[] tempAO = null; 
             foreach (var item in device.CellsArray)
@@ -349,13 +353,14 @@ namespace ModbusMonitor
                     }
                     Array.Reverse(tempAO);
                 }
-                if (startAdressDI > -1 && startAdressDO > -1 && startAdressAO > -1 || item == Cells?[^1])//Считывание закончено.
+                if (/*startAdressDI > -1 && startAdressDO > -1 && startAdressAO > -1 || */item == Cells?[^1])//Считывание закончено.
                 {                    
                     FillCells(tempDI, tempDO, tempAO, numOfDI, numOfDO, numOfAO);                  
                     startAdressDI = -1;
                     startAdressDO = -1;
                     startAdressAO = -1;
                     answerRequest = false;
+                    CorrectRequest = (++countReqgood).ToString();
                     return;
                 }
             }
@@ -585,6 +590,22 @@ namespace ModbusMonitor
 
         #region[Свойства-привязки]
 
+        /// <summary>
+        /// Количество запросов.
+        /// </summary>
+        public string NumberRequest
+        {
+            get => numberRequest;
+            set => SetOptions(nameof(NumberRequest), ref numberRequest, value);
+        }
+        /// <summary>
+        /// Корректные запросы.
+        /// </summary>
+        public string CorrectRequest
+        {
+            get => correctRequest;
+            set => SetOptions(nameof(CorrectRequest),ref correctRequest,value);
+        }
         /// <summary>
         /// Свойство-привязка отображения таблицы.
         /// </summary>
