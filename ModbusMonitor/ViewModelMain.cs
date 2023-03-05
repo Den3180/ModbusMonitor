@@ -177,6 +177,7 @@ namespace ModbusMonitor
             }
             modbusRTU.PortClose();
             CanDisconnection = false;
+            CanDisablePoll = false;
             CanRequest = false;
             if(treeNode is not null)
             treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";

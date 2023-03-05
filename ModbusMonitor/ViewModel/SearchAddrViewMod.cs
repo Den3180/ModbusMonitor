@@ -28,7 +28,7 @@ namespace ModbusMonitor.ViewModel
         private int timeOutWrite;
         private int timeOutRead;
         private double progBarValue;
-        private TimeOnly timeCurrent;
+        //private TimeOnly timeCurrent;
         private readonly Command searchCommand;
         private readonly Command clearResaultCommand;
         private readonly Command closeCommand;

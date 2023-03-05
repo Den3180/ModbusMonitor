@@ -286,7 +286,7 @@ namespace ModbusMonitor.Classes
                 windowSearch.ProgBarValue++;
                 byte[] b = new byte[6];
                 b[0] = (byte)i;     //Адрес устройства.
-                b[1] = 0x3;         //Команда 60.
+                b[1] = 0x3;         //Команда 3.
                 b[2] = 0x0;         //Адрес регистра.
                 b[3] = 0x0;         //Адрес регистра.
                 b[4] = 0;           //Количество регистров.

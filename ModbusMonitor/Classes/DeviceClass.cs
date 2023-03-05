@@ -21,16 +21,16 @@ namespace ModbusMonitor.Classes
             ConnectFromMap = new SettingConnectFromMap();
         }
 
-        public ConnectionType ConnectionType { get; set; }
-        public SettingConnectFromMap ConnectFromMap { get; set; }
-        public AdaptersArray AdaptersArray { get; set; }
-        public List<CellData> CellsArray { get; set; }
-        public string DeviceName_DC { get; set; } = string.Empty;
-        public int DeviceAdress_DC { get; set; }
-        public ushort NumOfAO { get; set; } = 0;
-        public ushort NumOfDO { get; set; } = 0;
-        public ushort NumOfDI { get; set; } = 0;
-        public EnumLink Link { get; set; }
+        public ConnectionType ConnectionType { get; set; } //Содержит инвормацию о подключении.
+        public SettingConnectFromMap ConnectFromMap { get; set; } //Содержит инвормацию о подключении.
+        public AdaptersArray AdaptersArray { get; set; } //Содержит инвормацию о подключении.
+        public List<CellData> CellsArray { get; set; }//Список регистров в устройстве.
+        public string DeviceName_DC { get; set; } = string.Empty;//Имя устройства.
+        public int DeviceAdress_DC { get; set; }//Адрес устройства.
+        public ushort NumOfAO { get; set; } = 0;//Количество регистров АО в устройстве.
+        public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
+        public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
+        public EnumLink Link { get; set; } //Устройство подключено/отключено.
 
         /// <summary>
         /// Загрузка карты и обработка данных.
@@ -39,15 +39,15 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         public static DeviceClass LoadMapReg(string FileName)
         {
-            DeviceClass device = null;
-            TextReader reader = new StreamReader(FileName);
-            XmlSerializer serializer = new XmlSerializer(typeof(DeviceClass));
+            DeviceClass device = null; //Объект устройства.
+            TextReader reader = new StreamReader(FileName); //Открытие потока чтения данных.
+            XmlSerializer serializer = new XmlSerializer(typeof(DeviceClass)); //Объект сериализации.
             try
             {
-                device = (DeviceClass)serializer.Deserialize(reader);
-                if (device != null)
+                device = (DeviceClass)serializer.Deserialize(reader);//Считывание данных с объекта сериализации.
+                if (device != null)//Если считывание успешно.
                 {
-                    return ChangeTIKFormat(device);
+                    return ChangeTIKFormat(device);//Преобразуем данные из карты регистров.
                 }
             }
             catch (Exception Ex)
