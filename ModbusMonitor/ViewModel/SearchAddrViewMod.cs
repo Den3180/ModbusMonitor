@@ -36,6 +36,7 @@ namespace ModbusMonitor.ViewModel
         private bool canSearch;
         private bool canClearResault;
         private bool canBreakCommand;
+        private bool disableGroupBox=true;
         private bool flagSearchMethod = false;
         public ICollection<string> sourceNamePort = new ObservableCollection<string>();
         private readonly SearchAddressWindow window;
@@ -104,6 +105,7 @@ namespace ModbusMonitor.ViewModel
             flagSearchMethod = false;
             AddressStart = Address;
             CanBreakCommand = false;
+            DisableGroupBox = true;
             timer.Stop();
         }
         /// <summary>
@@ -206,6 +208,7 @@ namespace ModbusMonitor.ViewModel
             timer.Start();
             CanBreakCommand = true;
             CanSearch = false;
+            DisableGroupBox = false;
         }       
         #endregion
 
@@ -325,6 +328,11 @@ namespace ModbusMonitor.ViewModel
 
         #region[Флаги доступности]
 
+        public bool DisableGroupBox
+        {
+            get => disableGroupBox;
+            set => SetOptions(nameof(DisableGroupBox),ref disableGroupBox,value);
+        }
         /// <summary>
         /// Включение кнопки "Прервать".
         /// </summary>

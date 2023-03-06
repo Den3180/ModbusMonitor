@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -15,6 +16,6 @@ namespace ModbusMonitor.ViewModel
         public ControlDeviceView(List<CellData> Cells)
         {
             this.Cells = Cells;
-        }
+        }       
     }
 }

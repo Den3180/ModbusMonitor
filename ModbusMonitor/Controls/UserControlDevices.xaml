@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:ModbusMonitor.Classes" 
              xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
              d:DataContext="{d:DesignInstance Type=viewmodel:ControlDeviceView}"
@@ -19,19 +20,20 @@
     </UserControl.Resources>
     <Grid>
         <DataGrid AutoGenerateColumns="False" SelectionMode="Single" ItemsSource="{Binding Cells}" 
-                  HorizontalGridLinesBrush="#FFBDB3B3" FontSize="16">
+                  SelectionUnit="Cell"
+                  HorizontalGridLinesBrush="#FFBDB3B3" FontSize="16" IsReadOnly="True">                  
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderBrush" Value="#FFFBF3F3" />
                     <Setter Property="BorderThickness" Value="0 0 1 1" />
-                    <Setter Property="Margin" Value="1" />
-                </Style>
+                    <Setter Property="Margin" Value="1" />                    
+                </Style>                
             </DataGrid.CellStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="№ п/п" Binding="{Binding NumberReg }">
+            <DataGrid.Columns>                
+                <DataGridTextColumn Header="№ п/п" Binding="{Binding NumberReg }">                    
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>                            
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
@@ -83,9 +85,33 @@
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                        </Style>
+                            <Setter Property="FontWeight" Value="Bold"/>                            
+                        </Style>                        
                     </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="График"/>
+                                        <MenuItem Header="Лог"/>
+                                        <Separator/>
+                                        <MenuItem Header="Записать регистр"/>
+                                        <MenuItem Header="Вставить ячейки"/>
+                                        <MenuItem Header="Формат"/>
+                                        <Separator/>
+                                        <MenuItem Header="Вырезать"/>
+                                        <MenuItem Header="Копировать"/>
+                                        <MenuItem Header="Вставить"/>
+                                        <MenuItem Header="Удалить"/>
+                                        <MenuItem Header="Очистить"/>
+                                        <Separator/>
+                                        <MenuItem Header="Свойства"/>
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>                           
+                        </Style>                        
+                    </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>

@@ -200,7 +200,7 @@ namespace ModbusMonitor
         /// Создание подключения.
         /// </summary>
         private void CreateConnect()
-        {
+        {           
             ConnectSettingWindow connectSetting = new ConnectSettingWindow(device);
             connectSetting.ShowDialog();
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
@@ -313,12 +313,15 @@ namespace ModbusMonitor
             short startAdressDI = -1;
             short startAdressDO = -1;
             short startAdressAO = -1;
+            short startAdressAI = -1;
             ushort numOfDI = device.NumOfDI;
             ushort numOfDO = device.NumOfDO;
             ushort numOfAO = device.NumOfAO;
+            ushort numOfAI = device.NumOfAI;
             string[] tempDI = null;
             string[] tempDO = null; 
-            ushort[] tempAO = null; 
+            ushort[] tempAO = null;
+            ushort[] tempAI = null;
             foreach (var item in device.CellsArray)
             {
                 if (item.Type == "DI" && startAdressDI == -1)
@@ -343,6 +346,17 @@ namespace ModbusMonitor
                     }
                     Array.Reverse(tempDO);
                 }
+                else if(item.Type == "AI" && startAdressAI == -1)
+                {
+                    startAdressAI = (short)item.Adress;
+                    tempAI = modbusRTU.ReadInputRegs(adressDev, (ushort)startAdressAI, numOfAI);
+                    if (tempAI == null)
+                    {
+                        answerRequest = false;
+                        return;
+                    }
+                    Array.Reverse(tempAI);
+                }
                 else if (item.Type == "AO" && startAdressAO == -1)
                 {
                     startAdressAO = (short)item.Adress;
@@ -354,9 +368,9 @@ namespace ModbusMonitor
                     }
                     Array.Reverse(tempAO);
                 }
-                if (/*startAdressDI > -1 && startAdressDO > -1 && startAdressAO > -1 || */item == Cells?[^1])//Считывание закончено.
+                if (item == Cells?[^1])//Считывание закончено.
                 {                    
-                    FillCells(tempDI, tempDO, tempAO, numOfDI, numOfDO, numOfAO);                  
+                    FillCells(tempDI, tempDO, tempAO,tempAI, numOfDI, numOfDO, numOfAO, numOfAI);                  
                     startAdressDI = -1;
                     startAdressDO = -1;
                     startAdressAO = -1;
@@ -375,8 +389,8 @@ namespace ModbusMonitor
         /// <param name="numOfDI"></param>
         /// <param name="numOfDO"></param>
         /// <param name="numOfAO"></param>
-        private void FillCells(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort numOfDI,
-                               ushort numOfDO, ushort numOfAO)
+        private void FillCells(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI, 
+            ushort numOfDI,ushort numOfDO, ushort numOfAO, ushort numOfAI)
         {
             //Заполнение ячеек привязанных к DataGrid. 
             foreach (var item in device.CellsArray)
@@ -397,6 +411,15 @@ namespace ModbusMonitor
                         continue;
                     }
                     item.Value = tempAO[--numOfAO].ToString();
+                }
+                else if (item.Type == "AI")
+                {
+                    if (item.Format == "Bin")//Перевод в бинарный формат.
+                    {
+                        item.Value = Convert.ToString(tempAI[--numOfAI], 2);
+                        continue;
+                    }
+                    item.Value = tempAI[--numOfAI].ToString();
                 }
             }
         }

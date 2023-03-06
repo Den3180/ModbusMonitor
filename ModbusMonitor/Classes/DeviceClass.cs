@@ -28,6 +28,7 @@ namespace ModbusMonitor.Classes
         public string DeviceName_DC { get; set; } = string.Empty;//Имя устройства.
         public int DeviceAdress_DC { get; set; }//Адрес устройства.
         public ushort NumOfAO { get; set; } = 0;//Количество регистров АО в устройстве.
+        public ushort NumOfAI { get; set; } = 0;//Количество регистров АI в устройстве.
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
         public EnumLink Link { get; set; } //Устройство подключено/отключено.

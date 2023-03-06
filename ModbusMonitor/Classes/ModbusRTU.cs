@@ -122,7 +122,27 @@ namespace ModbusMonitor.Classes
         {
             try
             {
-                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
+                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);                
+                return tempData;
+            }
+            catch (Exception ex)
+            {
+                //Mode = eMode.None;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Чтение группы регистров типа АI.
+        /// </summary>
+        /// <param name="adresDevice"></param>
+        /// <param name="startAdress"></param>
+        /// <param name="numOfPoint"></param>
+        public ushort[] ReadInputRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
+        {
+            try
+            {
+                ushort[] tempData = MasterRTU.ReadInputRegisters(adresDevice, startAdress, numOfPoint);
                 return tempData;
             }
             catch (Exception ex)
@@ -200,7 +220,7 @@ namespace ModbusMonitor.Classes
             {
                 if (!PortsEnabled.Contains(serialPort.PortName))
                 {
-                    PortsEnabled.Add(serialPort.PortName);
+                    PortsEnabled.Add(serialPort.PortName);                    
                 }
                 if (mess[0] == tempAdr && !AdressSearch.Contains(mess[0]))
                 {
@@ -228,7 +248,7 @@ namespace ModbusMonitor.Classes
                 PortOpen(settingPort);
                 byte[] b = new byte[6];
                 b[0] = (byte)adress;//Адрес устройства.
-                b[1] = 0x3C;        //Команда 60.
+                b[1] = 0x3;        //Команда 60.
                 b[2] = 0x13;        //Адрес регистра.
                 b[3] = 0x88;        //Адрес регистра.
                 b[4] = 0;           //Количество регистров.
@@ -252,7 +272,6 @@ namespace ModbusMonitor.Classes
         }  
         
         int tempAdr;
-       
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -262,7 +281,8 @@ namespace ModbusMonitor.Classes
         /// <param name="stopBit"></param>
         public void SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
             SearchAddrViewMod windowSearch=null)
-        {           
+        {   
+            TimeOnly timeOnly = new TimeOnly(0,0,0);
             serialPort ??= new SerialPort();
             if (AdressSearch.Count > 0)
             {
@@ -281,7 +301,7 @@ namespace ModbusMonitor.Classes
                     break;
                 }
                 windowSearch.Address = i;
-                windowSearch.TimeCount = new TimeOnly(0, 0, i+1-addressStart).ToLongTimeString();// Увеличивает время.
+                windowSearch.TimeCount = timeOnly.Add(TimeSpan.FromSeconds(addressEnd-i)).ToLongTimeString();
                 tempAdr = i;//Временно
                 windowSearch.ProgBarValue++;
                 byte[] b = new byte[6];

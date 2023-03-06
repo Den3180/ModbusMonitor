@@ -44,7 +44,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Background="#FFF9F5F5" Margin="5">            
-            <GroupBox Header="COM порт">
+            <GroupBox Header="COM порт" IsEnabled="{Binding DisableGroupBox}">
                 <ComboBox ItemsSource="{Binding SourceNamePort}" IsReadOnly="True" 
                           IsEditable="False" VerticalAlignment="Center" 
                           SelectedIndex="0" 
@@ -75,7 +75,7 @@
                     VerticalAlignment="Center" Margin="40,20"/>
         </StackPanel>
         <StackPanel  Grid.Row="0" Grid.Column="1" Background="#FFF9F5F5" Margin="5">
-            <GroupBox Header="Скорость(бод)">
+            <GroupBox Header="Скорость(бод)" IsEnabled="{Binding DisableGroupBox}">
                 <StackPanel Margin="2" Background="#FFF9F5F5" >
                     <RadioButton Content="300" Checked="RadioButtonSpeed_Checked"/>
                     <RadioButton Content="600" Checked="RadioButtonSpeed_Checked"/>
@@ -97,26 +97,26 @@
             </GroupBox>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="2" Background="#FFF9F5F5" Margin="5">
-            <GroupBox Header="DataBits">
+            <GroupBox Header="DataBits" IsEnabled="{Binding DisableGroupBox}">
                 <StackPanel>
                     <RadioButton Content="7" Checked="RadioButtonDataBits_Checked"/>
                     <RadioButton Content="8" Checked="RadioButtonDataBits_Checked" IsChecked="True" />
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Parity">
+            <GroupBox Header="Parity" IsEnabled="{Binding DisableGroupBox}">
                 <StackPanel>
                     <RadioButton Content="None" Checked="RadioButtonParity_Checked" IsChecked="True"/>
                     <RadioButton Content="Odd" Checked="RadioButtonParity_Checked"/>
                     <RadioButton Content="Even" Checked="RadioButtonParity_Checked"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="StopBits">
+            <GroupBox Header="StopBits" IsEnabled="{Binding DisableGroupBox}">
                 <StackPanel>
                     <RadioButton Content="1" Checked="RadioButtonStopBits_Checked" IsChecked="True"/>
                     <RadioButton Content="2" Checked="RadioButtonStopBits_Checked"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Диапазон адресов">                   
+            <GroupBox Header="Диапазон адресов" IsEnabled="{Binding DisableGroupBox}">                   
                 <UniformGrid VerticalAlignment="Top">
                     <TextBlock Text="Начало"/>
                     <!--<TextBox Margin="10,2" Text="{Binding AddressStart}" VerticalContentAlignment="Center"/>-->
@@ -128,7 +128,7 @@
                               SelectedItem="{Binding AddressEnd}" FontWeight="Bold"/>
                 </UniformGrid>                    
             </GroupBox>
-            <GroupBox Header="TimeOut">
+            <GroupBox Header="TimeOut" IsEnabled="{Binding DisableGroupBox}">
                 <UniformGrid VerticalAlignment="Top">
                     <TextBlock Text="Write"/>
                     <TextBox Margin="10,2" Text="{Binding TimeOutWrite}" 
