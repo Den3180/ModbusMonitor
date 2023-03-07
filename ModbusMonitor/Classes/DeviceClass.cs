@@ -112,6 +112,11 @@ namespace ModbusMonitor.Classes
                 if (item.Type.Contains("InputRegister"))
                 {
                     item.Type = "AI";
+                    device.NumOfAI++;
+                }
+                if (item.Type.Contains("DiscreteInput"))
+                {
+                    item.Type = "DI";
                     device.NumOfDI++;
                 }
                 item.NameDevice = device.DeviceName_DC;

@@ -18,10 +18,28 @@
             <Setter Property="Width" Value="auto"/>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid>        
         <DataGrid AutoGenerateColumns="False" SelectionMode="Single" ItemsSource="{Binding Cells}" 
-                  SelectionUnit="Cell"
-                  HorizontalGridLinesBrush="#FFBDB3B3" FontSize="16" IsReadOnly="True">                  
+                  SelectionUnit="FullRow" HorizontalGridLinesBrush="#FFBDB3B3" FontSize="16" 
+                  IsReadOnly="True" SelectedItem="{Binding SelectedCell}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="График"/>
+                    <MenuItem Header="Лог"/>
+                    <Separator/>
+                    <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
+                    <MenuItem Header="Вставить ячейки"/>
+                    <MenuItem Header="Формат"/>
+                    <Separator/>
+                    <MenuItem Header="Вырезать"/>
+                    <MenuItem Header="Копировать"/>
+                    <MenuItem Header="Вставить"/>
+                    <MenuItem Header="Удалить"/>
+                    <MenuItem Header="Очистить"/>
+                    <Separator/>
+                    <MenuItem Header="Свойства"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderBrush" Value="#FFFBF3F3" />
@@ -87,33 +105,9 @@
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="FontWeight" Value="Bold"/>                            
                         </Style>                        
-                    </DataGridTextColumn.ElementStyle>
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="ContextMenu">
-                                <Setter.Value>
-                                    <ContextMenu>
-                                        <MenuItem Header="График"/>
-                                        <MenuItem Header="Лог"/>
-                                        <Separator/>
-                                        <MenuItem Header="Записать регистр"/>
-                                        <MenuItem Header="Вставить ячейки"/>
-                                        <MenuItem Header="Формат"/>
-                                        <Separator/>
-                                        <MenuItem Header="Вырезать"/>
-                                        <MenuItem Header="Копировать"/>
-                                        <MenuItem Header="Вставить"/>
-                                        <MenuItem Header="Удалить"/>
-                                        <MenuItem Header="Очистить"/>
-                                        <Separator/>
-                                        <MenuItem Header="Свойства"/>
-                                    </ContextMenu>
-                                </Setter.Value>
-                            </Setter>                           
-                        </Style>                        
-                    </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn.ElementStyle>                   
                 </DataGridTextColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>        
     </Grid>
 </UserControl>

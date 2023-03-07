@@ -137,7 +137,8 @@ namespace ModbusMonitor.ViewModel
         private void SetSourceConnect()
         {
             sourceTypeConnect.Add(HeaderCombobox); //Добавление заголовка в Combobox.
-            string[] temp = ModbusRTU.PortsEnabled.ToArray();
+            //string[] temp = ModbusRTU.PortsEnabled.ToArray();
+            string[] temp = ModbusRTU.GetListPorts();
             if (temp.Length == 0)
             {
                 sourceTypeConnect.Add(Port_VM);

@@ -179,6 +179,7 @@ namespace ModbusMonitor
             CanDisconnection = false;
             CanDisablePoll = false;
             CanRequest = false;
+            CanConnection = true;
             if(treeNode is not null)
             treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";
         }
@@ -190,6 +191,7 @@ namespace ModbusMonitor
         {           
             modbusRTU.PortOpen(SettingPortStart);  //Подключение порта.            
             CanDisconnection = true;
+            CanConnection = false;
             CanRequest = true;
             device.Link = EnumLink.LinkYes;        //Статус подключения.
             if (treeNode is not null)
@@ -224,8 +226,7 @@ namespace ModbusMonitor
                 Connection();
                 if (modbusRTU.MasterRTU != null)
                 {
-                    CanDisconnection = true;
-                    CanConnection = true;
+                    CanDisconnection = true;                    
                 }
             }
         }
