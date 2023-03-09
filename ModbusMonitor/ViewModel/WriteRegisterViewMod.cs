@@ -58,8 +58,7 @@ namespace ModbusMonitor.ViewModel
                 "AO" => 4,
                  _ => 0
             };            
-        }
-        
+        }        
 
         /// <summary>
         /// Привязка выбранного элемента поля "Значение".
