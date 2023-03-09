@@ -110,7 +110,7 @@ namespace ModbusMonitor
         }
 
         public List<CellData> Cells { get; set; }
-        public SettingPortStart SettingPortStart { get; set; }
+        //public SettingPortStart SettingPortStart { get; set; }
         public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.
         //Комманды.Вкладка "Файл".
         public ICommand LoadMapCommand => loadMapCommand;
@@ -189,7 +189,7 @@ namespace ModbusMonitor
         /// </summary>
         private void Connection()
         {           
-            modbusRTU.PortOpen(SettingPortStart);  //Подключение порта.            
+            modbusRTU.PortOpen(ModbusRTU.SettingPortStart);  //Подключение порта.            
             CanDisconnection = true;
             CanConnection = false;
             CanRequest = true;
@@ -202,13 +202,16 @@ namespace ModbusMonitor
         /// Создание подключения.
         /// </summary>
         private void CreateConnect()
-        {           
+        {
+            ModbusRTU.PortsEnabled.Clear();
             ConnectSettingWindow connectSetting = new ConnectSettingWindow(device);
             connectSetting.ShowDialog();
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
             {
+                treeNodes?.Clear();
                 foreach (var ports in ModbusRTU.PortsEnabled)
                 {
+                    ModbusRTU.SettingPortStart.PortType = ports;
                     treeNode = new GroupsTreeNode();
                     treeNode.NameCOM = ports;
                     treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства:\t" + device.DeviceAdress_DC.ToString()));
@@ -505,14 +508,20 @@ namespace ModbusMonitor
             DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
             DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
             CanCreateConnect = true;
-            SettingPortStart = new SettingPortStart()
-            {               
-                BaudRate = device.ConnectFromMap.SpeedPort,
-                DataBit = device.ConnectFromMap.LenghtWord,
-                ParitySet = (Parity)device.ConnectFromMap.Parity,
-                StopBit = device.ConnectFromMap.Stop_Bit
-            };
-            Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, SettingPortStart));
+           
+            ModbusRTU.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
+            ModbusRTU.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
+            ModbusRTU.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
+            ModbusRTU.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
+           
+            //SettingPortStart = new SettingPortStart()
+            //{               
+            //    BaudRate = device.ConnectFromMap.SpeedPort,
+            //    DataBit = device.ConnectFromMap.LenghtWord,
+            //    ParitySet = (Parity)device.ConnectFromMap.Parity,
+            //    StopBit = device.ConnectFromMap.Stop_Bit
+            //};
+            //Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, SettingPortStart));
         }
 
         /// <summary>

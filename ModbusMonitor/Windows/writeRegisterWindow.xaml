@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModbusMonitor.Windows"
-        xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="ModbusMonitor.Windows.writeRegisterWindow"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:WriteRegisterViewMod}" 
+        x:Class="ModbusMonitor.Windows.writeRegisterWindow"
         mc:Ignorable="d"
-        Title="Запись регистра" Height="300" Width="350" MaxWidth="400" ResizeMode="CanMinimize" 
-        WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height">
+        Title="Запись регистра" Height="auto" Width="350" MaxWidth="400" ResizeMode="CanMinimize" 
+        WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
     <Window.Resources>
         <Style TargetType="{x:Type GroupBox}">
             <Setter Property="Margin" Value="1"/>
@@ -15,6 +18,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
     </Window.Resources>
     <Grid Background="Gray">
@@ -27,18 +31,21 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <GroupBox Grid.Row="0" Header="Подключение">
-                    <ComboBox Text="Подключение"/>
+                    <ComboBox ItemsSource="{Binding ConnectionPortDevice}"
+                              SelectedIndex="0"/>
                 </GroupBox>
                 <UniformGrid Grid.Row="1" Rows="1" Columns="2">
                     <StackPanel Orientation="Vertical">
                         <GroupBox Header="Адрес устройства">
-                            <TextBox Text="0" IsReadOnly="True"/>
+                            <TextBox Text="{Binding AddressDevice}" IsReadOnly="True"/>
                         </GroupBox>
                         <GroupBox Header="Тип регистра">
-                            <ComboBox IsReadOnly="true" IsEditable="False"/>
+                            <ComboBox ItemsSource="{Binding TypeRegister}" 
+                                      SelectedIndex="{Binding SelectedTypeRegister}"
+                                      IsReadOnly="true" IsEditable="False"/>
                         </GroupBox>
                         <GroupBox Header="Адрес регистра">
-                            <TextBox Text="0"/>
+                            <TextBox Text="{Binding AddressRegister}"/>
                         </GroupBox>
                     </StackPanel>
                     <GroupBox Header="Формат" VerticalAlignment="Stretch">
@@ -59,7 +66,7 @@
                     </GroupBox>
                 </UniformGrid>
                 <GroupBox Grid.Row="2" Header="Значение">
-                    <TextBox Text="0"/>
+                    <TextBox Text="{Binding ValueRegister}"/>
                 </GroupBox>
                 <UniformGrid Grid.Row="3" Columns="2">
                     <Button Content="Записать" Margin="10"/>

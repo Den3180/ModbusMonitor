@@ -19,7 +19,8 @@
         </Style>
     </UserControl.Resources>
     <Grid>        
-        <DataGrid AutoGenerateColumns="False" SelectionMode="Single" ItemsSource="{Binding Cells}" 
+        <DataGrid AutoGenerateColumns="False" SelectionMode="Single" 
+                  ItemsSource="{Binding Cells}" 
                   SelectionUnit="FullRow" HorizontalGridLinesBrush="#FFBDB3B3" FontSize="16" 
                   IsReadOnly="True" SelectedItem="{Binding SelectedCell}">
             <DataGrid.ContextMenu>

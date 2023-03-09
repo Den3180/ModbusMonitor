@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor.Windows
 {
@@ -19,9 +20,10 @@ namespace ModbusMonitor.Windows
     /// </summary>
     public partial class writeRegisterWindow : Window
     {
-        public writeRegisterWindow()
+        public writeRegisterWindow(object obj)
         {
             InitializeComponent();
+            DataContext = new WriteRegisterViewMod(obj,this);
         }
     }
 }

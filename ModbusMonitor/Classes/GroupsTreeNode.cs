@@ -35,6 +35,7 @@ namespace ModbusMonitor.Classes
                 SetOptions(nameof(ContentClass), ref content, value);
             }
         }
+
         private void SetOptions<T>(string Property, ref T variable, T value)
         {
             if (variable!=null && !variable.Equals(value))

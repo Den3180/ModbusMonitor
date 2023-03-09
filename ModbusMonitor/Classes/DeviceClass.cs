@@ -57,6 +57,7 @@ namespace ModbusMonitor.Classes
             }
             return device;
         }
+
         /// <summary>
         /// Сохранение карты.
         /// </summary>

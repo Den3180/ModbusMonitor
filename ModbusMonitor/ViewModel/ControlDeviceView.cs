@@ -21,7 +21,7 @@ namespace ModbusMonitor.ViewModel
         public ControlDeviceView(List<CellData> Cells)
         {
             this.Cells = Cells;
-            selectedCell = null;
+            selectedCell = new CellData();
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             PropertyChanged += ControlDeviceView_PropertyChanged;
         }
@@ -34,7 +34,7 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void WriteRegister()
         {
-            writeRegisterWindow writeRegisterWindow = new writeRegisterWindow();
+            writeRegisterWindow writeRegisterWindow = new writeRegisterWindow(SelectedCell);
             writeRegisterWindow.ShowDialog();
         }
         #endregion
@@ -49,7 +49,8 @@ namespace ModbusMonitor.ViewModel
                 SetOptions(nameof(SelectedCell), ref selectedCell, value);
                 if (value != null)
                 {
-                    if (value.Type=="AO" || value.Type == "DO")
+                    //Запись достуна только для Coil и Holding.
+                    if (value.Type=="AO" || value.Type == "DO") 
                     {
                         CanWriteRegister = true;
                     }

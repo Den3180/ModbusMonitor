@@ -67,7 +67,7 @@ namespace ModbusMonitor.ViewModel
         private void AddConnect()
         {
             SetConnectionDevice();
-            window.Content = CommandTypeConnection.AddConnection;
+            window.Content = CommandTypeConnection.AddConnection;           
             window.Close();
         }
         /// <summary>
@@ -76,7 +76,7 @@ namespace ModbusMonitor.ViewModel
         private void Add()
         {
             SetConnectionDevice();
-            window.Content = CommandTypeConnection.Add;
+            window.Content = CommandTypeConnection.Add;           
             window.Close();
         }
         /// <summary>
@@ -111,6 +111,10 @@ namespace ModbusMonitor.ViewModel
                 Port_VM = conn;
                 device.ConnectFromMap.PortType = Port_VM;
                 sourceTypeConnect.Remove(HeaderCombobox);
+                if (!ModbusRTU.PortsEnabled.Contains(SelectedItem))
+                {
+                    ModbusRTU.PortsEnabled.Add(SelectedItem);
+                }
             }
             else if (new Regex(connectPatternIP).IsMatch(conn))
             {
@@ -145,7 +149,7 @@ namespace ModbusMonitor.ViewModel
             }
             foreach (var item in temp)
             {
-                sourceTypeConnect.Add(item);
+                sourceTypeConnect.Add(item);                
             }
         }
 
@@ -171,7 +175,7 @@ namespace ModbusMonitor.ViewModel
                 SetOptions(nameof(SelectedItem), ref selectedItem, value);
                 if (!string.IsNullOrEmpty(SelectedItem))
                 {
-                    SelectConnections(value);
+                    SelectConnections(value);                    
                 }
             }
         }

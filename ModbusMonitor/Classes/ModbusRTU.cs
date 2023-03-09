@@ -40,7 +40,8 @@ namespace ModbusMonitor.Classes
             serialPort = new SerialPort();
             PortErrorEvent += MessageError;
             PortsEnabled = new List<string>();
-            AdressSearch = new List<int>();           
+            AdressSearch = new List<int>();
+            SettingPortStart = new SettingPortStart();
         }
 
         public eMode Mode { get; set; }
@@ -48,6 +49,7 @@ namespace ModbusMonitor.Classes
         public List<int> AdressSearch { get; set; } //Найденый адрес устройства.
         public static List<string> PortsEnabled { get; set; } //Список портов доступных
                                                               //для передачи данных.
+        public static SettingPortStart SettingPortStart { get; set; }//Первичные настройки порта.
         public ModbusSerialMaster MasterRTU => masterRTU;
 
         /// <summary>
@@ -249,7 +251,7 @@ namespace ModbusMonitor.Classes
                 byte[] b = new byte[6];
                 b[0] = (byte)adress;//Адрес устройства.
                 b[1] = 0x3;        //Команда 60.
-                b[2] = 0x13;        //Адрес регистра.
+                b[2] = 0x0;        //Адрес регистра.
                 b[3] = 0x88;        //Адрес регистра.
                 b[4] = 0;           //Количество регистров.
                 b[5] = 0x1;         //Количество регистров.
