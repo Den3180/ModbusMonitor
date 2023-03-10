@@ -17,10 +17,15 @@ namespace ModbusMonitor.ViewModel
         private bool canWriteRegister;
         private CellData selectedCell;
         public List<CellData> Cells { get; set; }
+        public ModbusRTU ModbusRTU { get; set; }
 
-        public ControlDeviceView(List<CellData> Cells)
+        public ControlDeviceView(params object[] objects)
         {
-            this.Cells = Cells;
+            foreach (var item in objects)
+            {
+                if (item is List<CellData>) Cells = item as List<CellData>;
+                if (item is ModbusRTU) ModbusRTU = item as ModbusRTU;
+            }            
             selectedCell = new CellData();
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             PropertyChanged += ControlDeviceView_PropertyChanged;
@@ -34,7 +39,7 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void WriteRegister()
         {
-            writeRegisterWindow writeRegisterWindow = new writeRegisterWindow(SelectedCell);
+            WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
         }
         #endregion

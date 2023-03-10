@@ -97,8 +97,8 @@ namespace ModbusMonitor
             searchAddressCommand = new Command(SearchAddress);
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
 
-            userControl = new UserControlDevices(new List<CellData>());
             modbusRTU = new ModbusRTU();
+            userControl = new UserControlDevices(new List<CellData>(), modbusRTU);
             device = new DeviceClass();
             treeNodes = new ObservableCollection<GroupsTreeNode>();//Источник данных дерева.            
             timerPoll = new DispatcherTimer();
@@ -503,8 +503,8 @@ namespace ModbusMonitor
             {
                 return;
             }
-            Cells = device.CellsArray;
-            Usercontrol = new UserControlDevices(Cells);
+            Cells = device.CellsArray;            
+            Usercontrol = new UserControlDevices(Cells, modbusRTU);//Привязано к свойству Content.
             DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
             DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
             CanCreateConnect = true;
@@ -552,7 +552,7 @@ namespace ModbusMonitor
         /// <param name="e"></param>
         private async void TimerSec_Tick(object sender, EventArgs e)
         {            
-            if (modbusRTU.Mode == ModbusRTU.eMode.None)
+            if (ModbusRTU.Mode == eMode.None)
             {
                 CanConnection = false;
                 CanDisconnection = false;

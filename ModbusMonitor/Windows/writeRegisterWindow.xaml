@@ -7,7 +7,7 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime" 
         xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:WriteRegisterViewMod}" 
-        x:Class="ModbusMonitor.Windows.writeRegisterWindow"
+        x:Class="ModbusMonitor.Windows.WriteRegisterWindow"
         mc:Ignorable="d"
         Title="Запись регистра" Height="auto" Width="350" MaxWidth="400" ResizeMode="CanMinimize" 
         WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
@@ -51,16 +51,24 @@
                     <GroupBox Header="Формат" VerticalAlignment="Stretch">
                         <UniformGrid Columns="2">
                             <UniformGrid VerticalAlignment="Stretch" Rows="4">                                
-                                <RadioButton Content="Decimal" GroupName="Type"/>
-                                <RadioButton Content="Int" GroupName="Type" IsChecked="True"/>
-                                <RadioButton Content="Bin" GroupName="Type"/>
-                                <RadioButton Content="Hex" GroupName="Type"/>
+                                <RadioButton Content="Decimal" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[0].CheckButton}"/>
+                                <RadioButton Content="Int" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[1].CheckButton}"/>
+                                <RadioButton Content="Bin" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[2].CheckButton}"/>
+                                <RadioButton Content="Hex" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[3].CheckButton}"/>
                             </UniformGrid>
                             <UniformGrid VerticalAlignment="Stretch" Rows="4">
-                                <RadioButton Content="Float" GroupName="Type"/>
-                                <RadioButton Content="swFloat" GroupName="Type"/>
-                                <RadioButton Content="Double" GroupName="Type"/>
-                                <RadioButton Content="swDouble" GroupName="Type"/>
+                                <RadioButton Content="Float" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[4].CheckButton}"/>
+                                <RadioButton Content="swFloat" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[5].CheckButton}"/>
+                                <RadioButton Content="Double" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[6].CheckButton}"/>
+                                <RadioButton Content="swDouble" GroupName="Type"
+                                             IsChecked="{Binding CheckRadioButtons[7].CheckButton}"/>
                             </UniformGrid>
                         </UniformGrid>
                     </GroupBox>
@@ -69,7 +77,7 @@
                     <TextBox Text="{Binding ValueRegister}"/>
                 </GroupBox>
                 <UniformGrid Grid.Row="3" Columns="2">
-                    <Button Content="Записать" Margin="10"/>
+                    <Button Command="{Binding WriteRegistryCommand}" Content="Записать" Margin="10"/>
                     <Button Content="Отмена" Margin="10" IsCancel="True" IsDefault="True"/>
                 </UniformGrid>
             </Grid>

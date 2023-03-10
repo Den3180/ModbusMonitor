@@ -23,10 +23,10 @@ namespace ModbusMonitor.Controls
     /// </summary>
     public partial class UserControlDevices : UserControl
     {
-        public UserControlDevices(List<CellData> Cell)
+        public UserControlDevices(params object[] objects)
         {
             InitializeComponent();
-            DataContext = new ControlDeviceView(Cell);
+            DataContext = new ControlDeviceView(objects);
         }
     }
 }

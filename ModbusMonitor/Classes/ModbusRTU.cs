@@ -28,12 +28,7 @@ namespace ModbusMonitor.Classes
         public event PortErrorEventHandler PortErrorEvent; //Событие ошибки.
         private SerialPort serialPort;//Создание порта.       
         private ModbusSerialMaster masterRTU;
-
-        public enum eMode
-        {
-            None = 0,
-            PortOpen
-        }
+       
         //TODO: Счетчики запроса сделать для класса Modbus.
         public ModbusRTU()
         {
@@ -44,9 +39,9 @@ namespace ModbusMonitor.Classes
             SettingPortStart = new SettingPortStart();
         }
 
-        public eMode Mode { get; set; }
         public string TextMessage { get; set; } = string.Empty;
         public List<int> AdressSearch { get; set; } //Найденый адрес устройства.
+        public static eMode Mode { get; set; }
         public static List<string> PortsEnabled { get; set; } //Список портов доступных
                                                               //для передачи данных.
         public static SettingPortStart SettingPortStart { get; set; }//Первичные настройки порта.
@@ -208,6 +203,26 @@ namespace ModbusMonitor.Classes
         }
 
         /// <summary>
+        /// Запись в регистр типа Coil.
+        /// </summary>
+        /// <param name="slaveID"></param>
+        /// <param name="coilAddress"></param>
+        /// <param name="value"></param>
+        public void WriteCoilRegister(int slaveID, int coilAddress,bool value)
+        {
+            byte ID = Convert.ToByte(slaveID);
+            ushort coilAddr = Convert.ToUInt16(coilAddress);
+            try
+            {
+                MasterRTU.WriteSingleCoil(ID, coilAddr, value);
+            }
+            catch
+            {
+
+            }
+        }
+
+        /// <summary>
         /// Прослушивание ответов.
         /// </summary>
         /// <param name="sender"></param>
@@ -220,10 +235,12 @@ namespace ModbusMonitor.Classes
             //Если хоть что-то пришло в ответ - заносим порт в список.
             if (mess.Length > 0)
             {
+                //Запись порта, по которому идет передача.
                 if (!PortsEnabled.Contains(serialPort.PortName))
                 {
                     PortsEnabled.Add(serialPort.PortName);                    
                 }
+                    //Контроль совпадения адреса устройства в пакете и отсутствия его в списке.
                 if (mess[0] == tempAdr && !AdressSearch.Contains(mess[0]))
                 {
                     AdressSearch.Add(mess[0]);

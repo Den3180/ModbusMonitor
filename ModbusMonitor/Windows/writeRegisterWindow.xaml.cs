@@ -18,12 +18,12 @@ namespace ModbusMonitor.Windows
     /// <summary>
     /// Логика взаимодействия для writeRegisterWindow.xaml
     /// </summary>
-    public partial class writeRegisterWindow : Window
+    public partial class WriteRegisterWindow : Window
     {
-        public writeRegisterWindow(object obj)
+        public WriteRegisterWindow(params object[] objects)
         {
             InitializeComponent();
-            DataContext = new WriteRegisterViewMod(obj,this);
+            DataContext = new WriteRegisterViewMod(objects);
         }
     }
 }

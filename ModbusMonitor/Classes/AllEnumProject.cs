@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace ModbusMonitor.Classes
 {
+
+    /// <summary>
+    /// Порт открыт/закрыт.
+    /// </summary>
+    public enum eMode
+    {
+        None = 0,
+        PortOpen
+    }
     /// <summary>
     /// Перечисление типов устройств.
     /// </summary>
