@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -19,6 +20,7 @@ namespace ModbusMonitor.ViewModel
         private int selectedTypeRegister;
         private int addressregister;
         private bool canWriteRegistry;
+        private readonly Window window;
         private readonly Command writeRegistryCommand;
         private readonly CellData cellData;
         private readonly ICollection<string> connectionPortDevice = new ObservableCollection<string>();        
@@ -37,8 +39,9 @@ namespace ModbusMonitor.ViewModel
             {
                 if(item is CellData)   cellData = item as CellData;
                 if (item is ModbusRTU) ModbusRTU = item as ModbusRTU;
+                if (item is Window) window = item as Window;
             }
-            SelectItemTypeRegister();
+            if(cellData!=null) SelectItemTypeRegister();
             writeRegistryCommand = new Command(WriteRegistry, () => CanWriteRegistry);
             PropertyChanged += WriteRegisterViewMod_PropertyChanged;
         }
@@ -49,16 +52,24 @@ namespace ModbusMonitor.ViewModel
         public IEnumerable<string> TypeRegister => typeRegister;
         public ICommand WriteRegistryCommand => writeRegistryCommand;
 
+        /// <summary>
+        /// Запись в одиночный регистр.
+        /// </summary>
         private void WriteRegistry()
         {
+            int slaveID = Convert.ToInt32(AddressDevice);
+            int regAddress= Convert.ToInt32(AddressRegister);
             if(cellData.Type == "DO")
             {
-                int slaveID = Convert.ToInt32(AddressDevice);
-                int coilAddress= Convert.ToInt32(AddressRegister);
                 bool value = Convert.ToBoolean(Int32.Parse(ValueRegister));
-                ModbusRTU.WriteCoilRegister(slaveID,coilAddress,value);
+                ModbusRTU.WriteCoilRegister(slaveID,regAddress,value);
             }
-
+            if (cellData.Type == "AO")
+            {
+                int value = Int32.Parse(ValueRegister);
+                ModbusRTU.WriteHoldingRegister(slaveID,regAddress,value);
+            }
+            window.Close();
         }
 
         /// <summary>

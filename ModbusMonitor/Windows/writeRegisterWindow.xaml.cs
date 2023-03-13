@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor.Windows
@@ -23,7 +24,10 @@ namespace ModbusMonitor.Windows
         public WriteRegisterWindow(params object[] objects)
         {
             InitializeComponent();
-            DataContext = new WriteRegisterViewMod(objects);
+            object[] outgoingParam = new object[objects.Length+1];
+            objects.CopyTo(outgoingParam,0);
+            outgoingParam[^1] = this;
+            DataContext = new WriteRegisterViewMod(outgoingParam);
         }
     }
 }

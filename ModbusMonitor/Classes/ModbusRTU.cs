@@ -29,7 +29,6 @@ namespace ModbusMonitor.Classes
         private SerialPort serialPort;//Создание порта.       
         private ModbusSerialMaster masterRTU;
        
-        //TODO: Счетчики запроса сделать для класса Modbus.
         public ModbusRTU()
         {
             serialPort = new SerialPort();
@@ -215,6 +214,23 @@ namespace ModbusMonitor.Classes
             try
             {
                 MasterRTU.WriteSingleCoil(ID, coilAddr, value);
+            }
+            catch
+            {
+
+            }
+        }
+        /// <summary>
+        /// Запись регистра типа HoldingRegister.
+        /// </summary>
+        public void WriteHoldingRegister(int slaveID, int regAddress, int value)
+        {
+            byte ID = Convert.ToByte(slaveID);
+            ushort regAddr = Convert.ToUInt16(regAddress);
+            ushort val = Convert.ToUInt16(value);
+            try
+            {
+                MasterRTU.WriteSingleRegister(ID, regAddr, val);
             }
             catch
             {

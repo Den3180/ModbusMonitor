@@ -189,10 +189,9 @@
                     </Border>
                     <GridSplitter Grid.Row="2" Height="2" 
                                   HorizontalAlignment="Stretch"/>
-                    <ListBox x:Name="TestList" Grid.Row="3" VerticalAlignment="Stretch" 
+                    <ListBox Grid.Row="3" VerticalAlignment="Stretch" 
                              HorizontalAlignment="Stretch"
-                             MinHeight="80">
-                    </ListBox>
+                             MinHeight="80"/>
                 </Grid>
             </Border>
         </Grid>

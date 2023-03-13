@@ -47,6 +47,7 @@ namespace ModbusMonitor
         private readonly Command writeRegisterCommand;//Записать регистр.
         private readonly Command searchAddressCommand;
         private readonly Command disablePollCommand;
+        private bool canWriteRegister;
         private bool canConnection;
         private bool canCreateConnect;
         private bool canDisconnection;
@@ -57,6 +58,8 @@ namespace ModbusMonitor
         private int numInOrder;//Номера регистров по порядку не зависимо от типа.
         private int regAddress;
         private int deviceAddress;//Адрес устройства в области "Добавления регистров".
+        int countReqTot = 0; //Общее количество запросов.
+        int countReqgood=0;//Количество корректных запросов.
         private string deviceName = "нет данных";
         private string dataFormat = "нет данных";
         private string regName = "нет данных";
@@ -84,7 +87,7 @@ namespace ModbusMonitor
             formatCommand = new Command(EditFormat);
             colorTypeCommand = new Command(EditColorType);
             resetColCommand = new Command(ResetColumn);
-            writeRegisterCommand = new Command(WriteRegister);
+            writeRegisterCommand = new Command(WriteRegister, () => CanWriteRegister);
             sendRequestCommand = new Command(SendRequest, () => CanRequest);
             openLogErrCommand = new Command(OpenLogError);
             clearLogErrCommand = new Command(ClearLogError);
@@ -180,6 +183,9 @@ namespace ModbusMonitor
             CanDisablePoll = false;
             CanRequest = false;
             CanConnection = true;
+            CanWriteRegister = false;
+            countReqgood = 0;
+            countReqTot = 0;
             if(treeNode is not null)
             treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";
         }
@@ -193,9 +199,12 @@ namespace ModbusMonitor
             CanDisconnection = true;
             CanConnection = false;
             CanRequest = true;
+            CanWriteRegister = true;
             device.Link = EnumLink.LinkYes;        //Статус подключения.
             if (treeNode is not null)
+            {
                 treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
+            }
         }
 
         /// <summary>
@@ -303,10 +312,16 @@ namespace ModbusMonitor
         /// </summary>
         private void WriteRegister()
         {
-
+            var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
+            if (string.IsNullOrEmpty(cellData.NameDevice))
+            {
+                MessageBox.Show("Не выбран регистр!");
+                return;
+            }
+            WriteRegisterWindow writeRegister = new WriteRegisterWindow(modbusRTU,cellData);
+            writeRegister.ShowDialog();
         }
 
-        int countReqTot =0, countReqgood=0;
         /// <summary>
         /// отправка запроса.
         /// </summary>
@@ -504,7 +519,7 @@ namespace ModbusMonitor
                 return;
             }
             Cells = device.CellsArray;            
-            Usercontrol = new UserControlDevices(Cells, modbusRTU);//Привязано к свойству Content.
+            Usercontrol = new UserControlDevices(Cells, modbusRTU);//Привязано к свойству Content основного окна.
             DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
             DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
             CanCreateConnect = true;
@@ -537,7 +552,6 @@ namespace ModbusMonitor
         /// </summary>
         private void ExitApp()
         {
-            //TODO: Сделать метод закрытия всего, что открыто.
             if (timerPoll.IsEnabled)
             {
                 timerPoll.Stop();
@@ -572,6 +586,15 @@ namespace ModbusMonitor
         #endregion
 
         #region [Флаги доступности]
+
+        /// <summary>
+        /// Доступность записи в регистр.
+        /// </summary>
+        public bool CanWriteRegister
+        {
+            get => canWriteRegister;
+            set => SetOptions(nameof(CanWriteRegister), ref canWriteRegister, value);
+        }
         /// <summary>
         /// Доступность опроса порта.
         /// </summary>
@@ -755,17 +778,21 @@ namespace ModbusMonitor
                 }
                 if (e.PropertyName.Equals(nameof(CanConnection)))
                 {
-                    connectionCommand.RaiseCanExecuteChanged();
+                    connectionCommand.RaiseCanExecuteChanged();                    
                 }
                 if (e.PropertyName.Equals(nameof(CanDisconnection)))
                 {
-                    disconnectionCommand.RaiseCanExecuteChanged();
+                    disconnectionCommand.RaiseCanExecuteChanged();                    
                 }
                 if (e.PropertyName.Equals(nameof(CanRequest)))
                 {
                     listenPortCommand.RaiseCanExecuteChanged();
                     sendRequestCommand.RaiseCanExecuteChanged();
-                }            
+                }
+                if (e.PropertyName.Equals(nameof(CanWriteRegister)))
+                {
+                    writeRegisterCommand.RaiseCanExecuteChanged();
+                }
         }
        
         /// <summary>
