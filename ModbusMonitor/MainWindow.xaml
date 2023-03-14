@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModbusMonitor"
         xmlns:src="clr-namespace:ModbusMonitor.Classes"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         d:DataContext="{d:DesignInstance Type=local:ViewModelMain}"
         mc:Ignorable="d"
         Title="ModbusMonitor" Height="450" Width="1000" WindowStyle="ThreeDBorderWindow"
@@ -112,6 +113,11 @@
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>
                         <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding WriteRegisterCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>                                        
                             <TreeView.ItemContainerStyle>
                                 <Style TargetType="{x:Type TreeViewItem}">
                                     <Setter Property="IsExpanded" Value="True" />

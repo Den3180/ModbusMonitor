@@ -26,7 +26,7 @@ namespace ModbusMonitor.Windows
         private string _parity;
         private string _stopBits;
 
-        public SearchAddressWindow(ModbusRTU modbusRTU)
+        public SearchAddressWindow(ModbusRTUASCII modbusRTU)
         {
             InitializeComponent();
             DataContext = new SearchAddrViewMod(modbusRTU, this)

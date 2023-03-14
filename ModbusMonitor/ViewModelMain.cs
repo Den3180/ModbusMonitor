@@ -68,7 +68,7 @@ namespace ModbusMonitor
         private string numberRequest = "0";  //Общее количество запросов.
         private UserControlDevices userControl;
         private DeviceClass device;
-        private readonly ModbusRTU modbusRTU;
+        private readonly ModbusRTUASCII modbusRTU;
         private readonly DispatcherTimer timerPoll;
         private GroupsTreeNode treeNode;//Дерево устройств.
         public ObservableCollection<GroupsTreeNode> treeNodes;
@@ -100,7 +100,7 @@ namespace ModbusMonitor
             searchAddressCommand = new Command(SearchAddress);
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
 
-            modbusRTU = new ModbusRTU();
+            modbusRTU = new ModbusRTUASCII();
             userControl = new UserControlDevices(new List<CellData>(), modbusRTU);
             device = new DeviceClass();
             treeNodes = new ObservableCollection<GroupsTreeNode>();//Источник данных дерева.            
@@ -195,7 +195,7 @@ namespace ModbusMonitor
         /// </summary>
         private void Connection()
         {           
-            modbusRTU.PortOpen(ModbusRTU.SettingPortStart);  //Подключение порта.            
+            modbusRTU.PortOpen(ModbusRTUASCII.SettingPortStart);  //Подключение порта.            
             CanDisconnection = true;
             CanConnection = false;
             CanRequest = true;
@@ -212,15 +212,15 @@ namespace ModbusMonitor
         /// </summary>
         private void CreateConnect()
         {
-            ModbusRTU.PortsEnabled.Clear();
+            ModbusRTUASCII.PortsEnabled.Clear();
             ConnectSettingWindow connectSetting = new ConnectSettingWindow(device);
             connectSetting.ShowDialog();
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
             {
                 treeNodes?.Clear();
-                foreach (var ports in ModbusRTU.PortsEnabled)
+                foreach (var ports in ModbusRTUASCII.PortsEnabled)
                 {
-                    ModbusRTU.SettingPortStart.PortType = ports;
+                    ModbusRTUASCII.SettingPortStart.PortType = ports;
                     treeNode = new GroupsTreeNode();
                     treeNode.NameCOM = ports;
                     treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства:\t" + device.DeviceAdress_DC.ToString()));
@@ -524,10 +524,10 @@ namespace ModbusMonitor
             DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
             CanCreateConnect = true;
            
-            ModbusRTU.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
-            ModbusRTU.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
-            ModbusRTU.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
-            ModbusRTU.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
+            ModbusRTUASCII.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
+            ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
+            ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
+            ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
            
             //SettingPortStart = new SettingPortStart()
             //{               
@@ -566,7 +566,7 @@ namespace ModbusMonitor
         /// <param name="e"></param>
         private async void TimerSec_Tick(object sender, EventArgs e)
         {            
-            if (ModbusRTU.Mode == eMode.None)
+            if (ModbusRTUASCII.Mode == eMode.None)
             {
                 CanConnection = false;
                 CanDisconnection = false;

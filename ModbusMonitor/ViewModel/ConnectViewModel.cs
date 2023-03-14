@@ -111,9 +111,9 @@ namespace ModbusMonitor.ViewModel
                 Port_VM = conn;
                 device.ConnectFromMap.PortType = Port_VM;
                 sourceTypeConnect.Remove(HeaderCombobox);
-                if (!ModbusRTU.PortsEnabled.Contains(SelectedItem))
+                if (!ModbusRTUASCII.PortsEnabled.Contains(SelectedItem))
                 {
-                    ModbusRTU.PortsEnabled.Add(SelectedItem);
+                    ModbusRTUASCII.PortsEnabled.Add(SelectedItem);
                 }
             }
             else if (new Regex(connectPatternIP).IsMatch(conn))
@@ -141,8 +141,8 @@ namespace ModbusMonitor.ViewModel
         private void SetSourceConnect()
         {
             sourceTypeConnect.Add(HeaderCombobox); //Добавление заголовка в Combobox.
-            //string[] temp = ModbusRTU.PortsEnabled.ToArray();
-            string[] temp = ModbusRTU.GetListPorts();
+            //string[] temp = ModbusRTUASCII.PortsEnabled.ToArray();
+            string[] temp = ModbusRTUASCII.GetListPorts();
             if (temp.Length == 0)
             {
                 sourceTypeConnect.Add(Port_VM);

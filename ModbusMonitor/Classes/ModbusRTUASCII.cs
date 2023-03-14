@@ -22,14 +22,14 @@ using Modbus.Message;
 
 namespace ModbusMonitor.Classes
 {
-    public class ModbusRTU
+    public class ModbusRTUASCII
     {
         public delegate void PortErrorEventHandler(Exception ex);//Делегат метода ошибки.
         public event PortErrorEventHandler PortErrorEvent; //Событие ошибки.
         private SerialPort serialPort;//Создание порта.       
         private ModbusSerialMaster masterRTU;
-       
-        public ModbusRTU()
+        
+        public ModbusRTUASCII()
         {
             serialPort = new SerialPort();
             PortErrorEvent += MessageError;
@@ -158,7 +158,7 @@ namespace ModbusMonitor.Classes
         public string[] ReadCoilRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
         {
             try
-            {
+            {               
                 bool[] tempcoil = MasterRTU.ReadCoils(adresDevice, startAdress, numOfPoint);
                 string[] dataCoils = new string[tempcoil.Length];
                 for (int i = 0; i < tempcoil.Length; i++)
@@ -288,7 +288,7 @@ namespace ModbusMonitor.Classes
                 b[3] = 0x88;        //Адрес регистра.
                 b[4] = 0;           //Количество регистров.
                 b[5] = 0x1;         //Количество регистров.
-                byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high
+                byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high                
                 byte[] mes = new byte[b.Length + crc.Length];
                 b.CopyTo(mes, 0);
                 crc.CopyTo(mes, mes.Length - crc.Length);

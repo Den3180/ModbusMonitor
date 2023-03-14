@@ -17,7 +17,7 @@ namespace ModbusMonitor.ViewModel
         private bool canWriteRegister;
         private CellData selectedCell;
         public List<CellData> Cells { get; set; }        
-        public ModbusRTU ModbusRTU { get; set; }        
+        public ModbusRTUASCII ModbusRTU { get; set; }        
 
         public ControlDeviceView(params object[] objects)
         {
@@ -25,7 +25,7 @@ namespace ModbusMonitor.ViewModel
             foreach (var item in objects)
             {
                 if (item is List<CellData>) Cells = item as List<CellData>;
-                if (item is ModbusRTU) ModbusRTU = item as ModbusRTU;                
+                if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;                
             }            
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             PropertyChanged += ControlDeviceView_PropertyChanged;
@@ -55,7 +55,7 @@ namespace ModbusMonitor.ViewModel
                 if (value != null)
                 {
                     //Запись достуна только для Coil и Holding.
-                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTU.Mode==eMode.PortOpen) 
+                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen) 
                     {
                         CanWriteRegister = true;
                     }

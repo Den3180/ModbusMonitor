@@ -38,7 +38,7 @@ namespace ModbusMonitor.ViewModel
             foreach(var item in objects)
             {
                 if(item is CellData)   cellData = item as CellData;
-                if (item is ModbusRTU) ModbusRTU = item as ModbusRTU;
+                if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is Window) window = item as Window;
             }
             if(cellData!=null) SelectItemTypeRegister();
@@ -46,7 +46,7 @@ namespace ModbusMonitor.ViewModel
             PropertyChanged += WriteRegisterViewMod_PropertyChanged;
         }
 
-        public ModbusRTU ModbusRTU { get; set; }
+        public ModbusRTUASCII ModbusRTU { get; set; }
         public List<RadioButProp> CheckRadioButtons { get; set; } = new List<RadioButProp>(8); 
         public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
         public IEnumerable<string> TypeRegister => typeRegister;
@@ -77,11 +77,11 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void SelectItemTypeRegister()
         {
-            if (ModbusRTU.Mode==eMode.PortOpen)
+            if (ModbusRTUASCII.Mode==eMode.PortOpen)
             {
                 CanWriteRegistry = true;
             }
-            connectionPortDevice.Add(ModbusRTU.SettingPortStart.PortType + " --- " + cellData.NameDevice);
+            connectionPortDevice.Add(ModbusRTUASCII.SettingPortStart.PortType + " --- " + cellData.NameDevice);
             AddressDevice = cellData.DeviceAdress;
             AddressRegister = cellData.Adress;
             ValueRegister = cellData.Value;

@@ -40,13 +40,13 @@ namespace ModbusMonitor.ViewModel
         private bool flagSearchMethod = false;
         public ICollection<string> sourceNamePort = new ObservableCollection<string>();
         private readonly SearchAddressWindow window;
-        private readonly ModbusRTU modbusRTU;
+        private readonly ModbusRTUASCII modbusRTU;
         private SettingPortStart settingPort;
         private readonly DispatcherTimer timer;
         public ICollection<string> resault = new ObservableCollection<string>();
         public ICollection<int> addressList = new ObservableCollection<int>();
 
-        public SearchAddrViewMod(ModbusRTU modbusRTU ,SearchAddressWindow window)
+        public SearchAddrViewMod(ModbusRTUASCII modbusRTU ,SearchAddressWindow window)
         {
             this.window = window;
             this.modbusRTU = modbusRTU;            
@@ -61,7 +61,7 @@ namespace ModbusMonitor.ViewModel
             clearResaultCommand = new Command(ClearResault,()=>CanClearResault);
             closeCommand = new Command(CloseSearch);
             breakCommand = new Command(BreakSearch,()=>CanBreakCommand);
-            sourceNamePort = ModbusRTU.GetListPorts();//Список доступных портов.
+            sourceNamePort = ModbusRTUASCII.GetListPorts();//Список доступных портов.
             //Заполнение диапазона адресов устройств.
             for(int i = 1; i <= addressEnd; i++)
             {
@@ -71,7 +71,7 @@ namespace ModbusMonitor.ViewModel
             if (sourceNamePort.Count > 0)
             {
                 canSearch = true;
-                currentPort = ModbusRTU.GetListPorts()[0];
+                currentPort = ModbusRTUASCII.GetListPorts()[0];
             }
             timer = new DispatcherTimer
             {
