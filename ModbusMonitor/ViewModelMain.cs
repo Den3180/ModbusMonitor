@@ -202,7 +202,7 @@ namespace ModbusMonitor
             CanWriteRegister = true;
             if (treeNode is not null && ModbusRTUASCII.Mode==eMode.PortOpen)
             {
-                device.Link = EnumLink.LinkYes;        //Статус подключения.
+                DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
             }
             else
@@ -534,13 +534,6 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
            
-            //SettingPortStart = new SettingPortStart()
-            //{               
-            //    BaudRate = device.ConnectFromMap.SpeedPort,
-            //    DataBit = device.ConnectFromMap.LenghtWord,
-            //    ParitySet = (Parity)device.ConnectFromMap.Parity,
-            //    StopBit = device.ConnectFromMap.Stop_Bit
-            //};
             Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart));
         }
 

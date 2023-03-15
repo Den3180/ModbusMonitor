@@ -40,12 +40,49 @@
                               HorizontalAlignment="Stretch"
                               IsReadOnly="True"  
                               IsEditable="False" Margin="40,0,0,0"/>
-                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}" Margin="20,0,20,0" 
-                            BorderBrush="#FF292C31" BorderThickness="2" Foreground="{x:Null}">                        
-                        <Button.Background>
-                            <ImageBrush Stretch="UniformToFill" ImageSource="/Windows/Refresh.JPG"/>
-                        </Button.Background>
-                        <Button.ToolTip >Обновить!</Button.ToolTip>
+                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}">
+                        <Button.Resources>                            
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="20,0,20,0"/>
+                            <Setter Property="BorderBrush" Value="#FF292C31"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/Windows/Refresh.JPG" Stretch="UniformToFill"/>
+                                    </Setter.Value>
+                                </Setter>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness= "{TemplateBinding BorderThickness}"                                                
+                                                CornerRadius="5">                                             
+                                                <ContentPresenter 
+                                            Content="{TemplateBinding Content}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            Margin="{TemplateBinding Margin}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>                                                
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <ImageBrush ImageSource="/Windows/Refresh1.JPG"
+                                                                        Stretch="UniformToFill"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        </Button.Resources>                        
+                        <Button.ToolTip>
+                            <ToolTip Content="Обновить список портов!"/>
+                        </Button.ToolTip>                       
                     </Button>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">

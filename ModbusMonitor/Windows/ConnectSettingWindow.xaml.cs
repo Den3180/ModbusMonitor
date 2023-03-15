@@ -24,7 +24,7 @@ namespace ModbusMonitor.Windows
         public ConnectSettingWindow(DeviceClass device, ModbusRTUASCII modbus)
         {
             InitializeComponent();
-            DataContext = new ConnectViewModel(device,modbus, this);
+            DataContext = new ConnectViewModel(device, modbus, this);
         }
     }
 }

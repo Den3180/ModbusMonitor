@@ -55,7 +55,8 @@ namespace ModbusMonitor.ViewModel
                 if (value != null)
                 {
                     //Запись достуна только для Coil и Holding.
-                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen) 
+                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen
+                        && DeviceClass.Link==EnumLink.LinkYes) 
                     {
                         CanWriteRegister = true;
                     }

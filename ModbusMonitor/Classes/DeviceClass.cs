@@ -31,7 +31,7 @@ namespace ModbusMonitor.Classes
         public ushort NumOfAI { get; set; } = 0;//Количество регистров АI в устройстве.
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
-        public EnumLink Link { get; set; } //Устройство подключено/отключено.
+        public static EnumLink Link { get; set; } //Устройство подключено/отключено.
 
         /// <summary>
         /// Загрузка карты и обработка данных.
