@@ -220,6 +220,7 @@ namespace ModbusMonitor.Classes
 
             }
         }
+
         /// <summary>
         /// Запись регистра типа HoldingRegister.
         /// </summary>
@@ -295,14 +296,17 @@ namespace ModbusMonitor.Classes
                 try
                 {
                     serialPort.Write(mes, 0, mes.Length);
+                    //Thread.Sleep(800);
+                    PortsEnabled.Add(serialPort.PortName);
                 }
                 catch (Exception ex)
                 {
                     serialPort.Close();
                     Mode = eMode.None;
+                    PortsEnabled?.Clear();
+                    settingPort.PortType = string.Empty;
                 }
             }
-            Thread.Sleep(800);
             serialPort.DataReceived -= Port_DataReceived;
         }  
         

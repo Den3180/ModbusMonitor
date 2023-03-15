@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ModbusMonitor.Classes;
+using System.Threading;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -42,17 +43,21 @@ namespace ModbusMonitor.ViewModel
         private readonly Command addConnectCommand;
         private readonly Command addCommand;
         private readonly Command canselCommand;
+        private readonly Command refreshPortCommand;
+        private readonly ModbusRTUASCII modbusMaster;
 
 
-        public ConnectViewModel(DeviceClass device, ConnectSettingWindow window)
+        public ConnectViewModel(DeviceClass device,ModbusRTUASCII modbus, ConnectSettingWindow window)
         {
             this.device = device;
             this.window = window;
+            modbusMaster = modbus;
             DeviceName_VM = device.DeviceName_DC;
             SetSourceConnect();
             addConnectCommand = new Command(AddConnect, () => CanAddConnect);
             addCommand = new Command(Add, () => CanAdd);
             canselCommand = new Command(Cansel);
+            refreshPortCommand = new Command(RefreshPort);
             PropertyChanged += ConnectViewModel_PropertyChanged;
         }
 
@@ -60,7 +65,17 @@ namespace ModbusMonitor.ViewModel
         public ICommand AddConnectCommand => addConnectCommand;
         public ICommand AddCommand => addCommand;
         public ICommand CanselCommand => canselCommand;
+        public ICommand RefreshPortCommand => refreshPortCommand;
 
+        private void RefreshPort()
+        {           
+            modbusMaster.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart);
+            if (ModbusRTUASCII.PortsEnabled.Count > 0 && !sourceTypeConnect.Contains(ModbusRTUASCII.PortsEnabled.First()))
+            {
+                sourceTypeConnect.Add(ModbusRTUASCII.PortsEnabled.First());
+            }
+
+        }
         /// <summary>
         /// Метод кнопки "Добавить и подключить".
         /// </summary>
@@ -141,8 +156,8 @@ namespace ModbusMonitor.ViewModel
         private void SetSourceConnect()
         {
             sourceTypeConnect.Add(HeaderCombobox); //Добавление заголовка в Combobox.
-            //string[] temp = ModbusRTUASCII.PortsEnabled.ToArray();
-            string[] temp = ModbusRTUASCII.GetListPorts();
+            string[] temp = ModbusRTUASCII.PortsEnabled.ToArray();
+            //string[] temp = ModbusRTUASCII.GetListPorts();
             if (temp.Length == 0)
             {
                 sourceTypeConnect.Add(Port_VM);

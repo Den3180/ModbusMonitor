@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModbusMonitor.Windows" 
-        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:ConnectViewModel}"
         mc:Ignorable="d"
         Title="Настройка подключения" Height="auto" Width="500" SizeToContent="Height">
@@ -28,16 +28,25 @@
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.4*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
                     <ComboBox Grid.Column="1" ItemsSource="{Binding SourceTypeConnect}" 
                               Text="{Binding HeaderCombobox}"
-                              SelectedItem="{Binding SelectedItem}"
+                              SelectedItem="{Binding SelectedItem}"                              
                               VerticalAlignment="Center" 
+                              HorizontalAlignment="Stretch"
                               IsReadOnly="True"  
-                              IsEditable="False" Margin="0,0,80,0"/>
+                              IsEditable="False" Margin="40,0,0,0"/>
+                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}" Margin="20,0,20,0" 
+                            BorderBrush="#FF292C31" BorderThickness="2" Foreground="{x:Null}">                        
+                        <Button.Background>
+                            <ImageBrush Stretch="UniformToFill" ImageSource="/Windows/Refresh.JPG"/>
+                        </Button.Background>
+                        <Button.ToolTip >Обновить!</Button.ToolTip>
+                    </Button>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>

@@ -200,10 +200,16 @@ namespace ModbusMonitor
             CanConnection = false;
             CanRequest = true;
             CanWriteRegister = true;
-            device.Link = EnumLink.LinkYes;        //Статус подключения.
-            if (treeNode is not null)
+            if (treeNode is not null && ModbusRTUASCII.Mode==eMode.PortOpen)
             {
+                device.Link = EnumLink.LinkYes;        //Статус подключения.
                 treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
+            }
+            else
+            {
+                treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";
+                CanConnection = true;
+                CanDisconnection = false;
             }
         }
 
@@ -212,8 +218,7 @@ namespace ModbusMonitor
         /// </summary>
         private void CreateConnect()
         {
-            ModbusRTUASCII.PortsEnabled.Clear();
-            ConnectSettingWindow connectSetting = new ConnectSettingWindow(device);
+            ConnectSettingWindow connectSetting = new ConnectSettingWindow(device, modbusRTU);
             connectSetting.ShowDialog();
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
             {
@@ -536,7 +541,7 @@ namespace ModbusMonitor
             //    ParitySet = (Parity)device.ConnectFromMap.Parity,
             //    StopBit = device.ConnectFromMap.Stop_Bit
             //};
-            //Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, SettingPortStart));
+            Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart));
         }
 
         /// <summary>
