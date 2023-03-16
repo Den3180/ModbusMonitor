@@ -26,5 +26,10 @@ namespace ModbusMonitor.Windows
             InitializeComponent();
             DataContext = new ConnectViewModel(device, modbus, this);
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

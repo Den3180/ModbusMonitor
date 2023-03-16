@@ -204,7 +204,7 @@
                             <Button Command="{Binding ConnectionCommand}" Content="Подключение" Margin="2"/>
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>
-                        <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}">
+                        <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" MinWidth="300">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick">
                                     <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>

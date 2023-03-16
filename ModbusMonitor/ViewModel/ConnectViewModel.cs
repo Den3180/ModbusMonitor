@@ -67,6 +67,9 @@ namespace ModbusMonitor.ViewModel
         public ICommand CanselCommand => canselCommand;
         public ICommand RefreshPortCommand => refreshPortCommand;
 
+        /// <summary>
+        /// Обновление доступных портов.
+        /// </summary>
         private void RefreshPort()
         {           
             modbusMaster.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart);
@@ -74,7 +77,6 @@ namespace ModbusMonitor.ViewModel
             {
                 sourceTypeConnect.Add(ModbusRTUASCII.PortsEnabled.First());
             }
-
         }
         /// <summary>
         /// Метод кнопки "Добавить и подключить".

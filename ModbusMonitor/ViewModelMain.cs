@@ -196,12 +196,12 @@ namespace ModbusMonitor
         private void Connection()
         {           
             modbusRTU.PortOpen(ModbusRTUASCII.SettingPortStart);  //Подключение порта.            
-            CanDisconnection = true;
             CanConnection = false;
             CanRequest = true;
             CanWriteRegister = true;
             if (treeNode is not null && ModbusRTUASCII.Mode==eMode.PortOpen)
             {
+                CanDisconnection = true;
                 DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
             }
