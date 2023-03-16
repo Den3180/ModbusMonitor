@@ -8,22 +8,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\about.png" />
     <None Remove="Resources\colortype.png" />
+    <None Remove="Resources\DisPoll.png" />
     <None Remove="Resources\ExitApp.png" />
     <None Remove="Resources\format.png" />
+    <None Remove="Resources\Help.png" />
     <None Remove="Resources\koef.png" />
     <None Remove="Resources\LoadMap.PNG" />
+    <None Remove="Resources\param.png" />
     <None Remove="Resources\Prosmotr.png" />
+    <None Remove="Resources\protocol.png" />
     <None Remove="Resources\Refresh.JPG" />
     <None Remove="Resources\Refresh1.JPG" />
     <None Remove="Resources\SaveIcon1.PNG" />
     <None Remove="Resources\searchAddress.png" />
+    <None Remove="Resources\Stolbwight.png" />
     <None Remove="Resources\Tablitsa.png" />
     <None Remove="Resources\Tekst.png" />
+    <None Remove="Resources\turnon.png" />
+    <None Remove="Resources\WriteReg.png" />
+    <None Remove="Resources\zaprosData.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\about.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\colortype.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\DisPoll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\ExitApp.png">
@@ -32,13 +47,22 @@
     <Content Include="Resources\format.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Help.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\koef.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\LoadMap.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\param.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Prosmotr.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\protocol.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SaveIcon1.PNG">
@@ -47,10 +71,22 @@
     <Content Include="Resources\searchAddress.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Stolbwight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Tablitsa.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Tekst.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\turnon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\WriteReg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\zaprosData.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

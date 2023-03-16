@@ -13,11 +13,17 @@
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
-        </Style>
+        </Style>        
+            <Style TargetType="{x:Type GroupBox}">                
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="1"/>               
+                <Setter Property="FontSize" Value="14"/>
+            </Style>        
     </Window.Resources>
-    <DockPanel LastChildFill="True">
+    <Grid Background="Gray">        
+    <DockPanel LastChildFill="True" Background="Lavender" Margin="2">
         <!--Меню-->
-        <Menu DockPanel.Dock="Top" VerticalAlignment="Top">
+        <Menu DockPanel.Dock="Top" VerticalAlignment="Top" Background="{x:Null}">
             <MenuItem Header="Файл" VerticalAlignment="Center">
                 <MenuItem Header="Загрузить карту регистров" Command="{Binding LoadMapCommand}"/>
                 <Separator/>
@@ -40,12 +46,12 @@
                 <MenuItem Header="Сброс ширины столбцов" Command="{Binding ResetColCommand}"/>
             </MenuItem>
             <MenuItem Header="Инструменты" VerticalAlignment="Center">
-                    <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
-                    <MenuItem Header="Устройство" VerticalAlignment="center">                    
+                        <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
+            <MenuItem Header="Устройство" VerticalAlignment="center">                    
                         <MenuItem Header="Запрос данных" Command="{Binding SendRequestCommand}"/>
                         <MenuItem Header="Включить опрос" Command="{Binding ListenPortCommand}"/>
                         <MenuItem Header="Отключить опрос" Command="{Binding DisablePollCommand}"/>
-                </MenuItem>
+            </MenuItem>
                 <Separator/>
                 <MenuItem Header="Открыть лог ошибок" Command="{Binding OpenLogErrCommand}"/>
                 <MenuItem Header="Очистить лог ошибок" Command="{Binding ClearLogErrCommand}"/>
@@ -59,8 +65,9 @@
                 <MenuItem Header="О программе"/>
             </MenuItem>
         </Menu>
-        <Border DockPanel.Dock="Top" BorderBrush="#FFD5D5E5" BorderThickness="2" CornerRadius="0.5">            
-        <ToolBarTray  Background="#FFF0F0F0" IsLocked="False">
+        <Border DockPanel.Dock="Top" VerticalAlignment="Center" BorderBrush="#FFF5F5FD" 
+                BorderThickness="0.7">            
+        <ToolBarTray  Background="{x:Null}" IsLocked="False" VerticalAlignment="Center">
             <ToolBarTray.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Width" Value="auto"/>
@@ -68,18 +75,13 @@
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     </Style>
-                    <Style TargetType="Image">
-                        <Setter Property="RenderTransform">
-                            <Setter.Value>
-                                <TransformGroup>
-                                    <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-                                </TransformGroup>
-                            </Setter.Value>
-                        </Setter>
+                    <Style TargetType="Image">                       
                         <Setter Property="Stretch" Value="UniformToFill"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="Width" Value="25"/>
                         <Setter Property="Height" Value="25"/>
+                        <Setter Property="Margin" Value="1"/>
                     </Style>
                 </ToolBarTray.Resources>
             <ToolBar Band="1" BandIndex="1" Background="{x:Null}">              
@@ -96,7 +98,7 @@
                     <Image Source="/Resources/ExitApp.png" />
                 </Button>
             </ToolBar>
-                <ToolBar Band="1" BandIndex="2" Background="{x:Null}">
+            <ToolBar Band="1" BandIndex="2" Background="{x:Null}">
                     <Button Command="{Binding TableCommand}" ToolTip="Таблица">
                         <Image Source="/Resources/Tablitsa.png" />
                     </Button>
@@ -115,11 +117,42 @@
                     <Button Command="{Binding ColorTypeCommand}" ToolTip="Цвета для типов">
                         <Image Source="/Resources/colortype.png" />
                     </Button>
+                    <Button Command="{Binding ResetColCommand}" ToolTip="Сброс ширины столбцов">
+                        <Image Source="/Resources/Stolbwight.png" />
+                    </Button>
                 </ToolBar>
-            </ToolBarTray>        
+                <ToolBar Band="1" BandIndex="3" Background="{x:Null}">
+                    <Button Command="{Binding WriteRegisterCommand}" ToolTip="Запись в регистр">
+                        <Image Source="/Resources/WriteReg.png" />
+                    </Button>
+                    <Button Command="{Binding SendRequestCommand}" ToolTip="Запрос данных">
+                        <Image Source="/Resources/zaprosData.png" />
+                    </Button>
+                    <Button Command="{Binding ListenPortCommand}" ToolTip="Включить опрос">
+                        <Image Source="/Resources/turnon.png" />
+                    </Button>
+                    <Button Command="{Binding DisablePollCommand}" ToolTip="Отключить опрос">
+                        <Image Source="/Resources/DisPoll.png" />
+                    </Button>                    
+                </ToolBar>
+                <ToolBar Band="1" BandIndex="4" Background="{x:Null}">
+                    <Button Command="{Binding ParamCommand}" ToolTip="Параметры">
+                        <Image Source="/Resources/param.png" />
+                    </Button>
+                </ToolBar>
+                <ToolBar Band="1" BandIndex="5" Background="{x:Null}">
+                    <Button Command="{Binding HelpCommand}" ToolTip="Справка">
+                        <Image Source="/Resources/Help.png" />
+                    </Button>
+                    <Button Command="{Binding AboutCommand}" ToolTip="О программе">
+                        <Image Source="/Resources/about.png" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>         
         </Border>
         <!--Статус бар-->
-        <StatusBar DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom">
+        <StatusBar DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom" 
+                   Background="{x:Null}" BorderBrush="#FFF5F5FD" BorderThickness="1">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -261,4 +294,5 @@
             </Border>
         </Grid>
     </DockPanel>
+    </Grid>
 </Window>

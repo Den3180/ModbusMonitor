@@ -15,6 +15,7 @@ namespace ModbusMonitor
     {
         public App()
         {
+            App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
 
