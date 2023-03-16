@@ -8,8 +8,51 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Windows\Refresh.JPG" />
-    <None Remove="Windows\Refresh1.JPG" />
+    <None Remove="Resources\colortype.png" />
+    <None Remove="Resources\ExitApp.png" />
+    <None Remove="Resources\format.png" />
+    <None Remove="Resources\koef.png" />
+    <None Remove="Resources\LoadMap.PNG" />
+    <None Remove="Resources\Prosmotr.png" />
+    <None Remove="Resources\Refresh.JPG" />
+    <None Remove="Resources\Refresh1.JPG" />
+    <None Remove="Resources\SaveIcon1.PNG" />
+    <None Remove="Resources\searchAddress.png" />
+    <None Remove="Resources\Tablitsa.png" />
+    <None Remove="Resources\Tekst.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\colortype.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ExitApp.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\format.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\koef.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\LoadMap.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Prosmotr.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SaveIcon1.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\searchAddress.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tablitsa.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tekst.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -19,12 +62,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Images\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Windows\Refresh.JPG" />
-    <Resource Include="Windows\Refresh1.JPG" />
+    <Content Include="Resources\Refresh.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Refresh1.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

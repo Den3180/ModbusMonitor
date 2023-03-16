@@ -554,7 +554,8 @@ namespace ModbusMonitor
             {
                 timerPoll.Stop();
             }
-            App.Current.Shutdown();
+            //App.Current.Shutdown();
+            Environment.Exit(0);
         }       
 
         /// <summary>

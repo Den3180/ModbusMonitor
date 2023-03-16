@@ -49,7 +49,7 @@
                             <Setter Property="Foreground" Value="Black"/>
                                 <Setter Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Windows/Refresh.JPG" Stretch="UniformToFill"/>
+                                        <ImageBrush ImageSource="/Resources/Refresh.JPG" Stretch="UniformToFill"/>
                                     </Setter.Value>
                                 </Setter>
                             <Setter Property="Template">
@@ -69,7 +69,7 @@
                                             <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Background">
                                                         <Setter.Value>
-                                                            <ImageBrush ImageSource="/Windows/Refresh1.JPG"
+                                                            <ImageBrush ImageSource="/Resources/Refresh1.JPG"
                                                                         Stretch="UniformToFill"/>
                                                         </Setter.Value>
                                                     </Setter>

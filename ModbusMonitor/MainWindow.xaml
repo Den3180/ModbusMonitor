@@ -15,7 +15,7 @@
             <Setter Property="FontSize" Value="14"/>
         </Style>
     </Window.Resources>
-    <DockPanel>
+    <DockPanel LastChildFill="True">
         <!--Меню-->
         <Menu DockPanel.Dock="Top" VerticalAlignment="Top">
             <MenuItem Header="Файл" VerticalAlignment="Center">
@@ -59,6 +59,65 @@
                 <MenuItem Header="О программе"/>
             </MenuItem>
         </Menu>
+        <Border DockPanel.Dock="Top" BorderBrush="#FFD5D5E5" BorderThickness="2" CornerRadius="0.5">            
+        <ToolBarTray  Background="#FFF0F0F0" IsLocked="False">
+            <ToolBarTray.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Width" Value="auto"/>
+                        <Setter Property="Height" Value="auto"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="Image">
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                                </TransformGroup>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Stretch" Value="UniformToFill"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Width" Value="25"/>
+                        <Setter Property="Height" Value="25"/>
+                    </Style>
+                </ToolBarTray.Resources>
+            <ToolBar Band="1" BandIndex="1" Background="{x:Null}">              
+                <Button Command="{Binding LoadMapCommand}" ToolTip="Загрузить карту регистров" >
+                    <Image Source="/Resources/LoadMap.PNG"/>
+                </Button>
+                <Button Command="{Binding SaveMapcomman}" ToolTip="Сохранить карту регистров">
+                    <Image Source="/Resources/SaveIcon1.PNG"/>                   
+                </Button>
+                <Button Command="{Binding SearchAddressCommand}" ToolTip="Поиск адреса устройства">
+                    <Image Source="/Resources/searchAddress.png" />
+                </Button>
+                <Button Command="{Binding ExitCommand}" ToolTip="Выход">
+                    <Image Source="/Resources/ExitApp.png" />
+                </Button>
+            </ToolBar>
+                <ToolBar Band="1" BandIndex="2" Background="{x:Null}">
+                    <Button Command="{Binding TableCommand}" ToolTip="Таблица">
+                        <Image Source="/Resources/Tablitsa.png" />
+                    </Button>
+                    <Button Command="{Binding TextCommand}" ToolTip="Текст">
+                        <Image Source="/Resources/Tekst.png" />
+                    </Button>
+                    <Button Command="{Binding ViewingPackagesCommand}" ToolTip="Просмотр пакетов">
+                        <Image Source="/Resources/Prosmotr.png" />
+                    </Button>
+                    <Button Command="{Binding RatioCommand}" ToolTip="Коэффициенты">
+                        <Image Source="/Resources/koef.png" />
+                    </Button>
+                    <Button Command="{Binding FormatCommand}" ToolTip="Формат регистра">
+                        <Image Source="/Resources/format.png" />
+                    </Button>
+                    <Button Command="{Binding ColorTypeCommand}" ToolTip="Цвета для типов">
+                        <Image Source="/Resources/colortype.png" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>        
+        </Border>
         <!--Статус бар-->
         <StatusBar DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom">
             <StatusBar.ItemsPanel>
