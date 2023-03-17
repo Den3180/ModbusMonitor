@@ -283,7 +283,7 @@
                     </UniformGrid>
                     <Border Grid.Row="1" Background="#FFDDD6D6">
                         <!--Окно данных-->
-                        <ContentControl x:Name="ContentArea" Content="{Binding Usercontrol}"/>
+                        <ContentControl Content="{Binding Usercontrol}"/>
                     </Border>
                     <GridSplitter Grid.Row="2" Height="2" 
                                   HorizontalAlignment="Stretch"/>

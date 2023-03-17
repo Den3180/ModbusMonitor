@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace ModbusMonitor
         public App()
         {
             App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;            
         }
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

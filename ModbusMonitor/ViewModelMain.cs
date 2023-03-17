@@ -435,6 +435,11 @@ namespace ModbusMonitor
                         continue;
                     }
                     item.Value = tempAO[--numOfAO].ToString();
+                    //Если отрицательное значение.
+                    if (ushort.Parse(item.Value) > 32767)
+                    {
+                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                    }
                 }
                 else if (item.Type == "AI")
                 {

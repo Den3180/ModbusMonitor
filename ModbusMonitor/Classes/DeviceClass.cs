@@ -93,6 +93,10 @@ namespace ModbusMonitor.Classes
 
             foreach (var item in device.CellsArray)
             {
+                if (ushort.Parse(item.Value) > 32767)
+                {
+                    item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                }
                 item.NumberReg = count++.ToString();
                 //Преобразование в бинарный формат.
                 if (item.Represent == "Bin")
