@@ -26,10 +26,10 @@
                   FontSize="16" 
                   IsReadOnly="True" SelectedItem="{Binding SelectedCell}">
             <!--<DataGrid.Resources>
-                <Style TargetType="DataGridCell">
+                <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="#FFB8E6F1"/>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Green"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -62,15 +62,20 @@
                 <Style TargetType="DataGridCell">
                     <Setter Property="BorderBrush" Value="#FFFBF3F3" />
                     <Setter Property="BorderThickness" Value="0 0 1 1" />
-                    <Setter Property="Margin" Value="1" />                   
+                    <Setter Property="Margin" Value="1" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>                
             </DataGrid.CellStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="#FFB8E6F1"/>                            
-                        </Trigger>
+                            <Setter Property="Background" Value="#FFDEF7FD"/>                            
+                        </Trigger>                      
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
