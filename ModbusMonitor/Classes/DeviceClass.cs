@@ -22,7 +22,7 @@ namespace ModbusMonitor.Classes
         }
 
         public ConnectionType ConnectionType { get; set; } //Содержит инвормацию о подключении.
-        public SettingConnectFromMap ConnectFromMap { get; set; } //Содержит инвормацию о подключении.
+        public SettingConnectFromMap ConnectFromMap { get; set; } //Содержит информацию о подключении.
         public AdaptersArray AdaptersArray { get; set; } //Содержит инвормацию о подключении.
         public List<CellData> CellsArray { get; set; }//Список регистров в устройстве.
         public string DeviceName_DC { get; set; } = string.Empty;//Имя устройства.
@@ -32,6 +32,8 @@ namespace ModbusMonitor.Classes
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
         public static EnumLink Link { get; set; } //Устройство подключено/отключено.
+
+        public EnumLink LinkDevice { get; set; } = EnumLink.Unknown;
 
         /// <summary>
         /// Загрузка карты и обработка данных.

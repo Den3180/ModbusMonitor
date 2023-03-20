@@ -24,16 +24,7 @@
                   SelectionUnit="FullRow" 
                   HorizontalGridLinesBrush="#FFBDB3B3" 
                   FontSize="16" 
-                  IsReadOnly="True" SelectedItem="{Binding SelectedCell}">
-            <!--<DataGrid.Resources>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="Green"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>-->
+                  IsReadOnly="True" SelectedItem="{Binding SelectedCell}">            
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding WriteRegisterCommand}"/>
@@ -65,8 +56,9 @@
                     <Setter Property="Margin" Value="1" />
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="Green"/>
-                        </Trigger>
+                            <Setter Property="Background" Value="#FFACCEF3"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>                       
                     </Style.Triggers>
                 </Style>                
             </DataGrid.CellStyle>

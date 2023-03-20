@@ -59,6 +59,7 @@ namespace ModbusMonitor.ViewModel
             canselCommand = new Command(Cansel);
             refreshPortCommand = new Command(RefreshPort);
             PropertyChanged += ConnectViewModel_PropertyChanged;
+            //RefreshPort();
         }
 
         public IEnumerable<string> SourceTypeConnect => sourceTypeConnect;
@@ -72,10 +73,17 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void RefreshPort()
         {           
-            modbusMaster.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart);
-            if (ModbusRTUASCII.PortsEnabled.Count > 0 && !sourceTypeConnect.Contains(ModbusRTUASCII.PortsEnabled.First()))
+            modbusMaster.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC);
+            if (ModbusRTUASCII.PortsEnabled.Count > 0)
             {
-                sourceTypeConnect.Add(ModbusRTUASCII.PortsEnabled.First());
+                sourceTypeConnect.Remove(port_VM);
+                foreach(var item in ModbusRTUASCII.PortsEnabled)
+                {
+                    if (!sourceTypeConnect.Contains(item))
+                    {
+                        sourceTypeConnect.Add(item);
+                    }
+                }                              
             }
         }
         /// <summary>
@@ -110,6 +118,10 @@ namespace ModbusMonitor.ViewModel
         /// <param name="conn"></param>
         private void SelectConnections(string conn)
         {
+            if (conn == null)
+            {
+                return;
+            }
             string connectPatternCOM = @"^(COM?)[1-9][0-9]?$";//Шаблон для последовательного порта.
             string connectPatternIP = @"\d{0,3}.\d{0,3}.\d{0,3}";//Шаблон для IP подключения.
                                                                  //Если есть совпадение по шаблону.                                                   

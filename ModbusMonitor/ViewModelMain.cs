@@ -18,6 +18,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 
 namespace ModbusMonitor
 {
@@ -54,12 +55,13 @@ namespace ModbusMonitor
         private bool canOpenLog;
         private bool canRequest;
         private bool canDisablePoll;
+        private bool treeViewEnabled;
         private bool answerRequest = false;//Флаг завершения опроса.        
         private int numInOrder;//Номера регистров по порядку не зависимо от типа.
         private int regAddress;
         private int deviceAddress;//Адрес устройства в области "Добавления регистров".
-        int countReqTot = 0; //Общее количество запросов.
-        int countReqgood=0;//Количество корректных запросов.
+        private int countReqTot = 0; //Общее количество запросов.
+        private int countReqgood=0;//Количество корректных запросов.
         private string deviceName = "нет данных";
         private string dataFormat = "нет данных";
         private string regName = "нет данных";
@@ -72,6 +74,7 @@ namespace ModbusMonitor
         private readonly DispatcherTimer timerPoll;
         private GroupsTreeNode treeNode;//Дерево устройств.
         public ObservableCollection<GroupsTreeNode> treeNodes;
+        public static List<DeviceClass> listDevices;
 
         public ViewModelMain()
         {
@@ -100,9 +103,11 @@ namespace ModbusMonitor
             searchAddressCommand = new Command(SearchAddress);
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
 
+            TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
             userControl = new UserControlDevices(new List<CellData>(), modbusRTU);
             device = new DeviceClass();
+            listDevices = new List<DeviceClass>();//Список устройств на линии.
             treeNodes = new ObservableCollection<GroupsTreeNode>();//Источник данных дерева.            
             timerPoll = new DispatcherTimer();
             timerPoll.Interval = TimeSpan.FromMilliseconds(1000);
@@ -110,10 +115,10 @@ namespace ModbusMonitor
             PropertyChanged += ViewModelMain_PropertyChanged;
             timerPoll.Tick += TimerSec_Tick;
             CheckStartParam();
+            Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart));
         }
 
-        public List<CellData> Cells { get; set; }
-        //public SettingPortStart SettingPortStart { get; set; }
+        public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.        
         public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.
         //Комманды.Вкладка "Файл".
         public ICommand LoadMapCommand => loadMapCommand;
@@ -157,7 +162,7 @@ namespace ModbusMonitor
                 timerPoll.Stop();
             }
             CanRequest = true;
-            CanDisablePoll = false;
+            CanDisablePoll = false;            
         }
 
         /// <summary>
@@ -184,10 +189,14 @@ namespace ModbusMonitor
             CanRequest = false;
             CanConnection = true;
             CanWriteRegister = false;
+            TreeViewEnabled = true;
             countReqgood = 0;
             countReqTot = 0;
+            NumberRequest = "0";
+            CorrectRequest = "0";
+
             if(treeNode is not null)
-            treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";
+            treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tОтключено";
         }
 
         /// <summary>
@@ -196,18 +205,20 @@ namespace ModbusMonitor
         private void Connection()
         {           
             modbusRTU.PortOpen(ModbusRTUASCII.SettingPortStart);  //Подключение порта.            
-            CanConnection = false;
-            CanRequest = true;
-            CanWriteRegister = true;
             if (treeNode is not null && ModbusRTUASCII.Mode==eMode.PortOpen)
             {
+                CanConnection = false;
+                CanRequest = true;
+                CanWriteRegister = true;
                 CanDisconnection = true;
                 DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
-                treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tПодключено";
+                device.LinkDevice=EnumLink.LinkYes;
+                treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tПодключено";
+                TreeViewEnabled = false;
             }
             else
             {
-                treeNode.SubGroups[2].ContentClass = "Статус:\t\t\tОтключено";
+                treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tОтключено";
                 CanConnection = true;
                 CanDisconnection = false;
             }
@@ -218,21 +229,17 @@ namespace ModbusMonitor
         /// </summary>
         private void CreateConnect()
         {
-            ConnectSettingWindow connectSetting = new ConnectSettingWindow(device, modbusRTU);
-            connectSetting.ShowDialog();
+            ConnectSettingWindow connectSetting = new ConnectSettingWindow(device, modbusRTU);//Создание объекта соединения.
+            connectSetting.ShowDialog();//Открытие окна создания соединения.
+            //Если не нажата кнопка отмены.
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
-            {
-                treeNodes?.Clear();
-                foreach (var ports in ModbusRTUASCII.PortsEnabled)
-                {
-                    ModbusRTUASCII.SettingPortStart.PortType = ports;
-                    treeNode = new GroupsTreeNode();
-                    treeNode.NameCOM = ports;
-                    treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства:\t" + device.DeviceAdress_DC.ToString()));
-                    treeNode.SubGroups.Add(new SubGroupsTree("Имя устройства:\t\t" + device.DeviceName_DC));
-                    treeNode.SubGroups.Add(new SubGroupsTree());
-                    treeNodes.Add(treeNode);
-                }
+            {                
+                treeNodes?.Clear();//Очистка дерева перед новым заполнением. Нужно ли?               
+                    foreach (var ports in ModbusRTUASCII.PortsEnabled)
+                    {
+                        ModbusRTUASCII.SettingPortStart.PortType = ports;
+                        FillNodesTree(device);                   
+                    }               
             }
             if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
             {
@@ -246,6 +253,21 @@ namespace ModbusMonitor
                     CanDisconnection = true;                    
                 }
             }
+        }
+        /// <summary>
+        /// Заполнение узлов дерева.
+        /// </summary>
+        /// <param name="device"></param>
+        private void FillNodesTree(DeviceClass device)
+        {
+            treeNode = new GroupsTreeNode();//Архитектура дерева.                    
+            treeNode.NameCOM = $"{treeNodes.Count + 1}";
+            treeNode.SubGroups.Add(new SubGroupsTree("Порт:\t" + ModbusRTUASCII.SettingPortStart.PortType));
+            treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства:\t" + device.DeviceAdress_DC.ToString()));
+            treeNode.SubGroups.Add(new SubGroupsTree("Имя устройства:\t\t" + device.DeviceName_DC));
+            treeNode.SubGroups.Add(new SubGroupsTree());
+            treeNodes.Add(treeNode);
+            CanConnection = true;
         }
 
         /// <summary>
@@ -279,6 +301,7 @@ namespace ModbusMonitor
             answerRequest = false;
             CanRequest = false;
             CanDisablePoll = true;
+            TreeViewEnabled = false;
             timerPoll.Start();
         }
 
@@ -404,6 +427,7 @@ namespace ModbusMonitor
                 }
             }
         }
+
         /// <summary>
         /// Заполнить таблицу.
         /// </summary>
@@ -528,18 +552,32 @@ namespace ModbusMonitor
             {
                 return;
             }
-            Cells = device.CellsArray;            
+            listDevices.Add(device);//После загрузки карты заносим устройство
+                                    //в список устройств на этой линии.
+            Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.           
             Usercontrol = new UserControlDevices(Cells, modbusRTU);//Привязано к свойству Content основного окна.
+            if (device.LinkDevice == EnumLink.LinkYes && DeviceAddress == device.DeviceAdress_DC)//Если устройство подключено.
+            {
+                Disconnection();  //Отключение подключения.          
+            }
             DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
             DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
-            CanCreateConnect = true;
-           
+            CanCreateConnect = true; //Кнопку "Создать" включить.
+            //Установка параметров порта из данных карты устройства.
+            if (ModbusRTUASCII.PortsEnabled.Count > 0)
+            {
+                ModbusRTUASCII.SettingPortStart.PortType = ModbusRTUASCII.PortsEnabled.FirstOrDefault();
+            }
+            else
+            {
+                ModbusRTUASCII.SettingPortStart.PortType = "нет доступных портов";
+            }
             ModbusRTUASCII.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
             ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
             ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-           
-            Task.Run(() => modbusRTU.SendResponsePort(device.DeviceAdress_DC, ModbusRTUASCII.SettingPortStart));
+            FillNodesTree(device);//Заполнение дерева без подключения.           
+            //Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));            
         }
 
         /// <summary>
@@ -650,6 +688,14 @@ namespace ModbusMonitor
 
         #region[Свойства-привязки]
 
+        /// <summary>
+        /// Доступность дерева.
+        /// </summary>
+        public bool TreeViewEnabled
+        {
+            get => treeViewEnabled;
+            set => SetOptions(nameof(TreeViewEnabled), ref treeViewEnabled, value);
+        }
         /// <summary>
         /// Количество запросов.
         /// </summary>

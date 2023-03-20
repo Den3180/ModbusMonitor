@@ -269,7 +269,7 @@ namespace ModbusMonitor.Classes
         /// Отправка запроса на устройство для поиска рабочего порта.
         /// </summary>
         /// <param name="adress"></param>
-        public void SendResponsePort(int adress, SettingPortStart settingPort)
+        public void SendResponsePort(SettingPortStart settingPort, int adress=1)
         {
             serialPort ??= new SerialPort();
             if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
