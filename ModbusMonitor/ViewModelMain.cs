@@ -572,7 +572,7 @@ namespace ModbusMonitor
             }
             else
             {
-                ModbusRTUASCII.SettingPortStart.PortType = "нет доступных портов";
+                ModbusRTUASCII.SettingPortStart.PortType = "не обнаружено";
             }
             ModbusRTUASCII.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
             ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;

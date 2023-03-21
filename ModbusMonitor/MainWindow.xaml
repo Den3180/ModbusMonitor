@@ -205,13 +205,19 @@
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>
                         <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}"
-                                   IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" >
+                                   IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" 
+                                  MaxWidth="300" 
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <TreeView.Resources>                                   
                                     <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
                                                               ItemsSource="{Binding SubGroups}">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="Устройство "/>
-                                            <TextBlock Text="{Binding NameCOM}" FontWeight="Bold"/>                            
+                                            <!--<TextBlock Text="Устройство "/>-->
+                                            <!--<TextBlock Text="{Binding NameCOM}" FontWeight="Bold"/>-->
+                                            <TextBlock>
+                                                <Run Text="Устройство"/>
+                                                <Run FontWeight="Bold" Text="{Binding NameCOM}"/>
+                                            </TextBlock>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
                                     <DataTemplate DataType="{x:Type src:SubGroupsTree}">
@@ -222,8 +228,12 @@
                                                     <Setter Property="HorizontalAlignment" Value="Right"/>
                                                 </Style>
                                             </UniformGrid.Style>
-                                            <TextBlock Text="{Binding SubHeader}"/>
-                                            <TextBlock Text="{Binding ContentClass}" FontWeight="Bold"/>                                        
+                                            <!--<TextBlock Text="{Binding SubHeader}"/>
+                                            <TextBlock Text="{Binding ContentClass}" FontWeight="Bold"/>-->
+                                            <TextBlock>
+                                                <Run Text="{Binding SubHeader}"/>
+                                                <Run Text="{Binding ContentClass}" FontWeight="Bold"/>
+                                            </TextBlock>
                                         </UniformGrid>
                                     </DataTemplate>
                                     <Style TargetType="{x:Type TreeViewItem}">
