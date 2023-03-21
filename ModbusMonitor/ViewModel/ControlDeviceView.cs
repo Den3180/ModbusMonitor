@@ -15,9 +15,10 @@ namespace ModbusMonitor.ViewModel
     {
         private readonly Command writeRegisterCommand;
         private bool canWriteRegister;
-        private CellData selectedCell;
+        private CellData selectedCell;        
         public List<CellData> Cells { get; set; }        
-        public ModbusRTUASCII ModbusRTU { get; set; }        
+        public ModbusRTUASCII ModbusRTU { get; set; }
+        public DeviceClass CurrentDevice { get; set; }
 
         public ControlDeviceView(params object[] objects)
         {
@@ -25,7 +26,8 @@ namespace ModbusMonitor.ViewModel
             foreach (var item in objects)
             {
                 if (item is List<CellData>) Cells = item as List<CellData>;
-                if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;                
+                if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
+                if (item is DeviceClass) CurrentDevice = item as DeviceClass;
             }            
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             PropertyChanged += ControlDeviceView_PropertyChanged;
@@ -38,7 +40,7 @@ namespace ModbusMonitor.ViewModel
         /// Вызов окна записи регистров.
         /// </summary>
         private void WriteRegister()
-        {
+        {           
             WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
         }
@@ -55,14 +57,14 @@ namespace ModbusMonitor.ViewModel
                 if (value != null)
                 {
                     //Запись достуна только для Coil и Holding.
-                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen
-                        && DeviceClass.Link==EnumLink.LinkYes) 
+                    if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen 
+                        && CurrentDevice.LinkDevice== EnumLink.LinkYes) 
                     {
-                        CanWriteRegister = true;
+                        CanWriteRegister = true;                        
                     }
                     else
                     {                        
-                        CanWriteRegister = false;
+                        CanWriteRegister = false;                        
                     }                    
                 }
             }

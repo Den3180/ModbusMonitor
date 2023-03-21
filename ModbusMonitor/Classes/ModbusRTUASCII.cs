@@ -37,7 +37,7 @@ namespace ModbusMonitor.Classes
             AdressSearch = new List<int>();
             SettingPortStart = new SettingPortStart();
         }
-
+        
         public string TextMessage { get; set; } = string.Empty;
         public List<int> AdressSearch { get; set; } //Найденый адрес устройства.
         public static eMode Mode { get; set; }

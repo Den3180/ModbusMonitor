@@ -205,24 +205,46 @@
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>
                         <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}"
-                                   IsEnabled="{Binding TreeViewEnabled}" MinWidth="300">
-                                <TreeView.Resources>
+                                   IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" >
+                                <TreeView.Resources>                                   
+                                    <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
+                                                              ItemsSource="{Binding SubGroups}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Устройство "/>
+                                            <TextBlock Text="{Binding NameCOM}" FontWeight="Bold"/>                            
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                    <DataTemplate DataType="{x:Type src:SubGroupsTree}">
+                                        <UniformGrid Columns="2">
+                                            <UniformGrid.Style >
+                                                <Style TargetType="UniformGrid">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                </Style>
+                                            </UniformGrid.Style>
+                                            <TextBlock Text="{Binding SubHeader}"/>
+                                            <TextBlock Text="{Binding ContentClass}" FontWeight="Bold"/>                                        
+                                        </UniformGrid>
+                                    </DataTemplate>
                                     <Style TargetType="{x:Type TreeViewItem}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type TreeViewItem}">
-
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </TreeView.Resources>
-                            <!--<i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDoubleClick">
-                                    <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>                       
-                            <TreeView.ItemContainerStyle>
+                                        <Setter Property="IsExpanded" Value="True" />
+                                        <!--<Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Foreground" Value="Brown"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Trigger>
+                                        </Style.Triggers>-->
+                                    </Style>                                    
+                                </TreeView.Resources>                                
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <i:Interaction.Behaviors>
+                                    <src:BindableSelectedItemBehavior SelectedItem="{Binding Obj, Mode=TwoWay}" />
+                                </i:Interaction.Behaviors>                            
+                                <!--<TreeView.ItemContainerStyle>
                                 <Style TargetType="{x:Type TreeViewItem}">
                                     <Setter Property="IsExpanded" Value="True" />                                       
                                     </Style>                                 

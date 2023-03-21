@@ -64,11 +64,11 @@ namespace ModbusMonitor.ViewModel
                 bool value = Convert.ToBoolean(Int32.Parse(ValueRegister));
                 ModbusRTU.WriteCoilRegister(slaveID,regAddress,value);
             }
-            if (cellData.Type == "AO")
+            else if (cellData.Type == "AO")
             {
                 int value = Int32.Parse(ValueRegister);
                 ModbusRTU.WriteHoldingRegister(slaveID,regAddress,value);
-            }
+            }            
             window.Close();
         }
 
@@ -77,7 +77,7 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void SelectItemTypeRegister()
         {
-            if (ModbusRTUASCII.Mode==eMode.PortOpen)
+            if (ModbusRTUASCII.Mode==eMode.PortOpen &&(cellData.Type=="AO"||cellData.Type=="DO"))
             {
                 CanWriteRegistry = true;
             }

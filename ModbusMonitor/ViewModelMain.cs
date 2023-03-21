@@ -73,7 +73,7 @@ namespace ModbusMonitor
         private readonly ModbusRTUASCII modbusRTU;
         private readonly DispatcherTimer timerPoll;
         private GroupsTreeNode treeNode;//Дерево устройств.
-        public ObservableCollection<GroupsTreeNode> treeNodes;
+        public ObservableCollection<GroupsTreeNode> treeNodes;//Источник данных для дерева.
         public static List<DeviceClass> listDevices;
 
         public ViewModelMain()
@@ -194,9 +194,9 @@ namespace ModbusMonitor
             countReqTot = 0;
             NumberRequest = "0";
             CorrectRequest = "0";
-
+            device.LinkDevice = EnumLink.LinkNo;
             if(treeNode is not null)
-            treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tОтключено";
+            treeNode.SubGroups[3].ContentClass = "Отключено";
         }
 
         /// <summary>
@@ -211,14 +211,14 @@ namespace ModbusMonitor
                 CanRequest = true;
                 CanWriteRegister = true;
                 CanDisconnection = true;
-                DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
-                device.LinkDevice=EnumLink.LinkYes;
-                treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tПодключено";
+               // DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
+                device.LinkDevice=EnumLink.LinkYes;                
+                treeNode.SubGroups[3].ContentClass = "Подключено";
                 TreeViewEnabled = false;
             }
             else
             {
-                treeNode.SubGroups[3].ContentClass = "Статус:\t\t\tОтключено";
+                treeNode.SubGroups[3].ContentClass = "Отключено";
                 CanConnection = true;
                 CanDisconnection = false;
             }
@@ -234,7 +234,7 @@ namespace ModbusMonitor
             //Если не нажата кнопка отмены.
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
             {                
-                treeNodes?.Clear();//Очистка дерева перед новым заполнением. Нужно ли?               
+                //treeNodes?.Clear();//Очистка дерева перед новым заполнением. Нужно ли?               
                     foreach (var ports in ModbusRTUASCII.PortsEnabled)
                     {
                         ModbusRTUASCII.SettingPortStart.PortType = ports;
@@ -262,11 +262,11 @@ namespace ModbusMonitor
         {
             treeNode = new GroupsTreeNode();//Архитектура дерева.                    
             treeNode.NameCOM = $"{treeNodes.Count + 1}";
-            treeNode.SubGroups.Add(new SubGroupsTree("Порт:\t" + ModbusRTUASCII.SettingPortStart.PortType));
-            treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства:\t" + device.DeviceAdress_DC.ToString()));
-            treeNode.SubGroups.Add(new SubGroupsTree("Имя устройства:\t\t" + device.DeviceName_DC));
+            treeNode.SubGroups.Add(new SubGroupsTree("Порт: " ,ModbusRTUASCII.SettingPortStart.PortType));
+            treeNode.SubGroups.Add(new SubGroupsTree("Адрес устройства: ",device.DeviceAdress_DC.ToString()));
+            treeNode.SubGroups.Add(new SubGroupsTree("Имя устройства: ",device.DeviceName_DC));
             treeNode.SubGroups.Add(new SubGroupsTree());
-            treeNodes.Add(treeNode);
+            treeNodes.Add(treeNode);//Добавление в коллекцию источника данных дерева.
             CanConnection = true;
         }
 
@@ -555,8 +555,10 @@ namespace ModbusMonitor
             listDevices.Add(device);//После загрузки карты заносим устройство
                                     //в список устройств на этой линии.
             Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.           
-            Usercontrol = new UserControlDevices(Cells, modbusRTU);//Привязано к свойству Content основного окна.
-            if (device.LinkDevice == EnumLink.LinkYes && DeviceAddress == device.DeviceAdress_DC)//Если устройство подключено.
+            //Привязано к свойству Content основного окна.
+            Usercontrol = new UserControlDevices(Cells, modbusRTU,device);            
+            //Если устройство подключено.
+            if (device.LinkDevice == EnumLink.LinkYes && DeviceAddress == device.DeviceAdress_DC)
             {
                 Disconnection();  //Отключение подключения.          
             }
@@ -577,7 +579,10 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
             FillNodesTree(device);//Заполнение дерева без подключения.           
-            //Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));            
+            if (ModbusRTUASCII.PortsEnabled.Count == 0)
+            {
+                Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));            
+            }
         }
 
         /// <summary>
@@ -634,7 +639,10 @@ namespace ModbusMonitor
         public bool CanWriteRegister
         {
             get => canWriteRegister;
-            set => SetOptions(nameof(CanWriteRegister), ref canWriteRegister, value);
+            set
+            {                
+                SetOptions(nameof(CanWriteRegister), ref canWriteRegister, value);                
+            }
         }
         /// <summary>
         /// Доступность опроса порта.
@@ -720,7 +728,7 @@ namespace ModbusMonitor
             get => userControl;
             set
             {
-                SetOptions<UserControlDevices>(nameof(Usercontrol), ref userControl, value);
+                SetOptions(nameof(Usercontrol), ref userControl, value);
             }
         }
         /// <summary>
@@ -863,6 +871,18 @@ namespace ModbusMonitor
         private void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
+        }
+
+
+        private object obj;
+        public object Obj
+        {
+            get => obj;
+            set {
+                var val = value;
+                  SetOptions(nameof(Obj), ref obj, value);
+            
+            }
         }
     }
 }

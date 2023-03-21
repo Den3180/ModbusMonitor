@@ -22,11 +22,13 @@ namespace ModbusMonitor.Classes
     public class SubGroupsTree : INotifyPropertyChanged
     {
         private string content = string.Empty;
-        public SubGroupsTree(string text = "Статус:\t\t\tОтключено")
+        public SubGroupsTree(string subHeader="Статус: ", string text = "Отключено")
         {
+            SubHeader = subHeader;
             ContentClass = text;
         }
 
+        public string SubHeader { get; set; } = string.Empty;
         public string ContentClass
         {
             get => content;
