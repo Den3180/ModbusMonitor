@@ -527,7 +527,6 @@ namespace ModbusMonitor
                 ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
                 ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
                 ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-                //FillNodesTree(device);//Заполнение дерева без подключения.
                 foreach(var elem in treeNodes)
                 {
                     if(item is GroupsTreeNode)//Если выбран верхний узел.
