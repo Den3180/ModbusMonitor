@@ -193,62 +193,59 @@
                     <RowDefinition Height="140"/>
                 </Grid.RowDefinitions>
                 <!--Подключения-->
-                <GroupBox Header="Подключения" Grid.Row="0" Margin="2">
+                <GroupBox Header="Подключения" Grid.Row="0" Margin="2" Background="White">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <UniformGrid Grid.Row="0" Columns="3">
                             <Button Command="{Binding CreateConnectCommand}" Content="Создать" Margin="2"/>
                             <Button Command="{Binding ConnectionCommand}" Content="Подключение" Margin="2"/>
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
-                        </UniformGrid>
-                        <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}"
+                        </UniformGrid>                                                           
+                               <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}"
                                    IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" 
                                   MaxWidth="300" 
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="White" >
                                 <TreeView.Resources>                                   
                                     <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
                                                               ItemsSource="{Binding SubGroups}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <!--<TextBlock Text="Устройство "/>-->
-                                            <!--<TextBlock Text="{Binding NameCOM}" FontWeight="Bold"/>-->
+                                        <StackPanel Orientation="Horizontal">                                           
                                             <TextBlock>
                                                 <Run Text="Устройство"/>
                                                 <Run FontWeight="Bold" Text="{Binding NameCOM}"/>
+                                                <Run Text="---"/>
+                                                <Run FontWeight="Bold" Text="{Binding State}"/>
                                             </TextBlock>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
-                                    <DataTemplate DataType="{x:Type src:SubGroupsTree}">
-                                        <UniformGrid Columns="2">
-                                            <UniformGrid.Style >
-                                                <Style TargetType="UniformGrid">
-                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                </Style>
-                                            </UniformGrid.Style>
-                                            <!--<TextBlock Text="{Binding SubHeader}"/>
-                                            <TextBlock Text="{Binding ContentClass}" FontWeight="Bold"/>-->
-                                            <TextBlock>
-                                                <Run Text="{Binding SubHeader}"/>
-                                                <Run Text="{Binding ContentClass}" FontWeight="Bold"/>
-                                            </TextBlock>
-                                        </UniformGrid>
+                                    <DataTemplate DataType="{x:Type src:SubGroupsTree}">                                        
+                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <Run Text="{Binding SubHeaderPort}"/>                                                
+                                                <Run Text="{Binding ContentPort}" FontWeight="Bold"/>
+                                                <LineBreak/>
+                                                <Run Text="{Binding SubHeaderAddress}"/>                                                
+                                                <Run Text="{Binding ContentAddress}" FontWeight="Bold"/>
+                                                <LineBreak/>
+                                                <Run Text="{Binding SubHeaderName}"/>
+                                                <Run Text="{Binding ContentName}" FontWeight="Bold"/>                                                
+                                            </TextBlock>                                        
                                     </DataTemplate>
                                     <Style TargetType="{x:Type TreeViewItem}">
                                         <Setter Property="IsExpanded" Value="True" />                                       
                                     </Style>                                    
-                                </TreeView.Resources>                                
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDoubleClick">
-                                        <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
+                                </TreeView.Resources>                                                                   
                                 <i:Interaction.Behaviors>
-                                    <src:BindableSelectedItemBehavior SelectedItem="{Binding Obj, Mode=TwoWay}" />
-                                </i:Interaction.Behaviors>                        
+                                    <src:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItemTree, Mode=TwoWay}" />
+                                </i:Interaction.Behaviors>                               
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                    <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>                              
                         </TreeView>
+                                                 
                     </Grid>
                 </GroupBox>
                 <!--Добавление регистров-->
