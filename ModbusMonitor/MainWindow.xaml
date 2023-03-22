@@ -204,7 +204,7 @@
                             <Button Command="{Binding ConnectionCommand}" Content="Подключение" Margin="2"/>
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>                                                           
-                               <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}"
+                               <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" 
                                    IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" 
                                   MaxWidth="300" 
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="White" >
@@ -235,7 +235,7 @@
                                     <Style TargetType="{x:Type TreeViewItem}">
                                         <Setter Property="IsExpanded" Value="True" />                                       
                                     </Style>                                    
-                                </TreeView.Resources>                                                                   
+                                </TreeView.Resources>                                  
                                 <i:Interaction.Behaviors>
                                     <src:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItemTree, Mode=TwoWay}" />
                                 </i:Interaction.Behaviors>                               

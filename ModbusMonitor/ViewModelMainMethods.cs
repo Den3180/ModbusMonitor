@@ -87,11 +87,13 @@ namespace ModbusMonitor
                 // DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 device.LinkDevice = EnumLink.LinkYes;
                 treeNode.State = "Подключено";
+                //_ = SelectedItemTree == null ? treeNode.State = "Подключено" : ((GroupsTreeNode)SelectedItemTree).State = "Подключено";
                 TreeViewEnabled = false;
             }
             else
             {
                 treeNode.State = "Отключено";
+                //_ = SelectedItemTree == null ? treeNode.State = "Отключено" : ((GroupsTreeNode)SelectedItemTree).State = "Отключено";
                 CanConnection = true;
                 CanDisconnection = false;
             }
@@ -137,8 +139,8 @@ namespace ModbusMonitor
             treeNode.NameCOM = $"{treeNodes.Count + 1}";
             treeNode.SubGroups.Add(new SubGroupsTree(ModbusRTUASCII.SettingPortStart.PortType,
                 device.DeviceAdress_DC.ToString(), device.DeviceName_DC));
+            CanConnection = true;            
             treeNodes.Add(treeNode);//Добавление в коллекцию источника данных дерева.
-            CanConnection = true;
         }
 
         /// <summary>
@@ -524,7 +526,7 @@ namespace ModbusMonitor
                 ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
                 ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
                 ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-                FillNodesTree(device);//Заполнение дерева без подключения.           
+                //FillNodesTree(device);//Заполнение дерева без подключения.           
                 if (ModbusRTUASCII.PortsEnabled.Count == 0)
                 {
                     Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
