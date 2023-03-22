@@ -478,6 +478,7 @@ namespace ModbusMonitor
             }
             App.Current.MainWindow.Close();
         }
+
         /// <summary>
         /// Выбор карты для выбранного устройства дерева.
         /// </summary>
@@ -526,13 +527,33 @@ namespace ModbusMonitor
                 ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
                 ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
                 ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-                //FillNodesTree(device);//Заполнение дерева без подключения.           
+                //FillNodesTree(device);//Заполнение дерева без подключения.
+                foreach(var elem in treeNodes)
+                {
+                    if(item is GroupsTreeNode)//Если выбран верхний узел.
+                    {
+                        if((item as GroupsTreeNode).SubGroups.First().SubHeaderName == elem.SubGroups.First().SubHeaderName)
+                        {
+                            treeNode = elem;
+                            break;
+                        }
+                    }
+                    else if(item is SubGroupsTree)//Выбран вложенный узел дерева.
+                    {
+                        if((item as SubGroupsTree).SubHeaderName== elem.SubGroups.First().SubHeaderName)
+                        {
+                           treeNode = elem;
+                           break;
+                        }
+                    }
+                }
                 if (ModbusRTUASCII.PortsEnabled.Count == 0)
                 {
                     Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
                 }
             }
         }
+
         /// <summary>
         /// Обработчик таймера.
         /// </summary>
