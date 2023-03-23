@@ -207,16 +207,18 @@
                                <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" 
                                    IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" 
                                   MaxWidth="300" 
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="White" >
-                                <TreeView.Resources>                                   
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                   BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
+                                <TreeView.Resources>                                
                                     <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
-                                                              ItemsSource="{Binding SubGroups}">
-                                        <StackPanel Orientation="Horizontal">                                           
+                                                              ItemsSource="{Binding SubGroups}">                                        
+                                        <StackPanel Orientation="Horizontal">
                                             <TextBlock>
                                                 <Run Text="Устройство"/>
                                                 <Run FontWeight="Bold" Text="{Binding NameCOM}"/>
                                                 <Run Text="---"/>
-                                                <Run FontWeight="Bold" Text="{Binding State}"/>
+                                                <Run FontWeight="Bold" Text="{Binding State}"                                                      
+                                                 Foreground="{Binding ColorTextTreeConnect}"/>
                                             </TextBlock>
                                         </StackPanel>
                                     </HierarchicalDataTemplate>

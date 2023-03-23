@@ -1,30 +1,18 @@
 ﻿using ModbusMonitor.Classes;
 using ModbusMonitor.Controls;
-using ModbusMonitor.Windows;
-using ModbusMonitor.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows;
 using System.Windows.Threading;
-using System.Reflection;
 using System.Collections.ObjectModel;
-using System.Windows.Media;
 
 namespace ModbusMonitor
 {
     public partial class ViewModelMain : INotifyPropertyChanged
     {
         private readonly DispatcherTimer timerPoll;
+
         public ViewModelMain()
         {
             exitCommand = new Command(ExitApp);
@@ -51,7 +39,7 @@ namespace ModbusMonitor
             disconnectionCommand = new Command(Disconnection, () => canDisconnection);
             searchAddressCommand = new Command(SearchAddress);
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
-
+           
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
             listMaps = new List<(string, string)>();
@@ -66,9 +54,6 @@ namespace ModbusMonitor
             timerPoll.Tick += TimerSec_Tick;
             CheckStartParam();
             Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart));
-        }            
-
-      
-        
+        }        
     }
 }

@@ -27,6 +27,6 @@ namespace ModbusMonitor.Controls
         {
             InitializeComponent();
             DataContext = new ControlDeviceView(objects);
-        }
+        }        
     }
 }

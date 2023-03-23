@@ -34,12 +34,22 @@ namespace ModbusMonitor
         private string correctRequest = "0"; //Корректные запросы.
         private string numberRequest = "0";  //Общее количество запросов.
         private object selectedItemTree;
+        private Brush colorTextTreeConnect = Brushes.Black;
         private UserControlDevices userControl;
 
         public ObservableCollection<GroupsTreeNode> treeNodes;//Источник данных для дерева.
         public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева. 
 
-        #region[Свойства-привязки]        
+        #region[Свойства-привязки]
+        /// <summary>
+        /// Привязка цвета к описанию статуса подключения в дереве.
+        /// </summary>
+        public Brush ColorTextTreeConnect
+        {
+            get => colorTextTreeConnect;
+            set => SetOptions(nameof(ColorTextTreeConnect), ref colorTextTreeConnect, value);
+        }
+
         /// <summary>
         /// Привязка к выбранным элементам дерева.
         /// </summary>

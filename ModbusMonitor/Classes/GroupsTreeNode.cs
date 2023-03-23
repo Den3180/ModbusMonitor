@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ModbusMonitor.Classes
 {
@@ -35,6 +36,12 @@ namespace ModbusMonitor.Classes
             }
         }
 
+        private Brush colorTextTreeConnect = Brushes.Red;
+        public Brush ColorTextTreeConnect
+        {
+            get => colorTextTreeConnect;
+            set => SetOptions(nameof(ColorTextTreeConnect), ref colorTextTreeConnect, value);
+        }
 
         private void SetOptions<T>(string Property, ref T variable, T value)
         {

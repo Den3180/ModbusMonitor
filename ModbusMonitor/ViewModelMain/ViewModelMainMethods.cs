@@ -79,7 +79,12 @@ namespace ModbusMonitor
             CorrectRequest = "0";
             device.LinkDevice = EnumLink.LinkNo;
             if (treeNode is not null)
+            {
                 treeNode.State = "Отключено";
+                treeNode.ColorTextTreeConnect = Brushes.Red;
+                //ColorTextTreeConnect = Brushes.Black;
+            }
+
         }
 
         /// <summary>
@@ -97,11 +102,14 @@ namespace ModbusMonitor
                 // DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 device.LinkDevice = EnumLink.LinkYes;
                 treeNode.State = "Подключено";
+                treeNode.ColorTextTreeConnect = Brushes.Green;
                 TreeViewEnabled = false;
+                //ColorTextTreeConnect = Brushes.Red;
             }
             else
             {
                 treeNode.State = "Отключено";
+                treeNode.ColorTextTreeConnect = Brushes.Red;
                 CanConnection = true;
                 CanDisconnection = false;
             }
@@ -124,6 +132,8 @@ namespace ModbusMonitor
                     if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))
                     {                       
                         Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU,device);
+                        CanConnection = false;
+                        return;
                     }
                 }
             }
@@ -225,8 +235,8 @@ namespace ModbusMonitor
         /// Цвета для типов.
         /// </summary>
         private void EditColorType()
-        {
-
+        {           
+            
         }
 
         /// <summary>
@@ -505,6 +515,7 @@ namespace ModbusMonitor
             {
                 timerPoll.Stop();
             }
+            modbusRTU.PortClose();
             App.Current.MainWindow.Close();
         }
 
@@ -535,6 +546,7 @@ namespace ModbusMonitor
             }
             if (!string.IsNullOrEmpty(filePath))
             {
+                GC.Collect();
                 device = DeviceClass.LoadMapReg(filePath);
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);

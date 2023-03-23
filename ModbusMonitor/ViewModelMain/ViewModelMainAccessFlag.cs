@@ -31,7 +31,7 @@ namespace ModbusMonitor
         private bool canOpenLog;
         private bool canRequest;
         private bool canDisablePoll;
-        private bool treeViewEnabled;
+        private bool treeViewEnabled;        
 
         #region [Флаги доступности]
 
