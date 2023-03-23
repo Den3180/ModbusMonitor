@@ -24,6 +24,21 @@ namespace ModbusMonitor
 {
     public partial class ViewModelMain : INotifyPropertyChanged
     {
+        private int numInOrder;//Номера регистров по порядку не зависимо от типа.
+        private int regAddress;
+        private int deviceAddress;//Адрес устройства в области "Добавления регистров".
+        private string deviceName = "нет данных";
+        private string dataFormat = "нет данных";
+        private string regName = "нет данных";
+        private string regValue = "нет данных";
+        private string correctRequest = "0"; //Корректные запросы.
+        private string numberRequest = "0";  //Общее количество запросов.
+        private object selectedItemTree;
+        private UserControlDevices userControl;
+
+        public ObservableCollection<GroupsTreeNode> treeNodes;//Источник данных для дерева.
+        public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева. 
+
         #region[Свойства-привязки]        
         /// <summary>
         /// Привязка к выбранным элементам дерева.
@@ -150,6 +165,69 @@ namespace ModbusMonitor
             }
         }
         #endregion
+
+        /// <summary>
+        /// Изменение доступности команд.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ViewModelMain_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == null)
+            {
+                return;
+            }
+            if (e.PropertyName.Equals(nameof(CanDisablePoll)))
+            {
+                disablePollCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanOpenLog)))
+            {
+                openLogCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanCreateConnect)))
+            {
+                createConnectCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanConnection)))
+            {
+                connectionCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanDisconnection)))
+            {
+                disconnectionCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanRequest)))
+            {
+                listenPortCommand.RaiseCanExecuteChanged();
+                sendRequestCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanWriteRegister)))
+            {
+                writeRegisterCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// Настройка изменяющихся свойств.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Property"></param>
+        /// <param name="variable"></param>
+        /// <param name="value"></param>
+        private void SetOptions<T>(string Property, ref T variable, T value)
+        {
+            if (variable != null && !variable.Equals(value))
+            {
+                variable = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(Property));
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
+        }
     }
 }
 

@@ -24,6 +24,16 @@ namespace ModbusMonitor
 {
     public partial class ViewModelMain : INotifyPropertyChanged
     {
+        private bool answerRequest = false;//Флаг завершения опроса.        
+        private int countReqTot = 0; //Общее количество запросов.
+        private int countReqgood = 0;//Количество корректных запросов.       
+        private DeviceClass device;
+        private readonly ModbusRTUASCII modbusRTU;
+        private GroupsTreeNode treeNode;//Дерево устройств.
+        public static List<DeviceClass> listDevices;
+        private List<(string, string)> listMaps;//Хранение загруженных карт.
+        public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
+
         #region[Обработчики комманд]
         /// <summary>
         /// Обработчик команнды "Отключить опрос".
@@ -87,13 +97,11 @@ namespace ModbusMonitor
                 // DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 device.LinkDevice = EnumLink.LinkYes;
                 treeNode.State = "Подключено";
-                //_ = SelectedItemTree == null ? treeNode.State = "Подключено" : ((GroupsTreeNode)SelectedItemTree).State = "Подключено";
                 TreeViewEnabled = false;
             }
             else
             {
                 treeNode.State = "Отключено";
-                //_ = SelectedItemTree == null ? treeNode.State = "Отключено" : ((GroupsTreeNode)SelectedItemTree).State = "Отключено";
                 CanConnection = true;
                 CanDisconnection = false;
             }
@@ -108,12 +116,15 @@ namespace ModbusMonitor
             connectSetting.ShowDialog();//Открытие окна создания соединения.
             //Если не нажата кнопка отмены.
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
-            {
-                //treeNodes?.Clear();//Очистка дерева перед новым заполнением. Нужно ли?               
+            {                             
                 foreach (var ports in ModbusRTUASCII.PortsEnabled)
                 {
                     ModbusRTUASCII.SettingPortStart.PortType = ports;
                     FillNodesTree(device);
+                    if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))
+                    {                       
+                        Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU,device);
+                    }
                 }
             }
             if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
@@ -129,6 +140,24 @@ namespace ModbusMonitor
                 }
             }
         }
+        /// <summary>
+        /// Поиск совпадений имени создаваемого устройства и имени в реестре карт. 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="elem"></param>
+        /// <returns></returns>
+        private bool SearchForMatchesNameDevice(List<(string,string)>list,string elem)
+        {
+            foreach (var item in list)
+            {
+                if (item.Item2 == elem)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Заполнение узлов дерева.
         /// </summary>
@@ -487,13 +516,15 @@ namespace ModbusMonitor
         {
             SubGroupsTree itemSelected;
             string filePath = string.Empty;
+            CanConnection = true;
+            //Определяем какой вид узла дерева выбран.
             if (item is GroupsTreeNode)
             {
-                itemSelected = (item as GroupsTreeNode).SubGroups.First();
+                itemSelected = (item as GroupsTreeNode).SubGroups.First();//Старший узел.
             }
             else
             {
-                itemSelected = item as SubGroupsTree;
+                itemSelected = item as SubGroupsTree;//Младший узел.
             }
             foreach (var listItem in listMaps)//Ищем по имени нужный адрес карты.
             {
@@ -531,7 +562,8 @@ namespace ModbusMonitor
                 {
                     if(item is GroupsTreeNode)//Если выбран верхний узел.
                     {
-                        if((item as GroupsTreeNode).SubGroups.First().SubHeaderName == elem.SubGroups.First().SubHeaderName)
+                        var temp = item as GroupsTreeNode;
+                        if (elem.Equals(temp))
                         {
                             treeNode = elem;
                             break;
@@ -539,7 +571,8 @@ namespace ModbusMonitor
                     }
                     else if(item is SubGroupsTree)//Выбран вложенный узел дерева.
                     {
-                        if((item as SubGroupsTree).SubHeaderName== elem.SubGroups.First().SubHeaderName)
+                        var temp = item as SubGroupsTree;
+                        if (elem.SubGroups.Contains(temp))
                         {
                            treeNode = elem;
                            break;
@@ -550,6 +583,11 @@ namespace ModbusMonitor
                 {
                     Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
                 }
+            }
+            else
+            {
+                Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                CanConnection = false;//При пустой карте не подключить.
             }
         }
 

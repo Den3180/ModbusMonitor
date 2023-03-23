@@ -24,6 +24,15 @@ namespace ModbusMonitor
 {
     public partial class ViewModelMain : INotifyPropertyChanged
     {
+        private bool canWriteRegister;
+        private bool canConnection;
+        private bool canCreateConnect;
+        private bool canDisconnection;
+        private bool canOpenLog;
+        private bool canRequest;
+        private bool canDisablePoll;
+        private bool treeViewEnabled;
+
         #region [Флаги доступности]
 
         /// <summary>

@@ -7,7 +7,7 @@
         xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:ConnectViewModel}"
         mc:Ignorable="d"
-        Title="Настройка подключения" Height="auto" Width="500" SizeToContent="Height">
+        Title="Новое подключение" Height="auto" Width="500" SizeToContent="Height">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -19,54 +19,53 @@
             <StackPanel Orientation="Vertical">
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="239"/>
                         <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Устройство:" HorizontalAlignment="Left" 
-                           Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding DeviceName_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                    <Label Grid.Column="0" Content="Устройство:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding DeviceName_VM}" VerticalAlignment="Center"/>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="239"/>                        
                         <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.4*"/>
+                        <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0" Width="38"/>
                     <ComboBox Grid.Column="1" ItemsSource="{Binding SourceTypeConnect}" 
                               Text="{Binding HeaderCombobox}"
                               SelectedItem="{Binding SelectedItem}"                              
-                              VerticalAlignment="Center" 
-                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
                               IsReadOnly="True"  
-                              IsEditable="False" Margin="40,0,0,0"/>
-                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}">
-                        <Button.Resources>                            
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="20,0,20,0"/>
-                            <Setter Property="BorderBrush" Value="#FF292C31"/>
-                            <Setter Property="BorderThickness" Value="2"/>
-                            <Setter Property="Foreground" Value="Black"/>
+                              IsEditable="False" Height="26"/>
+                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}" Margin="20,0,20,0">
+                        <Button.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="20,0,20,0"/>
+                                <Setter Property="BorderBrush" Value="#FF292C31"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="Foreground" Value="Black"/>
                                 <Setter Property="Background">
                                     <Setter.Value>
                                         <ImageBrush ImageSource="/Resources/Refresh.JPG" Stretch="UniformToFill"/>
                                     </Setter.Value>
                                 </Setter>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}" 
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" 
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness= "{TemplateBinding BorderThickness}"                                                
-                                                CornerRadius="5">                                             
+                                                CornerRadius="5">
                                                 <ContentPresenter 
                                             Content="{TemplateBinding Content}"
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             Margin="{TemplateBinding Margin}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>                                                
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Background">
                                                         <Setter.Value>
                                                             <ImageBrush ImageSource="/Resources/Refresh1.JPG"
@@ -74,38 +73,43 @@
                                                         </Setter.Value>
                                                     </Setter>
                                                 </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                        </Button.Resources>                        
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Resources>
                         <Button.ToolTip>
                             <ToolTip Content="Обновить список портов!"/>
-                        </Button.ToolTip>                       
+                        </Button.ToolTip>
                     </Button>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="239*"/>
-                        <ColumnDefinition Width="60*"/>
-                        <ColumnDefinition Width="179*"/>
+                        <ColumnDefinition Width="239"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="IP-адрес/Хост:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                    <Label Grid.Column="0"  
+                           HorizontalAlignment="Left" Margin="80,0,0,0" >
+                        <TextBlock Text="{Binding HeaderAddress}" TextWrapping="WrapWithOverflow"/>
+                    </Label>
                     <TextBox Grid.Column="1" 
                              Text="{Binding AdressIP_VM}" 
                              IsEnabled="{Binding CanTextIP}" 
-                             VerticalAlignment="Center" Margin="0,0,80,0" Grid.ColumnSpan="2"/>
+                             VerticalAlignment="Center"/>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="239"/>
                         <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="COM-порт:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" 
+                    <Label Grid.Column="0" Content="COM-порт:" HorizontalAlignment="Left" 
+                           Margin="80,0,0,0"/>
+                    <TextBox Grid.Column="1" HorizontalAlignment="Stretch"
                              Text="{Binding Port_VM}" 
-                             VerticalAlignment="Center" Margin="0,0,80,0"/>
+                             VerticalAlignment="Center"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
@@ -147,8 +151,8 @@
                 </UniformGrid>
             </StackPanel>
         </GroupBox>
-        <UniformGrid Grid.Row="3" Rows="0" Columns="3" Margin="10">
-            <Button Grid.Column="0" Command="{Binding AddConnectCommand}" Content="Добавить и Подключить" HorizontalAlignment="Right"/>
+        <UniformGrid Grid.Row="3" Rows="0" Columns="3" Margin="10" >
+            <Button Grid.Column="0" Command="{Binding AddConnectCommand}" Content="Добавить и Подключить" Margin="0,0,-22,0" />
             <Button Grid.Column="1" Command="{Binding AddCommand}" Content="Добавить" HorizontalAlignment="Right" Width="100"/>
             <Button Grid.Column="2" Command="{Binding CanselCommand}" Content="Отмена" HorizontalAlignment="Center" Width="100"/>
         </UniformGrid>

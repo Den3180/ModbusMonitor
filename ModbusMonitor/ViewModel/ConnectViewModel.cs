@@ -28,6 +28,7 @@ namespace ModbusMonitor.ViewModel
         private string port_VM = "нет доступных портов";
         private string selectedItem = string.Empty;
         private string headerCombobox = "--выберите подключение--";
+        private string headerAddress=string.Empty;
         private int speedPort_VM;
         private int wordLength_VM;
         private int timeoutRead_VM;
@@ -45,6 +46,13 @@ namespace ModbusMonitor.ViewModel
         private readonly Command canselCommand;
         private readonly Command refreshPortCommand;
         private readonly ModbusRTUASCII modbusMaster;
+        private readonly List<string> typeOfAddress = new List<string>() 
+        {
+            "Адрес",
+            "Адрес(Modbus RTU/ASCII)",
+            "IP-адрес/Хост(Modbus IP)"
+        };
+        
 
 
         public ConnectViewModel(DeviceClass device,ModbusRTUASCII modbus, ConnectSettingWindow window)
@@ -53,13 +61,13 @@ namespace ModbusMonitor.ViewModel
             this.window = window;
             modbusMaster = modbus;
             DeviceName_VM = device.DeviceName_DC;
+            HeaderAddress = typeOfAddress[0];
             SetSourceConnect();
             addConnectCommand = new Command(AddConnect, () => CanAddConnect);
             addCommand = new Command(Add, () => CanAdd);
             canselCommand = new Command(Cansel);
             refreshPortCommand = new Command(RefreshPort);
-            PropertyChanged += ConnectViewModel_PropertyChanged;
-            //RefreshPort();
+            PropertyChanged += ConnectViewModel_PropertyChanged;            
         }
 
         public IEnumerable<string> SourceTypeConnect => sourceTypeConnect;
@@ -137,7 +145,10 @@ namespace ModbusMonitor.ViewModel
                 CanTextIP = false;
                 CanAddConnect = true;
                 CanAdd = true;
+                CanTextIP = true;
+                HeaderAddress = typeOfAddress[1];
                 Port_VM = conn;
+                AdressIP_VM = device.DeviceAdress_DC.ToString();
                 device.ConnectFromMap.PortType = Port_VM;
                 sourceTypeConnect.Remove(HeaderCombobox);
                 if (!ModbusRTUASCII.PortsEnabled.Contains(SelectedItem))
@@ -147,6 +158,7 @@ namespace ModbusMonitor.ViewModel
             }
             else if (new Regex(connectPatternIP).IsMatch(conn))
             {
+                HeaderAddress = typeOfAddress[2];
                 CanTextIP = true;//Включение строки с IP адресом на форме.
             }
         }
@@ -162,6 +174,9 @@ namespace ModbusMonitor.ViewModel
             device.ConnectFromMap.LenghtWord = WordLength_VM;
             device.ConnectFromMap.TimeOutRead = TimeoutRead_VM;
             device.ConnectFromMap.TimeOutWrite = TimeoutWrite_VM;
+
+            device.DeviceName_DC = DeviceName_VM;
+            device.DeviceAdress_DC = Int32.Parse(AdressIP_VM);
         }
 
         /// <summary>
@@ -193,6 +208,19 @@ namespace ModbusMonitor.ViewModel
                 SetOptions(nameof(HeaderCombobox), ref headerCombobox, value);
             }
         }
+
+        /// <summary>
+        /// Метка адреса.
+        /// </summary>
+        public string HeaderAddress
+        {
+            get => headerAddress;
+            set
+            {
+                SetOptions(nameof(HeaderAddress), ref headerAddress, value);
+            }
+        }
+
         /// <summary>
         /// Выбранный элемент combobox.
         /// </summary>
