@@ -33,7 +33,7 @@ namespace ModbusMonitor
         private string regValue = "нет данных";
         private string correctRequest = "0"; //Корректные запросы.
         private string numberRequest = "0";  //Общее количество запросов.
-        private object selectedItemTree;
+        private object selectedItemTree=new object();
         private Brush colorTextTreeConnect = Brushes.Black;
         private UserControlDevices userControl;
 
@@ -227,6 +227,11 @@ namespace ModbusMonitor
         /// <param name="value"></param>
         private void SetOptions<T>(string Property, ref T variable, T value)
         {
+            if (variable == null)
+            {
+                var t = new object();
+                variable = (T)t;
+            }
             if (variable != null && !variable.Equals(value))
             {
                 variable = value;

@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Xml;
+using System.Security.RightsManagement;
 
 namespace ModbusMonitor
 {
@@ -49,6 +50,8 @@ namespace ModbusMonitor
         private readonly Command writeRegisterCommand;//Записать регистр.
         private readonly Command searchAddressCommand;
         private readonly Command disablePollCommand;
+        private readonly Command clearTreeSingleCommand;//Удалить один элемент из дерева.
+        private readonly Command clearTreeAllCommand;
 
         //Комманды.Вкладка "Файл".
         public ICommand LoadMapCommand => loadMapCommand;
@@ -80,6 +83,9 @@ namespace ModbusMonitor
         public ICommand CreateConnectCommand => createConnectCommand;
         public ICommand ConnectionCommand => connectionCommand;
         public ICommand DisconnectionCommand => disconnectionCommand;
-              
+        public ICommand ClearTreeSingleCommand => clearTreeSingleCommand;
+        public ICommand ClearTreeAllCommand => clearTreeAllCommand;
+
+
     }
 }

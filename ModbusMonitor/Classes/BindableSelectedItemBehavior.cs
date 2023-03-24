@@ -54,7 +54,7 @@ namespace ModbusMonitor.Classes
 
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            this.SelectedItem = e.NewValue;
+            this.SelectedItem = e.NewValue;            
         }
     }
 }

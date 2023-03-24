@@ -303,7 +303,7 @@ namespace ModbusMonitor.Classes
                 {
                     serialPort.Close();
                     Mode = eMode.None;
-                    PortsEnabled?.Clear();
+                    //PortsEnabled?.Clear();
                     settingPort.PortType = string.Empty;
                 }
             }

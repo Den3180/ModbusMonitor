@@ -205,10 +205,22 @@
                             <Button Command="{Binding DisconnectionCommand}" Content="Отключение" Margin="2"/>
                         </UniformGrid>                                                           
                                <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" 
-                                   IsEnabled="{Binding TreeViewEnabled}" MinWidth="300" 
-                                  MaxWidth="300" 
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                                   BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
+                                  MinWidth="300" IsEnabled="{Binding TreeViewEnabled}"
+                                  MaxWidth="300"                                   
+                                  BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
+                                <TreeView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Добавить" Command="{Binding CreateConnectCommand}"/>
+                                        <MenuItem Header="Изменить"/>
+                                        <MenuItem Header="Обновить"/>
+                                        <Separator/>
+                                        <MenuItem Header="Подключить" Command="{Binding ConnectionCommand}"/>
+                                        <MenuItem Header="Отключить" Command="{Binding DisconnectionCommand}"/>
+                                        <Separator/>
+                                        <MenuItem Header="Удалить" Command="{Binding ClearTreeSingleCommand}"/>
+                                        <MenuItem Header="Удалить все" Command="{Binding ClearTreeAllCommand}"/>
+                                    </ContextMenu>
+                                </TreeView.ContextMenu>
                                 <TreeView.Resources>                                
                                     <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
                                                               ItemsSource="{Binding SubGroups}">                                        

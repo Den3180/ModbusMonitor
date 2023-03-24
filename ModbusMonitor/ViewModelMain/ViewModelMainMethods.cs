@@ -35,6 +35,52 @@ namespace ModbusMonitor
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
         #region[Обработчики комманд]
+
+        /// <summary>
+        /// Очистка всего дерева.
+        /// </summary>
+        private void ClearTreeAll()
+        {
+            if (treeNodes.Count > 0)
+            {
+                treeNodes.Clear();
+                Disconnection();
+                device = new DeviceClass();
+                Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+            }
+        }
+
+        /// <summary>
+        /// Удаление одного элемента дерева.
+        /// </summary>
+        private void ClearTreeSingle()
+        {
+            if (SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
+            {
+                if (node.State == "Подключено") Disconnection();
+                treeNodes.Remove(node);
+            }
+            else if(SelectedItemTree is SubGroupsTree subNode)//Если выбран вторичный узел.
+            {
+                foreach(var item in treeNodes)//Проходим по списку элементов.
+                {
+                    if (item.SubGroups[0] == subNode)
+                    {
+                        if (item.State == "Подключено") Disconnection();
+                        treeNodes.Remove(item);
+                        break;
+                    }
+                }
+            }
+                if (treeNodes.Count == 0) //Если дерево пустое.
+                {
+                    device = new DeviceClass();
+                    Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                    Disconnection();
+                }
+                
+        }
+        
         /// <summary>
         /// Обработчик команнды "Отключить опрос".
         /// </summary>
@@ -70,19 +116,24 @@ namespace ModbusMonitor
             CanDisconnection = false;
             CanDisablePoll = false;
             CanRequest = false;
-            CanConnection = true;
             CanWriteRegister = false;
             TreeViewEnabled = true;
+            CanCreateConnect = true;
             countReqgood = 0;
             countReqTot = 0;
             NumberRequest = "0";
             CorrectRequest = "0";
             device.LinkDevice = EnumLink.LinkNo;
-            if (treeNode is not null)
+            if (treeNodes.Count>0 && treeNode is not null)
             {
+                CanConnection = true;
                 treeNode.State = "Отключено";
-                treeNode.ColorTextTreeConnect = Brushes.Red;
-                //ColorTextTreeConnect = Brushes.Black;
+                treeNode.ColorTextTreeConnect = Brushes.Red;                
+            }
+            else
+            {
+                CanDisconnection = false;
+                CanConnection = false;
             }
 
         }
@@ -104,6 +155,7 @@ namespace ModbusMonitor
                 treeNode.State = "Подключено";
                 treeNode.ColorTextTreeConnect = Brushes.Green;
                 TreeViewEnabled = false;
+                CanCreateConnect = false;
                 //ColorTextTreeConnect = Brushes.Red;
             }
             else
@@ -150,6 +202,7 @@ namespace ModbusMonitor
                 }
             }
         }
+
         /// <summary>
         /// Поиск совпадений имени создаваемого устройства и имени в реестре карт. 
         /// </summary>
@@ -539,14 +592,14 @@ namespace ModbusMonitor
             }
             foreach (var listItem in listMaps)//Ищем по имени нужный адрес карты.
             {
-                if (listItem.Item2 == itemSelected.ContentName)
+                if (listItem.Item2 == itemSelected?.ContentName)
                 {
                     filePath = listItem.Item1;
                 }
             }
             if (!string.IsNullOrEmpty(filePath))
             {
-                GC.Collect();
+                //GC.Collect();//?
                 device = DeviceClass.LoadMapReg(filePath);
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);

@@ -39,6 +39,8 @@ namespace ModbusMonitor
             disconnectionCommand = new Command(Disconnection, () => canDisconnection);
             searchAddressCommand = new Command(SearchAddress);
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
+            clearTreeSingleCommand = new Command(ClearTreeSingle);
+            clearTreeAllCommand = new Command(ClearTreeAll);
            
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
