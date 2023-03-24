@@ -258,8 +258,7 @@
                                                     <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>                              
-                        </TreeView>
-                                                 
+                        </TreeView>                                                 
                     </Grid>
                 </GroupBox>
                 <!--Добавление регистров-->

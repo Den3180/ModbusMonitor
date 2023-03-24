@@ -41,6 +41,10 @@ namespace ModbusMonitor
         /// </summary>
         private void ClearTreeAll()
         {
+            if (SelectedItemTree == null)
+            {
+                MessageBox.Show("Выберите устройство!");
+            }
             if (treeNodes.Count > 0)
             {
                 treeNodes.Clear();
@@ -48,6 +52,8 @@ namespace ModbusMonitor
                 device = new DeviceClass();
                 Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
             }
+            CanClearTreeAll = false;
+            CanClearTreeSingle = false;
         }
 
         /// <summary>
@@ -55,6 +61,10 @@ namespace ModbusMonitor
         /// </summary>
         private void ClearTreeSingle()
         {
+            if (SelectedItemTree == null)
+            {
+                MessageBox.Show("Выберите устройство!");
+            }
             if (SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
             {
                 if (node.State == "Подключено") Disconnection();
@@ -77,7 +87,9 @@ namespace ModbusMonitor
                     device = new DeviceClass();
                     Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
                     Disconnection();
-                }
+                CanClearTreeAll = false;
+                CanClearTreeSingle = false;
+            }
                 
         }
         
@@ -544,7 +556,8 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
             ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-            FillNodesTree(device);//Заполнение дерева без подключения.           
+            FillNodesTree(device);//Заполнение дерева без подключения.
+            SelectedItemTree = treeNodes[0];
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
                 Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));

@@ -31,9 +31,33 @@ namespace ModbusMonitor
         private bool canOpenLog;
         private bool canRequest;
         private bool canDisablePoll;
-        private bool treeViewEnabled;        
+        private bool treeViewEnabled;
+        private bool canClearTreeAll;
+        private bool canClearTreeSingle;
 
         #region [Флаги доступности]
+        /// <summary>
+        /// Доступность команды Удалить все(Дерево).
+        /// </summary>
+        public bool CanClearTreeAll
+        {
+            get => canClearTreeAll;
+            set
+            {
+                SetOptions(nameof(CanClearTreeAll), ref canClearTreeAll, value);
+            }
+        }
+        /// <summary>
+        /// Доступность команды Удалить(Дерево).
+        /// </summary>
+        public bool CanClearTreeSingle
+        {
+            get => canClearTreeSingle;
+            set
+            {
+                SetOptions(nameof(CanClearTreeSingle), ref canClearTreeSingle, value);
+            }
+        }
 
         /// <summary>
         /// Доступность записи в регистр.
@@ -95,5 +119,52 @@ namespace ModbusMonitor
             set => SetOptions(nameof(CanRequest), ref canRequest, value);
         }
         #endregion
+
+        /// <summary>
+        /// Изменение доступности команд.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ViewModelMain_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == null)
+            {
+                return;
+            }
+            if (e.PropertyName.Equals(nameof(CanDisablePoll)))
+            {
+                disablePollCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanOpenLog)))
+            {
+                openLogCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanCreateConnect)))
+            {
+                createConnectCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanConnection)))
+            {
+                connectionCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanDisconnection)))
+            {
+                disconnectionCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanRequest)))
+            {
+                listenPortCommand.RaiseCanExecuteChanged();
+                sendRequestCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanWriteRegister)))
+            {
+                writeRegisterCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanClearTreeSingle)))
+            {
+                clearTreeSingleCommand.RaiseCanExecuteChanged();
+                clearTreeAllCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 }

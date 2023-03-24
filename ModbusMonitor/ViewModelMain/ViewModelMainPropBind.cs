@@ -59,7 +59,12 @@ namespace ModbusMonitor
             set
             {
                 SetOptions(nameof(SelectedItemTree), ref selectedItemTree, value);
-                SelectMapsForDevice(value);
+                SelectMapsForDevice(value); 
+                if(SelectedItemTree !=null)
+                {
+                    CanClearTreeAll = true;
+                    CanClearTreeSingle = true;
+                }
             }
         }
         /// <summary>
@@ -175,48 +180,6 @@ namespace ModbusMonitor
             }
         }
         #endregion
-
-        /// <summary>
-        /// Изменение доступности команд.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ViewModelMain_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == null)
-            {
-                return;
-            }
-            if (e.PropertyName.Equals(nameof(CanDisablePoll)))
-            {
-                disablePollCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanOpenLog)))
-            {
-                openLogCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanCreateConnect)))
-            {
-                createConnectCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanConnection)))
-            {
-                connectionCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanDisconnection)))
-            {
-                disconnectionCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanRequest)))
-            {
-                listenPortCommand.RaiseCanExecuteChanged();
-                sendRequestCommand.RaiseCanExecuteChanged();
-            }
-            if (e.PropertyName.Equals(nameof(CanWriteRegister)))
-            {
-                writeRegisterCommand.RaiseCanExecuteChanged();
-            }
-        }
 
         /// <summary>
         /// Настройка изменяющихся свойств.
