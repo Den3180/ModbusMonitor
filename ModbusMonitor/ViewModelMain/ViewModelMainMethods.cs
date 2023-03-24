@@ -35,7 +35,25 @@ namespace ModbusMonitor
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
         #region[Обработчики комманд]
-
+        /// <summary>
+        /// Обновить дерево.
+        /// </summary>
+        private void RefreshTree()
+        {
+            if (treeNodes.Count > 0)
+            {
+                var temp = treeNodes;
+                treeNodes.Clear();
+                for(int i = 0; i < temp.Count; i++)
+                {
+                    treeNodes.Add(temp[i]);
+                }
+            }
+            else
+            {
+                treeNodes.Clear();
+            }
+        }
         /// <summary>
         /// Очистка всего дерева.
         /// </summary>
@@ -89,8 +107,7 @@ namespace ModbusMonitor
                     Disconnection();
                 CanClearTreeAll = false;
                 CanClearTreeSingle = false;
-            }
-                
+                }                
         }
         
         /// <summary>

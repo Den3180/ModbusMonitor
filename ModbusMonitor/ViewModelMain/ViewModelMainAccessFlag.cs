@@ -34,8 +34,21 @@ namespace ModbusMonitor
         private bool treeViewEnabled;
         private bool canClearTreeAll;
         private bool canClearTreeSingle;
+        private bool canRefreshTree;
 
         #region [Флаги доступности]
+        /// <summary>
+        /// Доступность команды Удалить все(Дерево).
+        /// </summary>
+        public bool CanRefreshTree
+        {
+            get => canRefreshTree;
+            set
+            {
+                SetOptions(nameof(CanRefreshTree), ref canRefreshTree, value);
+            }
+        }
+
         /// <summary>
         /// Доступность команды Удалить все(Дерево).
         /// </summary>
@@ -164,6 +177,10 @@ namespace ModbusMonitor
             {
                 clearTreeSingleCommand.RaiseCanExecuteChanged();
                 clearTreeAllCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanRefreshTree)))
+            {
+                refreshTreeCommand.RaiseCanExecuteChanged();
             }
         }
     }
