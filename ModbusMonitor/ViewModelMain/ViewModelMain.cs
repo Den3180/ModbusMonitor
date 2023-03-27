@@ -41,7 +41,8 @@ namespace ModbusMonitor
             disablePollCommand = new Command(DisablePoll, () => CanDisablePoll);
             clearTreeSingleCommand = new Command(ClearTreeSingle,()=>CanClearTreeSingle);
             clearTreeAllCommand = new Command(ClearTreeAll,()=>CanClearTreeAll);
-            refreshTreeCommand = new Command(RefreshTree);
+            refreshTreeCommand = new Command(RefreshTree,()=>CanRefreshTree);
+            changeDeviceCommand = new Command(ChangeDevice, () => CanChangeDevice);
             
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();

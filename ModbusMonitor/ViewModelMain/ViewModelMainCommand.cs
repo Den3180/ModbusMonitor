@@ -53,6 +53,7 @@ namespace ModbusMonitor
         private readonly Command clearTreeSingleCommand;//Удалить один элемент из дерева.
         private readonly Command clearTreeAllCommand;//Удалить все дерево.
         private readonly Command refreshTreeCommand; //Обновить все дерево.
+        private readonly Command changeDeviceCommand;//Изменить устройство в дереве.
 
         //Комманды.Вкладка "Файл".
         public ICommand LoadMapCommand => loadMapCommand;
@@ -87,7 +88,6 @@ namespace ModbusMonitor
         public ICommand ClearTreeSingleCommand => clearTreeSingleCommand;
         public ICommand ClearTreeAllCommand => clearTreeAllCommand;
         public ICommand RefreshTreeCommand => refreshTreeCommand;
-
-
+        public ICommand ChangeDeviceCommand => changeDeviceCommand;
     }
 }

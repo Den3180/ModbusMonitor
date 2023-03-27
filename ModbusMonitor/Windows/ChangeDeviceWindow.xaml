@@ -1,0 +1,38 @@
+﻿<Window x:Class="ModbusMonitor.Windows.ChangeDeviceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModbusMonitor.Windows" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:ChangeDeviceViewMod}"
+        mc:Ignorable="d"
+        Title="Изменить устройство" Height="auto" Width="400" MaxWidth="400" ResizeMode="CanMinimize" 
+        WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="Height">
+    <Window.Resources>
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="Gray">
+        <Border Background="Lavender" Margin="2">
+            <GroupBox Header="Устройство">
+                <UniformGrid Rows="5">
+                    <Label Content="Адрес устройства:" HorizontalContentAlignment="Stretch"/>
+                    <TextBox Text="{Binding Address_ChD }" VerticalAlignment="Center" Margin="1"/>
+                    <Label Content="Имя устройства:"/>
+                    <TextBox Text="{Binding Name_ChD}" VerticalAlignment="Center" Margin="1"/>
+                    <UniformGrid Columns="2">
+                        <Button Content="Принять" Command="{Binding CloseChangeCommand}" Margin="5"/>
+                        <Button Content="Отмена" Margin="5" IsCancel="True" IsDefault="True"/>
+                    </UniformGrid>
+                </UniformGrid>
+            </GroupBox>
+        </Border>
+    </Grid>
+</Window>

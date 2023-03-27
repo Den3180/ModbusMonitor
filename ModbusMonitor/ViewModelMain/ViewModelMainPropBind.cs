@@ -64,6 +64,7 @@ namespace ModbusMonitor
                 {
                     CanClearTreeAll = true;
                     CanClearTreeSingle = true;
+                    CanChangeDevice = true;
                 }
             }
         }

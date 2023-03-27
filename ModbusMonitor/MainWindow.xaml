@@ -211,8 +211,8 @@
                                 <TreeView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Добавить" Command="{Binding CreateConnectCommand}"/>
-                                        <MenuItem Header="Изменить"/>
-                                        <MenuItem Header="Обновить"/>
+                                        <MenuItem Header="Изменить" Command="{Binding ChangeDeviceCommand}"/>
+                                        <MenuItem Header="Обновить" Command="{Binding RefreshTreeCommand}"/>
                                         <Separator/>
                                         <MenuItem Header="Подключить" Command="{Binding ConnectionCommand}"/>
                                         <MenuItem Header="Отключить" Command="{Binding DisconnectionCommand}"/>

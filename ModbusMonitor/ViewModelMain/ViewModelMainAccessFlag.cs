@@ -35,8 +35,15 @@ namespace ModbusMonitor
         private bool canClearTreeAll;
         private bool canClearTreeSingle;
         private bool canRefreshTree;
+        private bool canChangeDevice;
 
         #region [Флаги доступности]
+
+        public bool CanChangeDevice
+        {
+            get => canChangeDevice;
+            set=> SetOptions(nameof(CanChangeDevice), ref canChangeDevice, value);
+        }
         /// <summary>
         /// Доступность команды Удалить все(Дерево).
         /// </summary>
@@ -181,6 +188,10 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanRefreshTree)))
             {
                 refreshTreeCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanChangeDevice)))                
+            {
+                changeDeviceCommand.RaiseCanExecuteChanged();
             }
         }
     }

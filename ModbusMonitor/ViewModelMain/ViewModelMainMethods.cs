@@ -35,21 +35,34 @@ namespace ModbusMonitor
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
         #region[Обработчики комманд]
+
+        /// <summary>
+        /// Изменить устройство.
+        /// </summary>
+        private void ChangeDevice()
+        {
+            ChangeDeviceWindow changeDevice = new ChangeDeviceWindow(device);
+            changeDevice.ShowDialog();
+        }
+
         /// <summary>
         /// Обновить дерево.
         /// </summary>
         private void RefreshTree()
         {
-            if (treeNodes.Count > 0)
+            if (treeNodes.Count > 0)//Если в дереве есть элементы.
             {
-                var temp = treeNodes;
+                var temp = new ObservableCollection<GroupsTreeNode>(treeNodes);                
                 treeNodes.Clear();
+                //Занаво отображаем элементы дерева.
                 for(int i = 0; i < temp.Count; i++)
                 {
                     treeNodes.Add(temp[i]);
                 }
+                SelectMapsForDevice(treeNodes[^1]);//Обновление карты после обновления дерева.
+                                                   //Загружается карта для последнего узла дерева.
             }
-            else
+            else //Если узлов в дереве нет - очищаем.
             {
                 treeNodes.Clear();
             }
@@ -70,8 +83,9 @@ namespace ModbusMonitor
                 device = new DeviceClass();
                 Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
             }
-            CanClearTreeAll = false;
-            CanClearTreeSingle = false;
+            CanClearTreeAll = false;//Отключение команды "Обновить".
+            CanClearTreeSingle = false;//Отключение команды "Удалить".
+            CanRefreshTree = false;// отключение команды "Удалить все".
         }
 
         /// <summary>
@@ -85,7 +99,10 @@ namespace ModbusMonitor
             }
             if (SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
             {
-                if (node.State == "Подключено") Disconnection();
+                if (node.State == "Подключено")
+                {
+                    Disconnection();
+                }
                 treeNodes.Remove(node);
             }
             else if(SelectedItemTree is SubGroupsTree subNode)//Если выбран вторичный узел.
@@ -105,8 +122,9 @@ namespace ModbusMonitor
                     device = new DeviceClass();
                     Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
                     Disconnection();
-                CanClearTreeAll = false;
-                CanClearTreeSingle = false;
+                    CanClearTreeAll = false;
+                    CanClearTreeSingle = false;
+                    CanRefreshTree = false;
                 }                
         }
         
@@ -256,11 +274,11 @@ namespace ModbusMonitor
         /// <param name="device"></param>
         private void FillNodesTree(DeviceClass device)
         {
-            treeNode = new GroupsTreeNode();//Архитектура дерева.                    
-            treeNode.NameCOM = $"{treeNodes.Count + 1}";
+            treeNode = new GroupsTreeNode();//Архитектура дерева.Корневой узел.                    
+            treeNode.NameCOM = $"{treeNodes.Count + 1}";//Номер устройства.
             treeNode.SubGroups.Add(new SubGroupsTree(ModbusRTUASCII.SettingPortStart.PortType,
-                device.DeviceAdress_DC.ToString(), device.DeviceName_DC));
-            CanConnection = true;            
+                device.DeviceAdress_DC.ToString(), device.DeviceName_DC));//Добавление подузлов.
+            CanConnection = true;//Включить кнопку "Подключение".
             treeNodes.Add(treeNode);//Добавление в коллекцию источника данных дерева.
         }
 
@@ -574,6 +592,7 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
             FillNodesTree(device);//Заполнение дерева без подключения.
+            CanRefreshTree = true;
             SelectedItemTree = treeNodes[0];
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
