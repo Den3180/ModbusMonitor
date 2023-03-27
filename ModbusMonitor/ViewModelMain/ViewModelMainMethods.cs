@@ -42,8 +42,7 @@ namespace ModbusMonitor
         private void ChangeDevice()
         {
             ChangeDeviceWindow changeDevice = new ChangeDeviceWindow(device);
-            changeDevice.ShowDialog();
-            
+            changeDevice.ShowDialog();            
         }
 
         /// <summary>
