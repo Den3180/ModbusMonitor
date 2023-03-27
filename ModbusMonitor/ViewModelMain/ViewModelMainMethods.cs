@@ -43,6 +43,7 @@ namespace ModbusMonitor
         {
             ChangeDeviceWindow changeDevice = new ChangeDeviceWindow(device);
             changeDevice.ShowDialog();
+            
         }
 
         /// <summary>
@@ -67,6 +68,7 @@ namespace ModbusMonitor
                 treeNodes.Clear();
             }
         }
+
         /// <summary>
         /// Очистка всего дерева.
         /// </summary>
