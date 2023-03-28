@@ -19,6 +19,7 @@ using System.Windows.Threading;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Runtime.CompilerServices;
 
 namespace ModbusMonitor
 {
@@ -42,7 +43,46 @@ namespace ModbusMonitor
         private void ChangeDevice()
         {
             ChangeDeviceWindow changeDevice = new ChangeDeviceWindow(device);
-            changeDevice.ShowDialog();            
+            changeDevice.ShowDialog(); 
+            if(changeDevice.DialogResult == true)//Если были изменения.
+            {
+                if(SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
+                {
+                    node.SubGroups[0].ContentAddress = device.DeviceAdress_DC.ToString();
+                    node.SubGroups[0].ContentName = device.DeviceName_DC;
+                }
+                else if(SelectedItemTree is SubGroupsTree subnode)//Если выбран подузел.
+                {
+                    subnode.ContentAddress = device.DeviceAdress_DC.ToString();
+                    subnode.ContentName = device.DeviceName_DC;
+                }
+                foreach (var cell in Cells)//Перебор коллекции регистров.
+                {
+                    cell.DeviceAdress = device.DeviceAdress_DC.ToString();
+                    cell.NameDevice = device.DeviceName_DC;
+                }
+                device.AdaptersArray.AdapterData.Devices.Device.Adress = device.DeviceAdress_DC.ToString();//Сохранение в поля адаптера.
+                device.AdaptersArray.AdapterData.Devices.Device.Name = device.DeviceName_DC;//Сохранение в поля адаптера.
+                device.ConnectFromMap.DeviceAdress = device.DeviceAdress_DC;//Сохранение в поле карты.
+                SaveMapTemp();//Сохранение карт во временный файл.
+            }
+        }
+
+        /// <summary>
+        /// Сохранение карт во временный файл.
+        /// </summary>
+        private void SaveMapTemp()
+        {
+            FileInfo file = new FileInfo("ModbusMonitor.exe");
+            string dir = file.DirectoryName + FileNameMap.MapsTemp;
+            if (!Directory.Exists(dir))//Если каталога с картами по этому пути нет,то создаем его.
+            {
+                Directory.CreateDirectory(dir);
+            }
+            string filePath = $"{dir}/{device.DeviceName_DC}.xml";
+            device.SaveMapReg(filePath);
+            listDevices.Add(device);
+            listMaps.Add((filePath, device.DeviceName_DC));
         }
 
         /// <summary>
@@ -87,6 +127,7 @@ namespace ModbusMonitor
             CanClearTreeAll = false;//Отключение команды "Обновить".
             CanClearTreeSingle = false;//Отключение команды "Удалить".
             CanRefreshTree = false;// отключение команды "Удалить все".
+            CanChangeDevice = false;//Отключение команды изменить устройство.
         }
 
         /// <summary>
@@ -97,6 +138,7 @@ namespace ModbusMonitor
             if (SelectedItemTree == null)
             {
                 MessageBox.Show("Выберите устройство!");
+                return;
             }
             if (SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
             {
@@ -126,6 +168,7 @@ namespace ModbusMonitor
                     CanClearTreeAll = false;
                     CanClearTreeSingle = false;
                     CanRefreshTree = false;
+                    CanChangeDevice = false;
                 }                
         }
         
@@ -619,7 +662,41 @@ namespace ModbusMonitor
                 timerPoll.Stop();
             }
             modbusRTU.PortClose();
+            CheckAndSaveUnsavedMaps();
             App.Current.MainWindow.Close();
+        }
+
+        /// <summary>
+        /// Проверка и сохранение не сохраненных карт.
+        /// </summary>
+        private void CheckAndSaveUnsavedMaps()
+        {
+            Stack<string> stackNameMaps = new Stack<string>();
+            FileInfo file = new FileInfo("ModbusMonitor.exe");
+            string dir = file.DirectoryName + FileNameMap.MapsTemp;
+            DirectoryInfo directory = new DirectoryInfo(dir);
+            FileInfo[] fileList = directory.GetFiles(); //Список файлов во временной папке.
+            foreach (var map in listMaps)
+            {
+                if (map.Item1.Contains(FileNameMap.MapsTemp))
+                {
+                    stackNameMaps.Push(map.Item1);
+                }
+            }
+            if (stackNameMaps.Count>0 && MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                MessageBoxResult.Yes)
+            {                
+                while (stackNameMaps.Count > 0)
+                {
+                    File.Copy(stackNameMaps.Peek(), file.DirectoryName + FileNameMap.MapsOrigin 
+                              + fileList[stackNameMaps.Count-1].Name);
+                    File.Delete(stackNameMaps.Pop());
+                }
+            }
+            else
+            {
+                directory.Delete(true);
+            }
         }
 
         /// <summary>
@@ -642,12 +719,13 @@ namespace ModbusMonitor
             }
             foreach (var listItem in listMaps)//Ищем по имени нужный адрес карты.
             {
-                if (listItem.Item2 == itemSelected?.ContentName)
+                if (listItem.Item2 == itemSelected?.ContentName)//Если имя устройства в кортеже совпадает с
+                                                                //с именем устройства в дереве.
                 {
                     filePath = listItem.Item1;
                 }
             }
-            if (!string.IsNullOrEmpty(filePath))
+            if (!string.IsNullOrEmpty(filePath))//Если есть адрес карты.
             {
                 //GC.Collect();//?
                 device = DeviceClass.LoadMapReg(filePath);

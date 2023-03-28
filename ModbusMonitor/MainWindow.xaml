@@ -193,7 +193,7 @@
                     <RowDefinition Height="140"/>
                 </Grid.RowDefinitions>
                 <!--Подключения-->
-                <GroupBox Header="Подключения" Grid.Row="0" Margin="2" Background="White">
+                <GroupBox x:Name="GBTree" Header="Подключения" Grid.Row="0" Margin="2" Background="White">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -206,6 +206,7 @@
                         </UniformGrid>                                                           
                                <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" 
                                   MinWidth="300" IsEnabled="{Binding TreeViewEnabled}"
+                                  Height="{Binding ElementName=GBTree, Path=ActualHeight}"       
                                   MaxWidth="300"                                   
                                   BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
                                 <TreeView.ContextMenu>
@@ -255,7 +256,7 @@
                                 </i:Interaction.Behaviors>                               
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="MouseDoubleClick">
-                                                    <i:InvokeCommandAction Command="{Binding CreateConnectCommand}"/>
+                                                    <i:InvokeCommandAction Command="{Binding ChangeDeviceCommand}"/>
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>                              
                         </TreeView>                                                 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -15,9 +16,12 @@ namespace ModbusMonitor.ViewModel
         private string address_ChD;
         private string name_ChD;
         private bool canCloseChange;
-        private Command closeChangeCommand;
-        private DeviceClass device;
-        private ChangeDeviceWindow window;
+        private readonly Command closeChangeCommand;
+        private readonly DeviceClass device;
+        private readonly ChangeDeviceWindow window;
+        string patternName = @"^\S+[a-zA-Z0-9-+_]$";
+        string patternAddress = @"^\d{0,3}$";
+
         public ChangeDeviceViewMod(DeviceClass device, ChangeDeviceWindow window)
         {
             this.device = device;
@@ -34,9 +38,13 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void CloseChange()
         {
-            device.DeviceAdress_DC = Int32.Parse(Address_ChD);
-            device.DeviceName_DC = Name_ChD;
-            window.Close();
+            if (Address_ChD != device.DeviceAdress_DC.ToString() || Name_ChD != device.DeviceName_DC)
+            {
+                device.DeviceAdress_DC =!string.IsNullOrEmpty(Address_ChD)?Int32.Parse(Address_ChD):1;
+                device.DeviceName_DC = !string.IsNullOrEmpty(Name_ChD)? Name_ChD : device.DeviceName_DC;
+                window.DialogResult = true;
+                window.Close();
+            }
         }
 
         /// <summary>
@@ -46,10 +54,16 @@ namespace ModbusMonitor.ViewModel
         {
             get => address_ChD;
             set
-            {
+            {                
+                if (!new Regex(patternAddress).IsMatch(value)|| 
+                    Int32.Parse(value)<=0 || Int32.Parse(value) > Byte.MaxValue)
+                {
+                    return;
+                }
                 SetOptions(nameof(Address_ChD), ref address_ChD, value);
             }
         }
+       
         /// <summary>
         /// Привяка к полю с именем.
         /// </summary>
@@ -58,6 +72,10 @@ namespace ModbusMonitor.ViewModel
             get => name_ChD;
             set
             {
+                if (!new Regex(patternName).IsMatch(value))
+                {                    
+                    return;
+                }
                 SetOptions(nameof(Name_ChD), ref name_ChD, value);
             }
         }

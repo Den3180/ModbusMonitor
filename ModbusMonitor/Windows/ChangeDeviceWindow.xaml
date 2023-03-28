@@ -24,9 +24,9 @@
             <GroupBox Header="Устройство">
                 <UniformGrid Rows="5">
                     <Label Content="Адрес устройства:" HorizontalContentAlignment="Stretch"/>
-                    <TextBox Text="{Binding Address_ChD }" VerticalAlignment="Center" Margin="1"/>
+                    <TextBox Text="{Binding Address_ChD, UpdateSourceTrigger=PropertyChanged }" VerticalAlignment="Center" Margin="1"/>
                     <Label Content="Имя устройства:"/>
-                    <TextBox Text="{Binding Name_ChD}" VerticalAlignment="Center" Margin="1"/>
+                    <TextBox Text="{Binding Name_ChD, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="1"/>
                     <UniformGrid Columns="2">
                         <Button Content="Принять" Command="{Binding CloseChangeCommand}" Margin="5"/>
                         <Button Content="Отмена" Margin="5" IsCancel="True" IsDefault="True"/>

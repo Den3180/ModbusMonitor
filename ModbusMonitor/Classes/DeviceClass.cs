@@ -95,13 +95,15 @@ namespace ModbusMonitor.Classes
 
             foreach (var item in device.CellsArray)
             {
-                if (ushort.Parse(item.Value) > 32767)
+                
+                if (ushort.TryParse(item.Value,out ushort val) && ushort.Parse(item.Value) > 32767)//Приведение данных из карты.
                 {
-                    item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                    item.Value = (Convert.ToInt32(item.Value) - ushort.MaxValue - 1).ToString();
                 }
+                
                 item.NumberReg = count++.ToString();
                 //Преобразование в бинарный формат.
-                if (item.Represent == "Bin")
+                if (item.Represent == "Bin" && ushort.TryParse(item.Value, out val))
                 {
                     item.Format = item.Represent;
                     item.Value = Convert.ToString(Convert.ToUInt16(item.Value), 2);

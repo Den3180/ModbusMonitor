@@ -46,7 +46,7 @@ namespace ModbusMonitor
             
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
-            listMaps = new List<(string, string)>();
+            listMaps = new List<(string, string)>();//Список кортежей(путь к карте, имя устройства).
             userControl = new UserControlDevices(new List<CellData>(), modbusRTU);
             device = new DeviceClass();
             listDevices = new List<DeviceClass>();//Список устройств на линии.

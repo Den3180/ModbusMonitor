@@ -89,4 +89,11 @@ namespace ModbusMonitor.Classes
         public int TimeOutWrite { get; set; } = 1000;
         public int TimeOutRead { get; set; } = 1000;
     }
+
+    public struct FileNameMap
+    {
+        public FileNameMap(){}
+        public static string MapsOrigin { get; set; } = @"\Maps";
+        public static string MapsTemp { get; set; } = @"\MapsTemp";
+    }
 }
