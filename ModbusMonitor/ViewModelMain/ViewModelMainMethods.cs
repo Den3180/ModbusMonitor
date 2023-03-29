@@ -112,11 +112,7 @@ namespace ModbusMonitor
         /// Очистка всего дерева.
         /// </summary>
         private void ClearTreeAll()
-        {
-            if (SelectedItemTree == null)
-            {
-                MessageBox.Show("Выберите устройство!");
-            }
+        {            
             if (treeNodes.Count > 0)
             {
                 treeNodes.Clear();
@@ -128,6 +124,7 @@ namespace ModbusMonitor
             CanClearTreeSingle = false;//Отключение команды "Удалить".
             CanRefreshTree = false;// отключение команды "Удалить все".
             CanChangeDevice = false;//Отключение команды изменить устройство.
+            SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
         }
 
         /// <summary>
@@ -135,6 +132,7 @@ namespace ModbusMonitor
         /// </summary>
         private void ClearTreeSingle()
         {
+            string nameDev=string.Empty;//Локальная переменная для хранения имени устройства.
             if (SelectedItemTree == null)
             {
                 MessageBox.Show("Выберите устройство!");
@@ -146,6 +144,7 @@ namespace ModbusMonitor
                 {
                     Disconnection();
                 }
+                nameDev = node.SubGroups[0].ContentName;
                 treeNodes.Remove(node);
             }
             else if(SelectedItemTree is SubGroupsTree subNode)//Если выбран вторичный узел.
@@ -155,8 +154,19 @@ namespace ModbusMonitor
                     if (item.SubGroups[0] == subNode)
                     {
                         if (item.State == "Подключено") Disconnection();
+                        nameDev = subNode.ContentName;
                         treeNodes.Remove(item);
                         break;
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(nameDev))
+            {
+                foreach(var map in listMaps)
+                {
+                    if(map.Item2==nameDev && map.Item1.Contains(FileNameMap.MapsTemp))
+                    {
+
                     }
                 }
             }
@@ -169,7 +179,8 @@ namespace ModbusMonitor
                     CanClearTreeSingle = false;
                     CanRefreshTree = false;
                     CanChangeDevice = false;
-                }                
+                    //SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
+            }                
         }
         
         /// <summary>
@@ -593,7 +604,7 @@ namespace ModbusMonitor
         /// </summary>
         private void SaveMap()
         {
-            DefaultDialogService dialogService = new DefaultDialogService();
+            SaveLoadService dialogService = new SaveLoadService();
             dialogService.SaveFileDialog(device);
         }
 
@@ -602,7 +613,7 @@ namespace ModbusMonitor
         /// </summary>
         private void LoadMap()
         {
-            DefaultDialogService dialogService = new DefaultDialogService();
+            SaveLoadService dialogService = new SaveLoadService();
             device = dialogService.OpenFileDialog();
             if (device == null)
             {
@@ -661,44 +672,11 @@ namespace ModbusMonitor
             {
                 timerPoll.Stop();
             }
-            modbusRTU.PortClose();
-            CheckAndSaveUnsavedMaps();
+            modbusRTU.PortClose();            
+            SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
             App.Current.MainWindow.Close();
         }
-
-        /// <summary>
-        /// Проверка и сохранение не сохраненных карт.
-        /// </summary>
-        private void CheckAndSaveUnsavedMaps()
-        {
-            Stack<string> stackNameMaps = new Stack<string>();
-            FileInfo file = new FileInfo("ModbusMonitor.exe");
-            string dir = file.DirectoryName + FileNameMap.MapsTemp;
-            DirectoryInfo directory = new DirectoryInfo(dir);
-            FileInfo[] fileList = directory.GetFiles(); //Список файлов во временной папке.
-            foreach (var map in listMaps)
-            {
-                if (map.Item1.Contains(FileNameMap.MapsTemp))
-                {
-                    stackNameMaps.Push(map.Item1);
-                }
-            }
-            if (stackNameMaps.Count>0 && MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
-                MessageBoxResult.Yes)
-            {                
-                while (stackNameMaps.Count > 0)
-                {
-                    File.Copy(stackNameMaps.Peek(), file.DirectoryName + FileNameMap.MapsOrigin 
-                              + fileList[stackNameMaps.Count-1].Name);
-                    File.Delete(stackNameMaps.Pop());
-                }
-            }
-            else
-            {
-                directory.Delete(true);
-            }
-        }
-
+        
         /// <summary>
         /// Выбор карты для выбранного устройства дерева.
         /// </summary>
@@ -809,8 +787,5 @@ namespace ModbusMonitor
             }
         }
         #endregion
-
-
-
     }
 }

@@ -5,14 +5,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Win32;
 using ModbusMonitor.Interfaces;
 namespace ModbusMonitor.Classes
 {
-    internal class DefaultDialogService : IDialogService
+    internal class SaveLoadService : IDialogService
     {
         public string FilePath { get; set; } = string.Empty;
-
+        
+        /// <summary>
+        /// Открывает диалог загрузки карт.
+        /// </summary>
+        /// <returns></returns>
         public DeviceClass OpenFileDialog()//fff.
         {
             FileInfo file = new FileInfo("ModbusMonitor.exe");
@@ -31,7 +36,6 @@ namespace ModbusMonitor.Classes
             }
             return null; 
         }
-
         /// <summary>
         /// Окрывает диалог сохранения карты регистров.
         /// </summary>
@@ -58,6 +62,45 @@ namespace ModbusMonitor.Classes
             return false;
         }
 
+        /// <summary>
+        /// Проверка и сохранение не сохраненных карт.
+        /// </summary>
+        public static void CheckAndSaveUnsavedMaps(List<(string,string)>listMaps)
+        {
+            Stack<string> stackNameMaps = new Stack<string>();//Стек хранение адресов временных карт.
+            FileInfo file = new FileInfo("ModbusMonitor.exe");
+            string dir = file.DirectoryName + FileNameMap.MapsTemp;
+            DirectoryInfo directory = new DirectoryInfo(dir);
+            if (!directory.Exists)//Если временных карт не создано - выход.
+            {
+                return;
+            }
+            FileInfo[] fileList = directory.GetFiles(); //Список файлов во временной папке.            
+            foreach (var map in listMaps)//Загрузка в стек адресов временных карт.
+            {
+                if (map.Item1.Contains(FileNameMap.MapsTemp))
+                {
+                    stackNameMaps.Push(map.Item1);
+                }
+            }
+            //Окно опроса сохранения временных карт.
+            if (stackNameMaps.Count > 0 && MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                MessageBoxResult.Yes)
+            {
+                while (stackNameMaps.Count > 0)//Пока в стеке есть элементы.
+                {
+                    //Прописываем путь.
+                    var fPaph = file.DirectoryName + FileNameMap.MapsOrigin + "\\" + fileList[stackNameMaps.Count - 1].Name;
+                    File.Copy(stackNameMaps.Peek(), fPaph);//Копируем в основной каталог карт
+                    File.Delete(stackNameMaps.Pop());//Удаляем из стека пути временных файлов.
+                }
+            }
+            directory.Delete(true);//Удаляем директорию временных файлов.
+        }
+        public static void CheckAndSaveUnsavedMaps(string pathFile)
+        {
+
+        }
         public void ShowMessage(string message)
         {
 
