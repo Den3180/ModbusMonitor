@@ -96,10 +96,33 @@ namespace ModbusMonitor.Classes
                 }
             }
             directory.Delete(true);//Удаляем директорию временных файлов.
+            listMaps.Clear();
         }
-        public static void CheckAndSaveUnsavedMaps(string pathFile)
-        {
 
+        /// <summary>
+        /// Проверка и сохранение не сохраненных карт.
+        /// </summary>
+        public static void CheckAndSaveUnsavedMaps(string pathFile)
+        {            
+            FileInfo file = new FileInfo("ModbusMonitor.exe");
+            string dir = file.DirectoryName + FileNameMap.MapsTemp;
+            DirectoryInfo directory = new DirectoryInfo(dir);
+            if (!directory.Exists)//Если временных карт не создано - выход.
+            {
+                return;
+            }
+                FileInfo fileMap = new FileInfo(pathFile);
+            if (MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                 MessageBoxResult.Yes)
+            {
+                var fPaph = file.DirectoryName + FileNameMap.MapsOrigin + "\\" + fileMap.Name;
+                fileMap.CopyTo(fPaph);
+            }
+                fileMap.Delete();
+            if (directory.GetFiles().Length == 0)
+            {
+                directory.Delete();
+            }
         }
         public void ShowMessage(string message)
         {

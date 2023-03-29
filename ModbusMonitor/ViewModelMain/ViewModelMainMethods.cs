@@ -133,19 +133,20 @@ namespace ModbusMonitor
         private void ClearTreeSingle()
         {
             string nameDev=string.Empty;//Локальная переменная для хранения имени устройства.
-            if (SelectedItemTree == null)
+            GroupsTreeNode treeNode=null;//Локальная переменная для хранения текущего узла.
+            if (SelectedItemTree == null)//Если устройство не выбрано.
             {
                 MessageBox.Show("Выберите устройство!");
                 return;
             }
             if (SelectedItemTree is GroupsTreeNode node)//Если выбран верхний узел.
-            {
-                if (node.State == "Подключено")
+            {                
+                if (node.State == "Подключено")//Если состояние устройства - Подключено.
                 {
-                    Disconnection();
+                    Disconnection(); //Отключение
                 }
                 nameDev = node.SubGroups[0].ContentName;
-                treeNodes.Remove(node);
+                treeNode = node;
             }
             else if(SelectedItemTree is SubGroupsTree subNode)//Если выбран вторичный узел.
             {
@@ -153,33 +154,42 @@ namespace ModbusMonitor
                 {
                     if (item.SubGroups[0] == subNode)
                     {
-                        if (item.State == "Подключено") Disconnection();
+                        if (item.State == "Подключено")
+                        {
+                            Disconnection();
+                        }
                         nameDev = subNode.ContentName;
-                        treeNodes.Remove(item);
+                        treeNode = item;                       
+                        break;
+                    }
+                }
+            }            
+            
+            //Если есть имя устройства.
+            if (!string.IsNullOrEmpty(nameDev))
+            {
+                (string,string) mapTemp=(string.Empty,string.Empty);//Локальная переменна списка карт.                
+                foreach(var map in listMaps)//Проходим по списку карт.
+                {
+                    if(map.Item2==nameDev && map.Item1.Contains(FileNameMap.MapsTemp)) //Находим в списке карт карту с нужным именем.
+                    {
+                        SaveLoadService.CheckAndSaveUnsavedMaps(map.Item1);//Сохраняем или удаляем карту.
+                        mapTemp = map;
+                        listMaps.Remove(mapTemp);//Удаляем карту из списка.
                         break;
                     }
                 }
             }
-            if (!string.IsNullOrEmpty(nameDev))
+            treeNodes.Remove(treeNode);//Удаляем элемент из дерева. 
+            if (treeNodes.Count == 0) //Если дерево пустое.
             {
-                foreach(var map in listMaps)
-                {
-                    if(map.Item2==nameDev && map.Item1.Contains(FileNameMap.MapsTemp))
-                    {
-
-                    }
-                }
-            }
-                if (treeNodes.Count == 0) //Если дерево пустое.
-                {
-                    device = new DeviceClass();
-                    Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
-                    Disconnection();
-                    CanClearTreeAll = false;
-                    CanClearTreeSingle = false;
-                    CanRefreshTree = false;
-                    CanChangeDevice = false;
-                    //SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
+                device = new DeviceClass();
+                Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                Disconnection();
+                CanClearTreeAll = false;
+                CanClearTreeSingle = false;
+                CanRefreshTree = false;
+                CanChangeDevice = false;                    
             }                
         }
         

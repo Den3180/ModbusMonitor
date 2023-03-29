@@ -19,8 +19,8 @@ namespace ModbusMonitor.ViewModel
         private readonly Command closeChangeCommand;
         private readonly DeviceClass device;
         private readonly ChangeDeviceWindow window;
-        string patternName = @"^\S+[a-zA-Z0-9-+_]$";
-        string patternAddress = @"^\d{0,3}$";
+        private readonly string patternName = @"^\w*[a-zA-Z0-9-+_]*$";
+        private readonly string patternAddress = @"^[1-2]?[0-9]?[0-9]?$" /*@"^\d{0,3}$"*/;
 
         public ChangeDeviceViewMod(DeviceClass device, ChangeDeviceWindow window)
         {
@@ -28,7 +28,17 @@ namespace ModbusMonitor.ViewModel
             this.window = window;
             address_ChD = device.DeviceAdress_DC.ToString();
             name_ChD = device.DeviceName_DC;
-            closeChangeCommand = new Command(CloseChange);
+            closeChangeCommand = new Command(CloseChange,()=>CanCloseChange);
+            CanCloseChange = true;
+            PropertyChanged += ChangeDeviceViewMod_PropertyChanged;
+        }
+
+        private void ChangeDeviceViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName.Equals(nameof(CanCloseChange)))
+            {
+                closeChangeCommand.RaiseCanExecuteChanged();
+            }
         }
 
         public ICommand CloseChangeCommand => closeChangeCommand;
@@ -55,12 +65,19 @@ namespace ModbusMonitor.ViewModel
             get => address_ChD;
             set
             {                
-                if (!new Regex(patternAddress).IsMatch(value)|| 
-                    Int32.Parse(value)<=0 || Int32.Parse(value) > Byte.MaxValue)
+                if (!new Regex(patternAddress).IsMatch(value)||(!string.IsNullOrEmpty(value) && Int32.Parse(value)>Byte.MaxValue))
                 {
                     return;
                 }
                 SetOptions(nameof(Address_ChD), ref address_ChD, value);
+                if (Address_ChD != string.Empty && Name_ChD != string.Empty)
+                {
+                    CanCloseChange = true;
+                }
+                else
+                {
+                    CanCloseChange = false;
+                }
             }
         }
        
@@ -77,6 +94,14 @@ namespace ModbusMonitor.ViewModel
                     return;
                 }
                 SetOptions(nameof(Name_ChD), ref name_ChD, value);
+                if (Address_ChD != string.Empty && Name_ChD != string.Empty)
+                {
+                    CanCloseChange = true;
+                }
+                else
+                {
+                    CanCloseChange = false;
+                }
             }
         }
 
@@ -85,6 +110,7 @@ namespace ModbusMonitor.ViewModel
             get => canCloseChange;
             set => SetOptions(nameof(CanCloseChange), ref canCloseChange, value);
         }
+
         /// <summary>
         /// Настройка изменяющихся свойств.
         /// </summary>
