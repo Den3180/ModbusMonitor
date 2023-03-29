@@ -79,8 +79,9 @@ namespace ModbusMonitor.ViewModel
                     CanCloseChange = false;
                 }
             }
-        }
-       
+        }      
+        
+
         /// <summary>
         /// Привяка к полю с именем.
         /// </summary>
@@ -88,7 +89,7 @@ namespace ModbusMonitor.ViewModel
         {
             get => name_ChD;
             set
-            {
+            {                
                 if (!new Regex(patternName).IsMatch(value))
                 {                    
                     return;
