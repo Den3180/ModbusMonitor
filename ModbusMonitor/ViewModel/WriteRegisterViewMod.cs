@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -47,7 +48,7 @@ namespace ModbusMonitor.ViewModel
         }
 
         public ModbusRTUASCII ModbusRTU { get; set; }
-        public List<RadioButProp> CheckRadioButtons { get; set; } = new List<RadioButProp>(8); 
+        public List<ButtonProp> CheckRadioButtons { get; set; } = new List<ButtonProp>(8); 
         public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
         public IEnumerable<string> TypeRegister => typeRegister;
         public ICommand WriteRegistryCommand => writeRegistryCommand;
@@ -58,18 +59,50 @@ namespace ModbusMonitor.ViewModel
         private void WriteRegistry()
         {
             int slaveID = Convert.ToInt32(AddressDevice);
-            int regAddress= Convert.ToInt32(AddressRegister);
-            if(cellData.Type == "DO")
+            int regAddress = Convert.ToInt32(AddressRegister);
+            if (cellData.Type == "DO")
             {
                 bool value = Convert.ToBoolean(Int32.Parse(ValueRegister));
-                ModbusRTU.WriteCoilRegister(slaveID,regAddress,value);
+                ModbusRTU.WriteCoilRegister(slaveID, regAddress, value);
             }
             else if (cellData.Type == "AO")
-            {
-                int value = Int32.Parse(ValueRegister);
-                ModbusRTU.WriteHoldingRegister(slaveID,regAddress,value);
-            }            
+            {               
+                int value = ConvertFormat(ValueRegister);
+                ModbusRTU.WriteHoldingRegister(slaveID, regAddress, value);
+            }
             window.Close();
+        }
+        /// <summary>
+        /// Преобразование формата данных.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private int ConvertFormat(string data)
+        {           
+            string tempFormat = string.Empty;
+            string patternBin = @"^[01]{4,}$";
+            string patternHex = @"^[0-9ABCDEF]{1,}$";
+            if (new Regex(patternBin).IsMatch(data))
+            {
+                tempFormat = "Bin";
+            }
+            else if (new Regex(patternHex).IsMatch(data)&& Convert.ToInt32(data, 16)<=UInt16.MaxValue)
+            {
+                tempFormat = "Hex";
+            }
+            foreach (var item in CheckRadioButtons)
+            {
+                if (item.CheckButton == true)
+                {
+                    cellData.Format = item.NameButton;                   
+                }
+            }
+            return tempFormat switch
+            {
+                "Bin" => Convert.ToInt32(data, 2),
+                "Hex" => Convert.ToInt32(data, 16),
+                _ => Convert.ToInt32(data)
+            } ;
         }
 
         /// <summary>
@@ -93,19 +126,19 @@ namespace ModbusMonitor.ViewModel
                 "AO" => 4,
                  _ => 0
             };
-            string[] NameRadButton = new string[] 
+            string[] NameButton = new string[] 
             { "Decimal","Int","Bin","Hex","Float","swFloat",
                "Double","swDouble"
             };          
             for(int i = 0; i < CheckRadioButtons.Capacity; i++)
             {
-                if (cellData.Format == NameRadButton[i])
+                if (cellData.Format == NameButton[i])
                 {
-                    CheckRadioButtons.Add(new RadioButProp(NameRadButton[i],true));                    
+                    CheckRadioButtons.Add(new ButtonProp(NameButton[i],true));                    
                 }
                 else
                 {
-                    CheckRadioButtons.Add(new RadioButProp(NameRadButton[i]));
+                    CheckRadioButtons.Add(new ButtonProp(NameButton[i]));
                 }
             }
         }       
@@ -182,15 +215,15 @@ namespace ModbusMonitor.ViewModel
     /// <summary>
     /// Класс свойств IsChecked radiobutton.
     /// </summary>
-    public class RadioButProp : INotifyPropertyChanged
+    public class ButtonProp : INotifyPropertyChanged
     {
         private bool checkButton;
-        public RadioButProp(string name,bool val=false)
+        public ButtonProp(string name,bool val=false)
         {
-            NameRadioButton = name;
+            NameButton = name;
             checkButton = val;
         }
-        public string NameRadioButton { get; set; }
+        public string NameButton { get; set; }
         public bool CheckButton
         {
             get => checkButton;

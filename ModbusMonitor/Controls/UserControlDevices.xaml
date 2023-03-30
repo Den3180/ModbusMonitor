@@ -32,13 +32,43 @@
             </i:Interaction.Triggers>
             <!--Контексное меню-->
             <DataGrid.ContextMenu>
-                <ContextMenu>
+                <ContextMenu>                   
                     <MenuItem Header="График"/>
                     <MenuItem Header="Лог"/>
                     <Separator/>
                     <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
                     <MenuItem Header="Вставить ячейки"/>
-                    <MenuItem Header="Формат"/>
+                    <MenuItem Header="Формат" >
+                        <MenuItem.Resources>
+                            <Style x:Key="Format" TargetType="{x:Type MenuItem}">
+                                <Setter Property="IsCheckable" Value="True"/>                                 
+                            </Style>
+                        </MenuItem.Resources>
+                        <MenuItem Header="Bin" Style="{StaticResource Format}" 
+                                  IsChecked="{Binding MenuItemCheck[0].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Hex" Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[1].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Int" Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[2].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Decimal"  Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[3].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Double"   Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[4].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="swDouble" Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[5].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Float"    Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[6].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="swFloat"  Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[7].CheckButton}"
+                                  Command="{Binding EditFormatCommand}"/>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="Вырезать"/>
                     <MenuItem Header="Копировать"/>

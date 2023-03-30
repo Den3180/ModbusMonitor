@@ -394,6 +394,8 @@ namespace ModbusMonitor
         /// </summary>
         private void EditFormat()
         {
+            var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
+            ValueConverter.ChangeFormatData(cellData); 
         }
 
         /// <summary>
@@ -530,29 +532,41 @@ namespace ModbusMonitor
                 }
                 else if (item.Type == "AO")
                 {
-                    if (item.Format == "Bin")//Перевод в бинарный формат.
-                    {
-                        item.Value = Convert.ToString(tempAO[--numOfAO], 2);
-                        continue;
-                    }
-                    item.Value = tempAO[--numOfAO].ToString();
+                    //if (item.Format == "Bin")//Перевод в бинарный формат.
+                    //{
+                        //item.Value = Convert.ToString(tempAO[--numOfAO], 2);
+                        //continue;
+                    //}
+                    //item.Value = tempAO[--numOfAO].ToString();
                     //Если отрицательное значение.
-                    if (ushort.Parse(item.Value) > 32767)
+                    item.Value = ValueConverter.ConvertFormatData(tempAO[--numOfAO], item.Format);
+                    if (ushort.TryParse(item.Value, out ushort res))
                     {
-                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                        if (res > 32767)//Если значение выходит в диапазон отрицательных чисел.
+                        {
+                            item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                        }
                     }
                 }
                 else if (item.Type == "AI")
                 {
-                    if (item.Format == "Bin")//Перевод в бинарный формат.
+                    //if (item.Format == "Bin")//Перевод в бинарный формат.
+                    //{
+                        //item.Value = Convert.ToString(tempAI[--numOfAI], 2);
+                        //continue;
+                    //}
+                   // item.Value = tempAI[--numOfAI].ToString();
+                    item.Value =ValueConverter.ConvertFormatData(tempAI[--numOfAI],item.Format);
+                    if (ushort.TryParse(item.Value, out ushort res)) 
                     {
-                        item.Value = Convert.ToString(tempAI[--numOfAI], 2);
-                        continue;
+                        if (res > 32767)//Если значение выходит в диапазон отрицательных чисел.
+                        {
+                            item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                        }
                     }
-                    item.Value = tempAI[--numOfAI].ToString();
                 }
             }
-        }
+        }      
 
         /// <summary>
         /// Открыть лог ошибок.

@@ -26,7 +26,7 @@ namespace ModbusMonitor
     {
         private bool canWriteRegister;
         private bool canConnection;
-        private bool canCreateConnect;
+        private bool canCreateConnect=true;
         private bool canDisconnection;
         private bool canOpenLog;
         private bool canRequest;

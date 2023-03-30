@@ -14,11 +14,16 @@ namespace ModbusMonitor.ViewModel
     public class ControlDeviceView : INotifyPropertyChanged
     {
         private readonly Command writeRegisterCommand;
+        private readonly Command editFormatCommand;
         private bool canWriteRegister;
         private CellData selectedCell;        
-        public List<CellData> Cells { get; set; }        
+        public List<CellData> Cells { get; set; }
+        public List<ButtonProp> MenuItemCheck { get; set; } = new List<ButtonProp>(8);
         public ModbusRTUASCII ModbusRTU { get; set; }
         public DeviceClass CurrentDevice { get; set; }
+        private readonly string [] nameFormat = new string[] {"Bin","Hex","Int","Decimal", "Double", 
+                                                     "swDouble","Float","swFloat" 
+                                                    }; 
 
         public ControlDeviceView(params object[] objects)
         {
@@ -28,14 +33,20 @@ namespace ModbusMonitor.ViewModel
                 if (item is List<CellData>) Cells = item as List<CellData>;
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is DeviceClass) CurrentDevice = item as DeviceClass;
-            }            
+            }
+            for (int i = 0; i < nameFormat.Length; i++)
+            {
+                MenuItemCheck.Add(new ButtonProp(nameFormat[i]));
+            }
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
+            editFormatCommand = new Command(EditFormat);
             PropertyChanged += ControlDeviceView_PropertyChanged;
         }
 
         public ICommand WriteRegisterCommand => writeRegisterCommand;
+        public ICommand EditFormatCommand => editFormatCommand;
 
-        #region[Обработчики команд]
+        #region[Обработчики команд и методы]
         /// <summary>
         /// Вызов окна записи регистров.
         /// </summary>
@@ -43,6 +54,42 @@ namespace ModbusMonitor.ViewModel
         {           
             WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
+        }
+
+        private void EditFormat()
+        {
+            foreach(var item in MenuItemCheck)
+            {
+                if (item.CheckButton == true && SelectedCell.Format!=item.NameButton)
+                {
+                    SelectedCell.Format = item.NameButton;
+                    break;
+                }               
+            }
+                foreach (var item1 in MenuItemCheck)
+                {
+                if (SelectedCell.Format != item1.NameButton)
+                {
+                    item1.CheckButton = false;
+                }
+                }                
+        }
+        /// <summary>
+        /// Выбор формата данных.
+        /// </summary>
+        private void SelectItemFormat()
+        {
+            foreach(var item in MenuItemCheck)
+            {
+                if (SelectedCell.Format!=item.NameButton && item.CheckButton==true)
+                {
+                    item.CheckButton = false;
+                }
+                else if(SelectedCell.Format == item.NameButton)
+                {
+                    item.CheckButton = true;
+                }
+            }
         }
         #endregion
 
@@ -60,12 +107,13 @@ namespace ModbusMonitor.ViewModel
                     if ((value.Type=="AO" || value.Type == "DO")&& ModbusRTUASCII.Mode==eMode.PortOpen 
                         && CurrentDevice.LinkDevice== EnumLink.LinkYes) 
                     {
-                        CanWriteRegister = true;                        
+                        CanWriteRegister = true;
                     }
                     else
                     {                        
                         CanWriteRegister = false;                        
                     }                    
+                        SelectItemFormat();
                 }
             }
         }
@@ -78,6 +126,7 @@ namespace ModbusMonitor.ViewModel
             get => canWriteRegister;
             set => SetOptions(nameof(CanWriteRegister),ref canWriteRegister,value);
         }
+
         #endregion
 
         /// <summary>

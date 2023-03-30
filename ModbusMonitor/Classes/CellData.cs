@@ -53,12 +53,22 @@ namespace ModbusMonitor.Classes
         private string nameDevice = string.Empty;//Имя устройства.
         private string name = "None";//Имя-описание регистра.
         private string _value = string.Empty;//Значение регистра.
+        private string format = string.Empty;
         public string Type { get; set; } = string.Empty;//Тип регистра.
-        public string Format { get; set; } = string.Empty;//Формат регистра.
         public string Represent { get; set; } = string.Empty;//Первичный тип регистра(не обработанный)
         public string AdapterId { get; set; } = string.Empty;//Данные в карте.
         public string DeviceAdress { get; set; } = string.Empty;//Адрес устройства.
         public string isHaveData { get; set; } = string.Empty;//Если есть данные в карте.
+
+
+        /// <summary>
+        /// Формат регистра.
+        /// </summary>
+        public string Format 
+        { 
+            get=> format;
+            set=> SetOptions<string>(nameof(Format), ref format, value);
+        }
 
         /// <summary>
         /// Номер регистра по порядку списка.

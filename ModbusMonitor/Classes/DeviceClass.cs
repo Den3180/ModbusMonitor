@@ -94,8 +94,7 @@ namespace ModbusMonitor.Classes
             device.DeviceAdress_DC = Convert.ToInt32(device.AdaptersArray.AdapterData.Devices.Device.Adress);
 
             foreach (var item in device.CellsArray)
-            {
-                
+            {                
                 if (ushort.TryParse(item.Value,out ushort val) && ushort.Parse(item.Value) > 32767)//Приведение данных из карты.
                 {
                     item.Value = (Convert.ToInt32(item.Value) - ushort.MaxValue - 1).ToString();

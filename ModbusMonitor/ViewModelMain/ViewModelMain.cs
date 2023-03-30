@@ -42,7 +42,7 @@ namespace ModbusMonitor
             clearTreeSingleCommand = new Command(ClearTreeSingle,()=>CanClearTreeSingle);
             clearTreeAllCommand = new Command(ClearTreeAll,()=>CanClearTreeAll);
             refreshTreeCommand = new Command(RefreshTree,()=>CanRefreshTree);
-            changeDeviceCommand = new Command(ChangeDevice, () => CanChangeDevice);
+            changeDeviceCommand = new Command(ChangeDevice, () => CanChangeDevice);            
             
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();

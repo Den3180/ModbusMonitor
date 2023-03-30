@@ -49,7 +49,6 @@ namespace ModbusMonitor
             get => colorTextTreeConnect;
             set => SetOptions(nameof(ColorTextTreeConnect), ref colorTextTreeConnect, value);
         }
-
         /// <summary>
         /// Привязка к выбранным элементам дерева.
         /// </summary>

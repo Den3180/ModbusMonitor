@@ -20,7 +20,7 @@ namespace ModbusMonitor.ViewModel
         private readonly DeviceClass device;
         private readonly ChangeDeviceWindow window;
         private readonly string patternName = @"^\w*[a-zA-Z0-9-+_]*$";
-        private readonly string patternAddress = @"^[1-2]?[0-9]?[0-9]?$" /*@"^\d{0,3}$"*/;
+        private readonly string patternAddress = @"^[1-2]?[0-9]?[0-9]?$";
 
         public ChangeDeviceViewMod(DeviceClass device, ChangeDeviceWindow window)
         {
