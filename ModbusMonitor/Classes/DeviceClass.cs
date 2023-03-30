@@ -97,7 +97,7 @@ namespace ModbusMonitor.Classes
             {                
                 if (ushort.TryParse(item.Value,out ushort val) && ushort.Parse(item.Value) > 32767)//Приведение данных из карты.
                 {
-                    item.Value = (Convert.ToInt32(item.Value) - ushort.MaxValue - 1).ToString();
+                    item.Value = (Convert.ToInt32(item.Value) - ushort.MaxValue - 1).ToString();//Со знаком минус.
                 }
                 
                 item.NumberReg = count++.ToString();
@@ -140,6 +140,7 @@ namespace ModbusMonitor.Classes
         {
             string pattern = @"\d*";
             Regex regex = new Regex(pattern);
+            //Разбиваем строку общих данных на лексемы.
             string[] tempDataArray = AdaptersArray.AdapterData.FullAdapterInf.Split(';');
             List<string> strings = new List<string>();
             for (int i = 0; i < tempDataArray.Length; i++)

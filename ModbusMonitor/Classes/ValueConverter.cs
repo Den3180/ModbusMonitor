@@ -26,7 +26,17 @@ namespace ModbusMonitor.Classes
 
         public static void ChangeFormatData(CellData cellData)
         {
-            
+            string data=Convert.ToString(123,2);            
+            string patternBin = @"^[01]{4,}$";
+            string patternHex = @"^[0-9ABCDEF]{1,}$";
+
+
+            //cellData.Value= cellData.Format switch
+            //{
+            //    "Bin" => Convert.ToString(, 2),
+            //    "Hex" => Convert.ToString(cellData.Value, 16),
+            //    _ => Convert.ToString(cellData)
+            //};
         }
     }
 }

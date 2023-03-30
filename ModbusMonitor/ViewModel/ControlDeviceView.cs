@@ -55,24 +55,30 @@ namespace ModbusMonitor.ViewModel
             WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
         }
-
+        /// <summary>
+        /// Редактирование формата при отключенном устройстве.
+        /// </summary>
         private void EditFormat()
         {
-            foreach(var item in MenuItemCheck)
+            foreach(var item in MenuItemCheck)//Ищем новый чек формата.
             {
-                if (item.CheckButton == true && SelectedCell.Format!=item.NameButton)
+                if (item.CheckButton == true && SelectedCell.Format!=item.NameButton)//Присваиваем новый тип формата данным.
                 {
                     SelectedCell.Format = item.NameButton;
                     break;
                 }               
             }
-                foreach (var item1 in MenuItemCheck)
-                {
-                if (SelectedCell.Format != item1.NameButton)
+            foreach (var item1 in MenuItemCheck)//Ищем предыдущие чеки.
+            {
+                if (SelectedCell.Format != item1.NameButton)//Сбрасываем их значения.
                 {
                     item1.CheckButton = false;
                 }
-                }                
+            }
+            if (CurrentDevice.LinkDevice == EnumLink.LinkNo)
+            {
+                ValueConverter.ChangeFormatData(SelectedCell);
+            }
         }
         /// <summary>
         /// Выбор формата данных.
