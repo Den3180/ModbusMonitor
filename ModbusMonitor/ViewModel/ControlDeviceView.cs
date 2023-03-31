@@ -60,6 +60,8 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void EditFormat()
         {
+            bool flag = false; //индикатор совпадений.
+            string prevFormat = string.Empty;
             foreach(var item in MenuItemCheck)//Ищем новый чек формата.
             {
                 if (item.CheckButton == true && SelectedCell.Format!=item.NameButton)//Присваиваем новый тип формата данным.
@@ -70,14 +72,17 @@ namespace ModbusMonitor.ViewModel
             }
             foreach (var item1 in MenuItemCheck)//Ищем предыдущие чеки.
             {
-                if (SelectedCell.Format != item1.NameButton)//Сбрасываем их значения.
+                if (SelectedCell.Format != item1.NameButton && item1.CheckButton==true)//Сбрасываем их значения.
                 {
                     item1.CheckButton = false;
+                    prevFormat = item1.NameButton;
+                    flag = true;                    
                 }
             }
-            if (CurrentDevice.LinkDevice == EnumLink.LinkNo)
+                //Если устройство не подключено и изменеие формата не было.
+            if (CurrentDevice.LinkDevice == EnumLink.LinkNo || CurrentDevice.LinkDevice == EnumLink.Unknown && flag)
             {
-                ValueConverter.ChangeFormatData(SelectedCell);
+                ValueConverter.ChangeFormatData(SelectedCell,prevFormat);
             }
         }
         /// <summary>

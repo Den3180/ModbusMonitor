@@ -395,7 +395,7 @@ namespace ModbusMonitor
         private void EditFormat()
         {
             var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
-            ValueConverter.ChangeFormatData(cellData); 
+            ValueConverter.ChangeFormatData(cellData,string.Empty); 
         }
 
         /// <summary>
@@ -713,13 +713,19 @@ namespace ModbusMonitor
             //Определяем какой вид узла дерева выбран.
             if (item is GroupsTreeNode)
             {
-                itemSelected = (item as GroupsTreeNode).SubGroups.First();//Старший узел.
+                itemSelected = (item as GroupsTreeNode).SubGroups.First();//Выбираем младший узел при выбранном старшемм узле.
             }
             else
             {
                 itemSelected = item as SubGroupsTree;//Младший узел.
             }
-            foreach (var listItem in listMaps)//Ищем по имени нужный адрес карты.
+            //Если нужная картауже загружена, то ничего не меняем.
+            if(itemSelected.ContentName==(Usercontrol.DataContext as ControlDeviceView).CurrentDevice.DeviceName_DC)
+            {
+                return;
+            }
+            //Ищем по имени нужный адрес карты.
+            foreach (var listItem in listMaps)
             {
                 if (listItem.Item2 == itemSelected?.ContentName)//Если имя устройства в кортеже совпадает с
                                                                 //с именем устройства в дереве.
@@ -728,8 +734,7 @@ namespace ModbusMonitor
                 }
             }
             if (!string.IsNullOrEmpty(filePath))//Если есть адрес карты.
-            {
-                //GC.Collect();//?
+            {                
                 device = DeviceClass.LoadMapReg(filePath);
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
