@@ -174,6 +174,7 @@ namespace ModbusMonitor.ViewModel
             device.ConnectFromMap.LenghtWord = WordLength_VM;
             device.ConnectFromMap.TimeOutRead = TimeoutRead_VM;
             device.ConnectFromMap.TimeOutWrite = TimeoutWrite_VM;
+            device.ConnectFromMap.PortType = Port_VM;
 
             device.DeviceName_DC = DeviceName_VM;
             device.DeviceAdress_DC = Int32.Parse(AdressIP_VM);

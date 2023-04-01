@@ -25,7 +25,7 @@ namespace ModbusMonitor.Classes
             string value = format switch
             {
                 "Bin" => Convert.ToString(cellData, 2),
-                "Hex" => Convert.ToString((Convert.ToInt32(cellData)), 16).ToUpper(),
+                "Hex" => Convert.ToString(cellData, 16).ToUpper(),
                 _ => Convert.ToString(cellData)
             };
             if(format=="Hex" && value.Length % 8 != 0)

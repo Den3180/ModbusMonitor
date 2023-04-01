@@ -288,17 +288,19 @@ namespace ModbusMonitor
             connectSetting.ShowDialog();//Открытие окна создания соединения.
             //Если не нажата кнопка отмены.
             if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
-            {                             
+            {
                 foreach (var ports in ModbusRTUASCII.PortsEnabled)
                 {
                     ModbusRTUASCII.SettingPortStart.PortType = ports;
                     FillNodesTree(device);
-                    if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))
-                    {                       
+                    if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))//Если нет совпадения в картах.
+                    {
+                        //Создаем пустую карту.
                         Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU,device);
-                        CanConnection = false;
+                        CanConnection = false;//Отключаем возможность подключения.
                         return;
                     }
+                    break;
                 }
             }
             if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
