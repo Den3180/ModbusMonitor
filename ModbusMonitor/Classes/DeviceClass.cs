@@ -19,6 +19,7 @@ namespace ModbusMonitor.Classes
             AdaptersArray = new AdaptersArray();
             CellsArray = new List<CellData>();
             ConnectFromMap = new SettingConnectFromMap();
+            ID = Guid.NewGuid();            
         }
 
         public ConnectionType ConnectionType { get; set; } //Содержит инвормацию о подключении.
@@ -32,6 +33,7 @@ namespace ModbusMonitor.Classes
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
         public static EnumLink Link { get; set; } //Устройство подключено/отключено.
+        public Guid ID { get; set; }//ID устройства.
 
         public EnumLink LinkDevice { get; set; } = EnumLink.Unknown;
 
@@ -158,6 +160,18 @@ namespace ModbusMonitor.Classes
             ConnectFromMap.LenghtWord = Convert.ToInt32(strings[5]);
             ConnectFromMap.TimeOutRead = Convert.ToInt32(strings[6]);
             ConnectFromMap.TimeOutWrite = Convert.ToInt32(strings[7]);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DeviceClass @class &&
+                   DeviceName_DC == @class.DeviceName_DC &&
+                   DeviceAdress_DC == @class.DeviceAdress_DC;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DeviceName_DC, DeviceAdress_DC);
         }
     }
 }

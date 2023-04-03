@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace ModbusMonitor.Classes
 {
@@ -40,30 +42,38 @@ namespace ModbusMonitor.Classes
         /// </summary>
         /// <param name="cellData"></param>
         public static void ChangeFormatData(CellData cellData, string prevFormat)
-        {            
+        {
+            if (cellData.Value.Length % 2 != 0 && prevFormat=="Hex")
+            {
+                cellData.Value = "0" + cellData.Value;
+            }
+            //cellData.Value = "65532";
             byte[] dataArr = prevFormat switch
             {
                 "Bin" => BitConverter.GetBytes(Convert.ToUInt32(cellData.Value, 2)),
                 "Hex" => Convert.FromHexString(cellData.Value),
-                _ => BitConverter.GetBytes(Convert.ToUInt32(cellData.Value))
-            } ;
-            if (prevFormat == "Hex")
-            {                
-                if (dataArr.Length < 4)
-                {
-                    Array.Resize(ref dataArr, 4);
-                }
-            }
-            if (prevFormat == "Hex" || cellData.Format == "Hex")
+                _ => BitConverter.GetBytes(Convert.ToInt32(cellData.Value))
+            };
+            if (cellData.Format == "Hex" || prevFormat == "Hex")
             {
                 Array.Reverse(dataArr);
+            }            
+            if (dataArr.Length < 4)
+            {
+                Array.Resize(ref dataArr, 4);
             }
             cellData.Value = cellData.Format switch
             {
-                "Bin" => Convert.ToString(BitConverter.ToUInt32(dataArr),2),
+                "Bin" => Convert.ToString(BitConverter.ToUInt32(dataArr), 2),
                 "Hex" => Convert.ToHexString(dataArr),
                 _ => Convert.ToString(BitConverter.ToUInt32(dataArr))
             };
+        }
+
+        public static string ConvertToUSHortFromValue(string data)
+        {
+
+            return string.Empty;
         }
     }
 }

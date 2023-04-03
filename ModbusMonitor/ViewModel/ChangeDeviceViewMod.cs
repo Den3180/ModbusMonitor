@@ -2,6 +2,7 @@
 using ModbusMonitor.Windows;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -15,22 +16,29 @@ namespace ModbusMonitor.ViewModel
     {
         private string address_ChD;
         private string name_ChD;
+        private string selectedItem=string.Empty;
         private bool canCloseChange;
         private readonly Command closeChangeCommand;
         private readonly DeviceClass device;
         private readonly ChangeDeviceWindow window;
         private readonly string patternName = @"^\w*[a-zA-Z0-9-+_]*$";
         private readonly string patternAddress = @"^[1-2]?[0-9]?[0-9]?$";
+        private readonly ICollection<string> typePortList = new ObservableCollection<string>();
 
         public ChangeDeviceViewMod(DeviceClass device, ChangeDeviceWindow window)
         {
             this.device = device;
-            this.window = window;
+            this.window = window;            
             address_ChD = device.DeviceAdress_DC.ToString();
             name_ChD = device.DeviceName_DC;
             closeChangeCommand = new Command(CloseChange,()=>CanCloseChange);
             CanCloseChange = true;
             PropertyChanged += ChangeDeviceViewMod_PropertyChanged;
+            foreach (var item in ModbusRTUASCII.PortsEnabled)
+            {
+                typePortList.Add(item);
+            }
+            SelectedItem=typePortList?.First();
         }
 
         private void ChangeDeviceViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -42,16 +50,19 @@ namespace ModbusMonitor.ViewModel
         }
 
         public ICommand CloseChangeCommand => closeChangeCommand;
+        public IEnumerable<string> TypePortList => typePortList;
 
         /// <summary>
         /// Закрыть окно изменения устройства.
         /// </summary>
         private void CloseChange()
         {
-            if (Address_ChD != device.DeviceAdress_DC.ToString() || Name_ChD != device.DeviceName_DC)
+            if (Address_ChD != device.DeviceAdress_DC.ToString() || Name_ChD != device.DeviceName_DC
+                || device.ConnectFromMap.PortType != SelectedItem)
             {
                 device.DeviceAdress_DC =!string.IsNullOrEmpty(Address_ChD)?Int32.Parse(Address_ChD):1;
                 device.DeviceName_DC = !string.IsNullOrEmpty(Name_ChD)? Name_ChD : device.DeviceName_DC;
+                device.ConnectFromMap.PortType = SelectedItem;
                 window.DialogResult = true;
                 window.Close();
             }
@@ -79,9 +90,8 @@ namespace ModbusMonitor.ViewModel
                     CanCloseChange = false;
                 }
             }
-        }      
+        }     
         
-
         /// <summary>
         /// Привяка к полю с именем.
         /// </summary>
@@ -106,6 +116,14 @@ namespace ModbusMonitor.ViewModel
             }
         }
 
+        /// <summary>
+        /// Привязка к комбобоксу.
+        /// </summary>
+        public string SelectedItem
+        {
+            get => selectedItem;
+            set => SetOptions(nameof(SelectedItem), ref selectedItem, value);
+        }
         public bool CanCloseChange
         {
             get => canCloseChange;

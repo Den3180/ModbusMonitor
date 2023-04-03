@@ -26,7 +26,7 @@ namespace ModbusMonitor.Classes
 
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var item = e.NewValue as TreeViewItem;
+            TreeViewItem item = e.NewValue as TreeViewItem;
             if (item != null)
             {
                 item.SetValue(TreeViewItem.IsSelectedProperty, true);

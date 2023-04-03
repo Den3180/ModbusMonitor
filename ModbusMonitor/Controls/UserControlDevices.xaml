@@ -161,7 +161,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Значение" Width="auto" MinWidth="80" 
+                <DataGridTextColumn Header="Значение" Width="200" MinWidth="80" 
                                     Binding="{Binding Value}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

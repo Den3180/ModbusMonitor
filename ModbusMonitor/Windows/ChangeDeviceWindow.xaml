@@ -22,11 +22,14 @@
     <Grid Background="Gray">
         <Border Background="Lavender" Margin="2">
             <GroupBox Header="Устройство">
-                <UniformGrid Rows="5">
+                <UniformGrid Rows="7">
                     <Label Content="Адрес устройства:" HorizontalContentAlignment="Stretch"/>
                     <TextBox Text="{Binding Address_ChD, UpdateSourceTrigger=PropertyChanged }" VerticalAlignment="Center" Margin="1"/>
                     <Label Content="Имя устройства:"/>
                     <TextBox Text="{Binding Name_ChD, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="1"/>
+                    <Label Content="Имя порта:"/>
+                    <ComboBox ItemsSource="{Binding TypePortList}" SelectedIndex="0" Margin="5" 
+                              SelectedItem="{Binding SelectedItem}" Text="{Binding SelectedItem}"/>
                     <UniformGrid Columns="2">
                         <Button Content="Принять" Command="{Binding CloseChangeCommand}" Margin="5"/>
                         <Button Content="Отмена" Margin="5" IsCancel="True" IsDefault="True"/>

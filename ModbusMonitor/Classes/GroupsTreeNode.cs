@@ -18,14 +18,15 @@ namespace ModbusMonitor.Classes
     /// </summary>
     public class GroupsTreeNode : INotifyPropertyChanged
     {
-        public string NameCOM { get; set; } = "no name";
         private string state = "Отключено";
+        private Brush colorTextTreeConnect = Brushes.Red;
 
-        public ObservableCollection<SubGroupsTree> SubGroups { get; set; }//Источник данных дерева.      
         public GroupsTreeNode()
         {
             SubGroups = new ObservableCollection<SubGroupsTree>();            
         }
+        public string NameCOM { get; set; } = "no name";
+        public ObservableCollection<SubGroupsTree> SubGroups { get; set; }//Источник данных дерева.      
 
         public string State
         {
@@ -36,7 +37,6 @@ namespace ModbusMonitor.Classes
             }
         }
 
-        private Brush colorTextTreeConnect = Brushes.Red;
         public Brush ColorTextTreeConnect
         {
             get => colorTextTreeConnect;
@@ -67,7 +67,7 @@ namespace ModbusMonitor.Classes
         private string contentName = string.Empty;
         private string contentAddress = string.Empty;        
         public SubGroupsTree(string port = "не известно", string address="не известно", 
-            string name="не известно")
+            string name="не известно", string nameCom="не известно")
         {
             SubHeaderPort ="Порт: " ;
             SubHeaderAddress = "Адрес: ";
@@ -75,14 +75,17 @@ namespace ModbusMonitor.Classes
             ContentPort = port;
             ContentAddress = address;
             ContentName = name;
-           
+            NameComNode = nameCom;
         }
+       
         /// <summary>
         /// Неизменяемая часть.
         /// </summary>
         public string SubHeaderPort { get; set; } = string.Empty;
         public string SubHeaderName { get; set; } = string.Empty;
         public string SubHeaderAddress { get; set; } = string.Empty;
+        public string NameComNode { get; set; }
+        public Guid DeviceID { get; set; }
         
         /// <summary>
         /// Изменяемая часть.
@@ -115,6 +118,6 @@ namespace ModbusMonitor.Classes
         private void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
-        }
+        }        
     }
 }
