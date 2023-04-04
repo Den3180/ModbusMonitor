@@ -94,7 +94,8 @@ namespace ModbusMonitor.ViewModel
             {
                 if (item.CheckButton == true)
                 {
-                    cellData.Format = item.NameButton;                   
+                    cellData.Format = item.NameButton;
+                    break;
                 }
             }
             return tempFormat switch

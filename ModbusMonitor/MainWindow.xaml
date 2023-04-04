@@ -207,7 +207,7 @@
                                <TreeView Grid.Row="1" Margin="2" ItemsSource="{Binding TreeNodes}" 
                                   MinWidth="300" IsEnabled="{Binding TreeViewEnabled}"
                                   Height="{Binding ElementName=GBTree, Path=ActualHeight}"       
-                                  MaxWidth="300"                                   
+                                  MaxWidth="300"                                  
                                   BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
                                 <TreeView.ContextMenu>
                                     <ContextMenu>

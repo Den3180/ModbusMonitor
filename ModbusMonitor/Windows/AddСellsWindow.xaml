@@ -27,7 +27,7 @@
                 </GroupBox>
                 <GroupBox Header="Тип и формат ячейки">
                     <UniformGrid Columns="2">
-                        <ComboBox ItemsSource="{Binding CellType_AC}" Text="{Binding CellType_AC[0]}" Margin="5"/>
+                        <ComboBox ItemsSource="{Binding TypeRegister}" Text="{Binding TypeRegister[0]}" Margin="5"/>
                         <ComboBox ItemsSource="{Binding CellFormat_AC}" Text="{Binding CellFormat_AC[0]}" Margin="5"/>
                     </UniformGrid>
                 </GroupBox>

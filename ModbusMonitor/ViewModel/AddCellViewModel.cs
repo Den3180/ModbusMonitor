@@ -17,20 +17,23 @@ namespace ModbusMonitor.ViewModel
         private string connectionText = string.Empty;
         private string deviceName_AC = string.Empty;
         private string deviceAddress_AC = string.Empty;
-        private string cellAddress_AC = string.Empty;
+        private string cellAddress_AC = "Пример: 1,2,3,5-15";
         private string titleText = string.Empty;
         private bool canInsertCell;
         private readonly Command insertCellCommand;
         private readonly ICollection<string> cellType_AC = new ObservableCollection<string>();
         private readonly ICollection<string> cellFormat_AC = new ObservableCollection<string>();
         private readonly AddСellsWindow window;
-        private readonly CellData cell;
+        private readonly CellData cell_AC;
 
         public AddCellViewModel(CellData cell, AddСellsWindow window)
         {
             this.window = window;
-            this.cell = cell;
+            cell_AC = cell;
             insertionPosition = string.IsNullOrEmpty(cell.NumberReg)?"0":cell.NumberReg;
+            ConnectionText = cell_AC.NameDevice+"-"+ModbusRTUASCII.PortsEnabled.First();
+            DeviceName_AC = cell_AC.NameDevice;
+            DeviceAddress_AC = cell_AC.DeviceAdress;
             TitleText = $"Добавление ячеек в позицию {insertionPosition}";
             insertCellCommand = new Command(InsertCell,()=> CanInsertCell);
             PropertyChanged += AddCellViewModel_PropertyChanged;

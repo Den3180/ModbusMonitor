@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,17 @@ namespace ModbusMonitor
     /// </summary>
     public class ChangePropertyClass : INotifyPropertyChanged
     {
+        private readonly ICollection<string> typeRegister = new ObservableCollection<string>()
+        {
+            "None",
+            "Discrete Inputs",
+            "Coil",
+            "Input Registers",
+            "Holding Registers"
+        };
+        public IEnumerable<string> TypeRegister => typeRegister;
+
+
         /// <summary>
         /// Настройка изменяющихся свойств.
         /// </summary>

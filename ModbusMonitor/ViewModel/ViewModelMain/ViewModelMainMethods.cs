@@ -43,11 +43,10 @@ namespace ModbusMonitor
         private void AddCells()
         {
             CellData selecedCell = GetSelectedCell();
-            //if (string.IsNullOrEmpty(selecedCell.NameDevice))
-            //{
-            //    MessageBox.Show("Выберите позицию для вставки!");
-            //    return;
-            //}
+            if(string.IsNullOrEmpty(selecedCell.DeviceAdress))//Если не выбрана строка.
+            {
+                selecedCell = (Usercontrol.DataContext as ControlDeviceView).Cells[0];
+            }
             AddСellsWindow addСellsWindow = new AddСellsWindow(selecedCell);
             addСellsWindow.ShowDialog();
         }
@@ -730,7 +729,7 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
             FillNodesTree(device);//Заполнение дерева без подключения.
             CanRefreshTree = true;
-            SelectedItemTree = treeNodes[0];
+            SelectedItemTree = treeNodes[0];            
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
                 Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
