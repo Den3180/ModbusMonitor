@@ -11,7 +11,7 @@ using ModbusMonitor.Windows;
 
 namespace ModbusMonitor.ViewModel
 {
-    public class ControlDeviceView : INotifyPropertyChanged
+    public class ControlDeviceView : ChangePropertyClass //INotifyPropertyChanged
     {
         private readonly Command writeRegisterCommand;
         private readonly Command editFormatCommand;
@@ -140,21 +140,21 @@ namespace ModbusMonitor.ViewModel
 
         #endregion
 
-        /// <summary>
-        /// Настройка изменяющихся свойств.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Property"></param>
-        /// <param name="variable"></param>
-        /// <param name="value"></param>
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
+        ///// <summary>
+        ///// Настройка изменяющихся свойств.
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="Property"></param>
+        ///// <param name="variable"></param>
+        ///// <param name="value"></param>
+        //private void SetOptions<T>(string Property, ref T variable, T value)
+        //{
+        //    if (variable != null && !variable.Equals(value))
+        //    {
+        //        variable = value;
+        //        OnPropertyChanged(new PropertyChangedEventArgs(Property));
+        //    }
+        //}
         private void ControlDeviceView_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(nameof(CanWriteRegister)))
@@ -162,10 +162,10 @@ namespace ModbusMonitor.ViewModel
                 writeRegisterCommand.RaiseCanExecuteChanged();
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //private void OnPropertyChanged(PropertyChangedEventArgs e)
+        //{
+        //    PropertyChanged?.Invoke(this, e);
+        //}
     }
 }

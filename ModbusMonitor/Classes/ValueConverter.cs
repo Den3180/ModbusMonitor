@@ -23,15 +23,14 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         public static string ConvertFormatData(ushort cellData, string format)
         {
-
-            string value = format switch
+            string value = format switch//Преобразование полученных данных в строку.
             {
                 "Bin" => Convert.ToString(cellData, 2),
                 "Hex" => Convert.ToString(cellData, 16).ToUpper(),
                 _ => Convert.ToString(cellData)
             };
             if(format=="Hex" && value.Length % 8 != 0)
-            {
+            {                
                 return "0" + value;
             }
             return value;
@@ -46,11 +45,10 @@ namespace ModbusMonitor.Classes
             if (cellData.Value.Length % 2 != 0 && prevFormat=="Hex")
             {
                 cellData.Value = "0" + cellData.Value;
-            }
-            //cellData.Value = "65532";
+            }            
             byte[] dataArr = prevFormat switch
             {
-                "Bin" => BitConverter.GetBytes(Convert.ToUInt32(cellData.Value, 2)),
+                "Bin" => BitConverter.GetBytes(Convert.ToInt32(cellData.Value, 2)),
                 "Hex" => Convert.FromHexString(cellData.Value),
                 _ => BitConverter.GetBytes(Convert.ToInt32(cellData.Value))
             };
@@ -64,16 +62,10 @@ namespace ModbusMonitor.Classes
             }
             cellData.Value = cellData.Format switch
             {
-                "Bin" => Convert.ToString(BitConverter.ToUInt32(dataArr), 2),
+                "Bin" => Convert.ToString(BitConverter.ToInt32(dataArr), 2),
                 "Hex" => Convert.ToHexString(dataArr),
-                _ => Convert.ToString(BitConverter.ToUInt32(dataArr))
+                _ => Convert.ToString(BitConverter.ToInt32(dataArr))
             };
-        }
-
-        public static string ConvertToUSHortFromValue(string data)
-        {
-
-            return string.Empty;
-        }
+        }       
     }
 }

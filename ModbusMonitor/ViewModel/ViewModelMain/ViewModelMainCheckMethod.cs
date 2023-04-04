@@ -1,4 +1,5 @@
 ﻿using ModbusMonitor.Classes;
+using ModbusMonitor.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ModbusMonitor
 {
-    public partial class ViewModelMain : INotifyPropertyChanged
+    public partial class ViewModelMain 
     {
         /// <summary>
         /// Определяет какой элемент дерева выбран, узел или подузел.
@@ -61,6 +62,15 @@ namespace ModbusMonitor
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Получитьт выбранную ячейку.
+        /// </summary>
+        /// <returns></returns>
+        private CellData GetSelectedCell()
+        {
+            return (Usercontrol.DataContext as ControlDeviceView).SelectedCell;
         }
 
     }

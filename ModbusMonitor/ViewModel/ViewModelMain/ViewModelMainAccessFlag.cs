@@ -19,10 +19,11 @@ using System.Windows.Threading;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Windows.Navigation;
 
 namespace ModbusMonitor
 {
-    public partial class ViewModelMain : INotifyPropertyChanged
+    public partial class ViewModelMain 
     {
         private bool canWriteRegister;
         private bool canConnection;
@@ -36,9 +37,22 @@ namespace ModbusMonitor
         private bool canClearTreeSingle;
         private bool canRefreshTree;
         private bool canChangeDevice;
+        private bool canAddCells;
 
         #region [Флаги доступности]
 
+        /// <summary>
+        /// Доступность команды Добавить ячейки.
+        /// </summary>
+        public bool CanAddCells
+        {
+            get => canAddCells;
+            set => SetOptions(nameof(CanAddCells), ref canAddCells, value);
+        }
+
+        /// <summary>
+        /// Доступность команды Изменить устройчтво.
+        /// </summary>
         public bool CanChangeDevice
         {
             get => canChangeDevice;
@@ -139,7 +153,7 @@ namespace ModbusMonitor
             set => SetOptions(nameof(CanRequest), ref canRequest, value);
         }
         #endregion
-
+        
         /// <summary>
         /// Изменение доступности команд.
         /// </summary>
@@ -150,7 +164,7 @@ namespace ModbusMonitor
             if (e.PropertyName == null)
             {
                 return;
-            }
+            }                      
             if (e.PropertyName.Equals(nameof(CanDisablePoll)))
             {
                 disablePollCommand.RaiseCanExecuteChanged();
@@ -192,6 +206,10 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanChangeDevice)))                
             {
                 changeDeviceCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanAddCells)))
+            {
+                addCellsCommand.RaiseCanExecuteChanged();
             }
         }
     }

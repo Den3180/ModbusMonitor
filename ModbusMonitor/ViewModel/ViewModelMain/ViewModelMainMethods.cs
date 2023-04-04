@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 
 namespace ModbusMonitor
 {
-    public partial class ViewModelMain : INotifyPropertyChanged
+    public partial class ViewModelMain 
     {
         private bool answerRequest = false;//Флаг завершения опроса.        
         private int countReqTot = 0; //Общее количество запросов.
@@ -36,6 +36,21 @@ namespace ModbusMonitor
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
         #region[Обработчики комманд]
+
+        /// <summary>
+        /// Добавить ячейки.
+        /// </summary>
+        private void AddCells()
+        {
+            CellData selecedCell = GetSelectedCell();
+            //if (string.IsNullOrEmpty(selecedCell.NameDevice))
+            //{
+            //    MessageBox.Show("Выберите позицию для вставки!");
+            //    return;
+            //}
+            AddСellsWindow addСellsWindow = new AddСellsWindow(selecedCell);
+            addСellsWindow.ShowDialog();
+        }
 
         /// <summary>
         /// Изменить устройство.
@@ -127,6 +142,7 @@ namespace ModbusMonitor
             CanClearTreeSingle = false;//Отключение команды "Удалить".
             CanRefreshTree = false;// отключение команды "Удалить все".
             CanChangeDevice = false;//Отключение команды изменить устройство.
+            CanAddCells = false;
             SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
         }
 
@@ -202,6 +218,7 @@ namespace ModbusMonitor
                 CanClearTreeSingle = false;
                 CanRefreshTree = false;
                 CanChangeDevice = false;
+                CanAddCells = false;
                 listDevices.Clear();
             }                
         }
@@ -384,6 +401,7 @@ namespace ModbusMonitor
                 DeviceID=device.ID
             });//Добавление подузлов.
             CanConnection = true;//Включить кнопку "Подключение".
+            CanAddCells = true;
             treeNodes.Add(treeNode);//Добавление в коллекцию источника данных дерева.
         }
 
@@ -645,7 +663,7 @@ namespace ModbusMonitor
         /// </summary>
         private void ShowAbout()
         {
-
+            
         }
 
         /// <summary>

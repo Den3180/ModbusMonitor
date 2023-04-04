@@ -22,7 +22,7 @@ using System.Windows.Media;
 
 namespace ModbusMonitor
 {
-    public partial class ViewModelMain : INotifyPropertyChanged
+    public partial class ViewModelMain 
     {
         private int numInOrder;//Номера регистров по порядку не зависимо от типа.
         private int regAddress;
@@ -179,33 +179,7 @@ namespace ModbusMonitor
                 SetOptions(nameof(RegValue), ref regValue, value);
             }
         }
-        #endregion
-
-        /// <summary>
-        /// Настройка изменяющихся свойств.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Property"></param>
-        /// <param name="variable"></param>
-        /// <param name="value"></param>
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable == null)
-            {
-                var t = new object();
-                variable = (T)t;
-            }
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
+        #endregion       
     }
 }
 
