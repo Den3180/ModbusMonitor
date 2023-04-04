@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace ModbusMonitor.ViewModel
 {
-    class ChangeDeviceViewMod : INotifyPropertyChanged
+    class ChangeDeviceViewMod : ChangePropertyClass
     {
         private string address_ChD;
         private string name_ChD;
@@ -35,10 +35,10 @@ namespace ModbusMonitor.ViewModel
             CanCloseChange = true;
             PropertyChanged += ChangeDeviceViewMod_PropertyChanged;
             foreach (var item in ModbusRTUASCII.PortsEnabled)
-            {
+            {                
                 typePortList.Add(item);
             }
-            SelectedItem=typePortList?.First();
+            SelectedItem=typePortList?.FirstOrDefault();
         }
 
         private void ChangeDeviceViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -129,27 +129,5 @@ namespace ModbusMonitor.ViewModel
             get => canCloseChange;
             set => SetOptions(nameof(CanCloseChange), ref canCloseChange, value);
         }
-
-        /// <summary>
-        /// Настройка изменяющихся свойств.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Property"></param>
-        /// <param name="variable"></param>
-        /// <param name="value"></param>
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
-
     }
 }

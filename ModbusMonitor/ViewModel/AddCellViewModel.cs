@@ -31,7 +31,8 @@ namespace ModbusMonitor.ViewModel
             this.window = window;
             cell_AC = cell;
             insertionPosition = string.IsNullOrEmpty(cell.NumberReg)?"0":cell.NumberReg;
-            ConnectionText = cell_AC.NameDevice+"-"+ModbusRTUASCII.PortsEnabled.First();
+            ConnectionText = ModbusRTUASCII.PortsEnabled.Count>0? 
+                cell_AC.NameDevice+"-"+ModbusRTUASCII.PortsEnabled.First(): cell_AC.NameDevice + "- нет доступных портов";
             DeviceName_AC = cell_AC.NameDevice;
             DeviceAddress_AC = cell_AC.DeviceAdress;
             TitleText = $"Добавление ячеек в позицию {insertionPosition}";

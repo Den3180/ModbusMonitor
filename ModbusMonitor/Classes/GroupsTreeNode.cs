@@ -16,7 +16,7 @@ namespace ModbusMonitor.Classes
     /// <summary>
     /// Узел дерева элементов.
     /// </summary>
-    public class GroupsTreeNode : INotifyPropertyChanged
+    public class GroupsTreeNode : ChangePropertyClass
     {
         private string state = "Отключено";
         private Brush colorTextTreeConnect = Brushes.Red;
@@ -41,26 +41,12 @@ namespace ModbusMonitor.Classes
         {
             get => colorTextTreeConnect;
             set => SetOptions(nameof(ColorTextTreeConnect), ref colorTextTreeConnect, value);
-        }
-
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
+        }        
     }
     /// <summary>
     /// Конечные узлы дерева элементов.
     /// </summary>
-    public class SubGroupsTree : INotifyPropertyChanged
+    public class SubGroupsTree : ChangePropertyClass
     {
         
         private string contentPort = string.Empty;
@@ -104,20 +90,6 @@ namespace ModbusMonitor.Classes
         {
             get => contentName;
             set => SetOptions(nameof(ContentName), ref contentName, value);           
-        }
-
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable!=null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
         }        
     }
 }

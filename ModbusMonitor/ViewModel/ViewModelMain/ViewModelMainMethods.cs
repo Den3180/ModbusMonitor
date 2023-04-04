@@ -41,7 +41,7 @@ namespace ModbusMonitor
         /// Добавить ячейки.
         /// </summary>
         private void AddCells()
-        {
+        {           
             CellData selecedCell = GetSelectedCell();
             if(string.IsNullOrEmpty(selecedCell.DeviceAdress))//Если не выбрана строка.
             {
