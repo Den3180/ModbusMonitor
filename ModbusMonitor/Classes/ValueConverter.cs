@@ -80,13 +80,17 @@ namespace ModbusMonitor.Classes
             int j = 0;
             for (int i = 0; i < valcell.Length; i++)
             {
-                if (i > 0 && j > 0 && j % 4 == 0 && valcell[i] != '_')
+                if (i > 0 && j > 0 && j % 4 == 0 && valcell[i] != ' ')
                 {
-                    valcell = valcell.Insert(i, "_");
+                    valcell = valcell.Insert(i, " ");
                     j = 0;
                     continue;
                 }
                 j++;
+            }
+            if(valcell.Split(' ')[0]=="0000")
+            {
+                valcell=valcell.Remove(0, 5);
             }
             return valcell;
         }
