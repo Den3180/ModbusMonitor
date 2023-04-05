@@ -7,6 +7,19 @@ using System.Threading.Tasks;
 
 namespace ModbusMonitor.Classes
 {
+    /// <summary>
+    /// Тип данных.
+    /// </summary>
+    public enum TypeData
+    {
+        Bin,
+        Hex,
+        Int,
+        Decimal,
+        Float,
+        swFloat,
+        swDouble
+    }
 
     /// <summary>
     /// Порт открыт/закрыт.

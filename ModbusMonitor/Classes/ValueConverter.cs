@@ -25,7 +25,7 @@ namespace ModbusMonitor.Classes
         {
             string value = format switch//Преобразование полученных данных в строку.
             {
-                "Bin" => Convert.ToString(cellData, 2),
+                "Bin" =>RepresentBinFormat(Convert.ToString(cellData, 2)),
                 "Hex" => Convert.ToString(cellData, 16).ToUpper(),
                 _ => Convert.ToString(cellData)
             };
@@ -62,10 +62,33 @@ namespace ModbusMonitor.Classes
             }
             cellData.Value = cellData.Format switch
             {
-                "Bin" => Convert.ToString(BitConverter.ToInt32(dataArr), 2),
+                "Bin" => RepresentBinFormat( Convert.ToString(BitConverter.ToInt32(dataArr), 2)),
                 "Hex" => Convert.ToHexString(dataArr),
                 _ => Convert.ToString(BitConverter.ToInt32(dataArr))
             };
-        }       
+        } 
+        /// <summary>
+        /// Конечный бинарный вид.
+        /// </summary>
+        /// <param name="valueData"></param>
+        /// <returns></returns>
+        public static string RepresentBinFormat(string valueData)
+        {
+            int delta1 = 16 - valueData.Length < 0 ? 4 - valueData.Length % 4 : 16 - valueData.Length;
+            string valcell = new string('0', delta1);
+            valcell += valueData;
+            int j = 0;
+            for (int i = 0; i < valcell.Length; i++)
+            {
+                if (i > 0 && j > 0 && j % 4 == 0 && valcell[i] != '_')
+                {
+                    valcell = valcell.Insert(i, "_");
+                    j = 0;
+                    continue;
+                }
+                j++;
+            }
+            return valcell;
+        }
     }
 }

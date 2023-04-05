@@ -13,6 +13,10 @@ namespace ModbusMonitor
     /// </summary>
     public class ChangePropertyClass : INotifyPropertyChanged
     {
+        protected string patternBin = @"^[01]{4,}$";       //Паттерн бинарного числа.
+        protected string patternHex = @"^0x[0-9ABCDEF]*$"; //Паттерн hex.
+        protected string patternInt = @"^[1-9]{1}[0-9]+$"; //Паттерн Int.
+
         private readonly ICollection<string> typeRegister = new ObservableCollection<string>()
         {
             "None",
@@ -22,7 +26,11 @@ namespace ModbusMonitor
             "Holding Registers"
         };
         public IEnumerable<string> TypeRegister => typeRegister;
-
+        protected string[] NameButton = new string[]
+           { 
+               "Bin","Hex","Int","Decimal","Float","swFloat",
+               "Double","swDouble"
+           };
 
         /// <summary>
         /// Настройка изменяющихся свойств.

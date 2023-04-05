@@ -133,6 +133,7 @@ namespace ModbusMonitor.ViewModel
                 CanSearch = true;
                 CanBreakCommand = false;
                 flagSearchMethod = false;
+                DisableGroupBox = true;
             }
         }
 

@@ -64,18 +64,18 @@ namespace ModbusMonitor.ViewModel
             string prevFormat = string.Empty;
             foreach(var item in MenuItemCheck)//Ищем новый чек формата.
             {
-                if (item.CheckButton == true && SelectedCell.Format!=item.NameButton)//Присваиваем новый тип формата данным.
+                if (item.CheckButton == true && SelectedCell.Format!=item.NameButtonProp)//Присваиваем новый тип формата данным.
                 {
-                    SelectedCell.Format = item.NameButton;
+                    SelectedCell.Format = item.NameButtonProp;
                     break;
                 }               
             }
             foreach (var item1 in MenuItemCheck)//Ищем предыдущие чеки.
             {
-                if (SelectedCell.Format != item1.NameButton && item1.CheckButton==true)//Сбрасываем их значения.
+                if (SelectedCell.Format != item1.NameButtonProp && item1.CheckButton==true)//Сбрасываем их значения.
                 {
                     item1.CheckButton = false;
-                    prevFormat = item1.NameButton;
+                    prevFormat = item1.NameButtonProp;
                     flag = true;                    
                 }
             }
@@ -92,11 +92,11 @@ namespace ModbusMonitor.ViewModel
         {
             foreach(var item in MenuItemCheck)
             {
-                if (SelectedCell.Format!=item.NameButton && item.CheckButton==true)
+                if (SelectedCell.Format!=item.NameButtonProp && item.CheckButton==true)
                 {
                     item.CheckButton = false;
                 }
-                else if(SelectedCell.Format == item.NameButton)
+                else if(SelectedCell.Format == item.NameButtonProp)
                 {
                     item.CheckButton = true;
                 }
@@ -139,22 +139,7 @@ namespace ModbusMonitor.ViewModel
         }
 
         #endregion
-
-        ///// <summary>
-        ///// Настройка изменяющихся свойств.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="Property"></param>
-        ///// <param name="variable"></param>
-        ///// <param name="value"></param>
-        //private void SetOptions<T>(string Property, ref T variable, T value)
-        //{
-        //    if (variable != null && !variable.Equals(value))
-        //    {
-        //        variable = value;
-        //        OnPropertyChanged(new PropertyChangedEventArgs(Property));
-        //    }
-        //}
+       
         private void ControlDeviceView_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(nameof(CanWriteRegister)))
@@ -162,10 +147,6 @@ namespace ModbusMonitor.ViewModel
                 writeRegisterCommand.RaiseCanExecuteChanged();
             }
         }
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private void OnPropertyChanged(PropertyChangedEventArgs e)
-        //{
-        //    PropertyChanged?.Invoke(this, e);
-        //}
+       
     }
 }

@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace ModbusMonitor.ViewModel
 {
-    public class WriteRegisterViewMod : INotifyPropertyChanged
+    public class WriteRegisterViewMod : ChangePropertyClass
     {
         private string addressDevice=string.Empty;
         private string valueRegister=string.Empty;
@@ -23,16 +23,9 @@ namespace ModbusMonitor.ViewModel
         private bool canWriteRegistry;
         private readonly Window window;
         private readonly Command writeRegistryCommand;
+        private readonly Command checkTypeDataCommand;
         private readonly CellData cellData;
-        private readonly ICollection<string> connectionPortDevice = new ObservableCollection<string>();        
-        private readonly ICollection<string> typeRegister = new ObservableCollection<string>()
-        {
-            "None",
-            "Discrete Inputs",
-            "Coil",
-            "Input Registers",
-            "Holding Registers"
-        };
+        private readonly ICollection<string> connectionPortDevice = new ObservableCollection<string>();
         
         public WriteRegisterViewMod(params object[] objects )
         {
@@ -44,15 +37,31 @@ namespace ModbusMonitor.ViewModel
             }
             if(cellData!=null) SelectItemTypeRegister();
             writeRegistryCommand = new Command(WriteRegistry, () => CanWriteRegistry);
+            checkTypeDataCommand = new Command(CheckTypeData);
             PropertyChanged += WriteRegisterViewMod_PropertyChanged;
         }
 
         public ModbusRTUASCII ModbusRTU { get; set; }
         public List<ButtonProp> CheckRadioButtons { get; set; } = new List<ButtonProp>(8); 
-        public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
-        public IEnumerable<string> TypeRegister => typeRegister;
+        public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;       
         public ICommand WriteRegistryCommand => writeRegistryCommand;
+        public ICommand CheckTypeDataCommand => checkTypeDataCommand;
 
+        private void CheckTypeData()
+        {
+            string typeData=string.Empty;
+            foreach(var rButton in CheckRadioButtons)//Ищем и запоминаем выбраный тип данных.
+            {
+                if (rButton.CheckButton == true)
+                {
+                    typeData = rButton.NameButtonProp;
+                }
+            }
+            if(Regex.IsMatch(ValueRegister, patternHex, RegexOptions.IgnoreCase))
+            {
+
+            }
+        }
         /// <summary>
         /// Запись в одиночный регистр.
         /// </summary>
@@ -79,9 +88,16 @@ namespace ModbusMonitor.ViewModel
         /// <returns></returns>
         private int ConvertFormat(string data)
         {           
-            string tempFormat = string.Empty;
-            string patternBin = @"^[01]{4,}$";
-            string patternHex = @"^[0-9ABCDEF]{1,}$";
+            string tempFormat = string.Empty;       
+
+            foreach (var item in CheckRadioButtons)//Определяем какой чек выбран.
+            {
+                if (item.CheckButton == true)
+                {
+                    cellData.Format = item.NameButtonProp;//Присваиваем этот чек элементу в таблице данных.
+                    break;
+                }
+            }
             if (new Regex(patternBin).IsMatch(data))
             {
                 tempFormat = "Bin";
@@ -89,14 +105,6 @@ namespace ModbusMonitor.ViewModel
             else if (new Regex(patternHex).IsMatch(data)&& Convert.ToInt32(data, 16)<=UInt16.MaxValue)
             {
                 tempFormat = "Hex";
-            }
-            foreach (var item in CheckRadioButtons)
-            {
-                if (item.CheckButton == true)
-                {
-                    cellData.Format = item.NameButton;
-                    break;
-                }
             }
             return tempFormat switch
             {
@@ -126,14 +134,10 @@ namespace ModbusMonitor.ViewModel
                 "AI" => 3,
                 "AO" => 4,
                  _ => 0
-            };
-            string[] NameButton = new string[] 
-            { "Decimal","Int","Bin","Hex","Float","swFloat",
-               "Double","swDouble"
-            };          
+            };            
             for(int i = 0; i < CheckRadioButtons.Capacity; i++)
             {
-                if (cellData.Format == NameButton[i])
+                if (cellData.Format == NameButton[i])//Если формат выбранного элемента совпал с именем кнопки.
                 {
                     CheckRadioButtons.Add(new ButtonProp(NameButton[i],true));                    
                 }
@@ -141,6 +145,10 @@ namespace ModbusMonitor.ViewModel
                 {
                     CheckRadioButtons.Add(new ButtonProp(NameButton[i]));
                 }
+            }
+            if (cellData.Format == nameof(TypeData.Bin))
+            {               
+                ValueRegister = ValueConverter.RepresentBinFormat(cellData.Value);
             }
         }       
 
@@ -183,22 +191,6 @@ namespace ModbusMonitor.ViewModel
         {
             get => canWriteRegistry;
             set => SetOptions(nameof(CanWriteRegistry), ref canWriteRegistry, value);
-        }             
-
-        /// <summary>
-        /// Настройка изменяющихся свойств.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Property"></param>
-        /// <param name="variable"></param>
-        /// <param name="value"></param>
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
         }
         private void WriteRegisterViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -206,25 +198,22 @@ namespace ModbusMonitor.ViewModel
             {
                 writeRegistryCommand.RaiseCanExecuteChanged();
             }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
+        }        
     }
+
+
     /// <summary>
     /// Класс свойств IsChecked radiobutton.
     /// </summary>
-    public class ButtonProp : INotifyPropertyChanged
+    public class ButtonProp : ChangePropertyClass
     {
         private bool checkButton;
         public ButtonProp(string name,bool val=false)
         {
-            NameButton = name;
+            NameButtonProp = name;
             checkButton = val;
         }
-        public string NameButton { get; set; }
+        public string NameButtonProp { get; set; }
         public bool CheckButton
         {
             get => checkButton;
@@ -232,26 +221,6 @@ namespace ModbusMonitor.ViewModel
             {
                 SetOptions(nameof(CheckButton), ref checkButton, value);
             }
-        }
-        /// <summary>
-        /// Настройка изменяющихся свойств.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Property"></param>
-        /// <param name="variable"></param>
-        /// <param name="value"></param>
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {
-            if (variable != null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
         }       
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
     }
 }
