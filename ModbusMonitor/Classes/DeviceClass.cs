@@ -107,7 +107,7 @@ namespace ModbusMonitor.Classes
                 if (item.Represent == "Bin" && ushort.TryParse(item.Value, out val))
                 {
                     item.Format = item.Represent;
-                    item.Value = Convert.ToString(Convert.ToUInt16(item.Value), 2);
+                    item.Value = ValueConverter.RepresentBinFormat(Convert.ToString(Convert.ToUInt16(item.Value), 2));
                 }
                 if (item.Type.Contains("Coil"))
                 {

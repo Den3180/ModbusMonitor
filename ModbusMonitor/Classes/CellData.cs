@@ -46,7 +46,7 @@ namespace ModbusMonitor.Classes
     /// <summary>
     /// Класс ячеек для регистров из карты TikModbus.
     /// </summary>
-    public class CellData : INotifyPropertyChanged
+    public class CellData : ChangePropertyClass
     {
         private int adress;//Адрес регистра.
         private string numberReg = string.Empty;//Номер по порядку.
@@ -127,20 +127,6 @@ namespace ModbusMonitor.Classes
             get => adress;
             set =>  SetOptions<int>(nameof(Adress), ref adress, value);
             
-        }
-
-        private void SetOptions<T>(string Property, ref T variable, T value)
-        {            
-            if (variable!=null && !variable.Equals(value))
-            {
-                variable = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(Property));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
+        }       
     }
 }

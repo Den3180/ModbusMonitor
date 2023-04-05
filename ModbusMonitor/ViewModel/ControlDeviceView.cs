@@ -11,7 +11,7 @@ using ModbusMonitor.Windows;
 
 namespace ModbusMonitor.ViewModel
 {
-    public class ControlDeviceView : ChangePropertyClass //INotifyPropertyChanged
+    public class ControlDeviceView : ChangePropertyClass 
     {
         private readonly Command writeRegisterCommand;
         private readonly Command editFormatCommand;
@@ -30,7 +30,7 @@ namespace ModbusMonitor.ViewModel
             selectedCell = new CellData();
             foreach (var item in objects)
             {
-                if (item is List<CellData>) Cells = item as List<CellData>;
+                if (item is List<CellData>) Cells = item as List<CellData>;//Это элементы уже из карты.
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is DeviceClass) CurrentDevice = item as DeviceClass;
             }

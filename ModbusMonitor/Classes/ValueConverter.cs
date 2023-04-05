@@ -88,9 +88,9 @@ namespace ModbusMonitor.Classes
                 }
                 j++;
             }
-            if(valcell.Split(' ')[0]=="0000")
+            if(valcell.Split(' ')[0]=="0000")//Проверка на нулевое значение старшего бита.
             {
-                valcell=valcell.Remove(0, 5);
+                valcell=valcell.Remove(0, 5);//Удаляем бит с нулями.
             }
             return valcell;
         }
