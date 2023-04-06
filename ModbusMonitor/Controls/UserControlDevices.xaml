@@ -41,33 +41,26 @@
                     <MenuItem Header="Формат" >
                         <MenuItem.Resources>
                             <Style x:Key="Format" TargetType="{x:Type MenuItem}">
-                                <Setter Property="IsCheckable" Value="True"/>                                 
+                                <Setter Property="IsCheckable" Value="True"/>
+                                <Setter Property="Command" Value="{Binding EditFormatCommand}"/>                                
                             </Style>
                         </MenuItem.Resources>
-                        <MenuItem Header="Bin" Style="{StaticResource Format}" 
-                                  IsChecked="{Binding MenuItemCheck[0].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                        <MenuItem Header="Bin" Style="{StaticResource Format}"
+                                  IsChecked="{Binding MenuItemCheck[0].CheckButton}"/>
                         <MenuItem Header="Hex" Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[1].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[1].CheckButton}"/>
                         <MenuItem Header="Int" Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[2].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[2].CheckButton}"/>
                         <MenuItem Header="Decimal"  Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[3].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[3].CheckButton}"/>
                         <MenuItem Header="Double"   Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[4].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[4].CheckButton}"/>
                         <MenuItem Header="swDouble" Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[5].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[5].CheckButton}"/>
                         <MenuItem Header="Float"    Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[6].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[6].CheckButton}"/>
                         <MenuItem Header="swFloat"  Style="{StaticResource Format}"
-                                  IsChecked="{Binding MenuItemCheck[7].CheckButton}"
-                                  Command="{Binding EditFormatCommand}"/>
+                                  IsChecked="{Binding MenuItemCheck[7].CheckButton}"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Вырезать"/>

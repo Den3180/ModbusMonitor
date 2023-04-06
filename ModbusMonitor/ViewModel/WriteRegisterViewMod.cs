@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -18,6 +19,7 @@ namespace ModbusMonitor.ViewModel
     {
         private string addressDevice=string.Empty;
         private string valueRegister=string.Empty;
+        private string dataFormat=string.Empty;
         private int selectedTypeRegister;
         private int addressregister;
         private bool canWriteRegistry;
@@ -35,6 +37,7 @@ namespace ModbusMonitor.ViewModel
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is Window) window = item as Window;
             }
+            dataFormat = cellData.Format;            
             if(cellData!=null) SelectItemTypeRegister();
             writeRegistryCommand = new Command(WriteRegistry, () => CanWriteRegistry);
             checkTypeDataCommand = new Command(CheckTypeData);
@@ -48,19 +51,15 @@ namespace ModbusMonitor.ViewModel
         public ICommand CheckTypeDataCommand => checkTypeDataCommand;
 
         private void CheckTypeData()
-        {
-            string typeData=string.Empty;
+        {            
             foreach(var rButton in CheckRadioButtons)//Ищем и запоминаем выбраный тип данных.
             {
                 if (rButton.CheckButton == true)
                 {
-                    typeData = rButton.NameButtonProp;
-                }
-            }
-            if(Regex.IsMatch(ValueRegister, patternHex, RegexOptions.IgnoreCase))
-            {
-
-            }
+                    ValueRegister= ValueConverter.ChangeFormatData(ValueRegister, rButton.NameButtonProp);
+                    dataFormat = rButton.NameButtonProp;
+                }                
+            }            
         }
         /// <summary>
         /// Запись в одиночный регистр.
@@ -75,45 +74,33 @@ namespace ModbusMonitor.ViewModel
                 ModbusRTU.WriteCoilRegister(slaveID, regAddress, value);
             }
             else if (cellData.Type == "AO")
-            {               
-                int value = ConvertFormat(ValueRegister);
+            {
+                int value;
+                string valString;
+                if(dataFormat=="Bin" && Regex.IsMatch(ValueRegister, patternBin))
+                {
+                    valString = ValueConverter.RepresentBinToString(ValueRegister);
+                    value = Convert.ToInt32(valString, 2);
+                }
+                else if (dataFormat == "Hex" && Regex.IsMatch(ValueRegister,patternHex))
+                {
+                    valString = ValueConverter.RepresentHexToString(ValueRegister);
+                    value = Convert.ToInt32(valString, 16);
+                }
+                else if (dataFormat == "Int" && Regex.IsMatch(ValueRegister, patternInt))
+                {                    
+                    value = Convert.ToInt32(ValueRegister);
+                }
+                else
+                {                    
+                    value = Convert.ToInt32(ValueRegister);
+                }
                 ModbusRTU.WriteHoldingRegister(slaveID, regAddress, value);
+                cellData.Format = dataFormat;
             }
             window.Close();
         }
-        /// <summary>
-        /// Преобразование формата данных.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        private int ConvertFormat(string data)
-        {           
-            string tempFormat = string.Empty;       
-
-            foreach (var item in CheckRadioButtons)//Определяем какой чек выбран.
-            {
-                if (item.CheckButton == true)
-                {
-                    cellData.Format = item.NameButtonProp;//Присваиваем этот чек элементу в таблице данных.
-                    break;
-                }
-            }
-            if (new Regex(patternBin).IsMatch(data))
-            {
-                tempFormat = "Bin";
-            }
-            else if (new Regex(patternHex).IsMatch(data)&& Convert.ToInt32(data, 16)<=UInt16.MaxValue)
-            {
-                tempFormat = "Hex";
-            }
-            return tempFormat switch
-            {
-                "Bin" => Convert.ToInt32(data, 2),
-                "Hex" => Convert.ToInt32(data, 16),
-                _ => Convert.ToInt32(data)
-            } ;
-        }
-
+      
         /// <summary>
         /// Заполнение формы в окна записи регистра.
         /// </summary>
@@ -134,7 +121,9 @@ namespace ModbusMonitor.ViewModel
                 "AI" => 3,
                 "AO" => 4,
                  _ => 0
-            };            
+            };
+
+            //Выставление флажка кнопки.
             for(int i = 0; i < CheckRadioButtons.Capacity; i++)
             {
                 if (cellData.Format == NameButton[i])//Если формат выбранного элемента совпал с именем кнопки.
@@ -145,11 +134,7 @@ namespace ModbusMonitor.ViewModel
                 {
                     CheckRadioButtons.Add(new ButtonProp(NameButton[i]));
                 }
-            }
-            if (cellData.Format == nameof(TypeData.Bin))
-            {               
-                ValueRegister = ValueConverter.RepresentBinFormat(cellData.Value);
-            }
+            }           
         }       
 
         /// <summary>
@@ -158,7 +143,10 @@ namespace ModbusMonitor.ViewModel
         public string ValueRegister
         {
             get => valueRegister;
-            set => SetOptions(nameof(ValueRegister), ref valueRegister, value);
+            set
+            {                
+                SetOptions(nameof(ValueRegister), ref valueRegister, value); 
+            }
         }
         /// <summary>
         /// Привязка выбранного элемента поля "Адрес регистра".

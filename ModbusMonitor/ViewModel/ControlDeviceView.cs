@@ -54,36 +54,32 @@ namespace ModbusMonitor.ViewModel
         {           
             WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
+            SelectItemFormat();
         }
         /// <summary>
         /// Редактирование формата при отключенном устройстве.
         /// </summary>
         private void EditFormat()
         {
-            bool flag = false; //индикатор совпадений.
-            string prevFormat = string.Empty;
-            foreach(var item in MenuItemCheck)//Ищем новый чек формата.
+            foreach (var item in MenuItemCheck)//Ищем новый чек формата.
             {
-                if (item.CheckButton == true && SelectedCell.Format!=item.NameButtonProp)//Присваиваем новый тип формата данным.
+                //Присваиваем новый тип формата данным.
+                if (item.CheckButton == true && SelectedCell.Format != item.NameButtonProp)
                 {
-                    SelectedCell.Format = item.NameButtonProp;
+                    SelectedCell.Format = item.NameButtonProp;//Изменение формата в таблице.
                     break;
-                }               
+                }
             }
             foreach (var item1 in MenuItemCheck)//Ищем предыдущие чеки.
             {
-                if (SelectedCell.Format != item1.NameButtonProp && item1.CheckButton==true)//Сбрасываем их значения.
+                //Находим предыдущий формат и сбрасываем его.
+                if (SelectedCell.Format != item1.NameButtonProp && item1.CheckButton == true)
                 {
                     item1.CheckButton = false;
-                    prevFormat = item1.NameButtonProp;
-                    flag = true;                    
                 }
             }
-                //Если устройство не подключено и изменеие формата не было.
-            if (CurrentDevice.LinkDevice == EnumLink.LinkNo || CurrentDevice.LinkDevice == EnumLink.Unknown && flag)
-            {
-                ValueConverter.ChangeFormatData(SelectedCell,prevFormat);
-            }
+            SelectItemFormat();
+            ValueConverter.ChangeFormatData(SelectedCell);            
         }
         /// <summary>
         /// Выбор формата данных.

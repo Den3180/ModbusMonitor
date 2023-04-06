@@ -26,47 +26,99 @@ namespace ModbusMonitor.Classes
             string value = format switch//Преобразование полученных данных в строку.
             {
                 "Bin" =>RepresentBinFormat(Convert.ToString(cellData, 2)),
-                "Hex" => Convert.ToString(cellData, 16).ToUpper(),
+                "Hex" =>RepresentHexFormat(Convert.ToString(cellData, 16).ToUpper(),false),
                 _ => Convert.ToString(cellData)
-            };
-            if(format=="Hex" && value.Length % 8 != 0)
-            {                
-                return "0" + value;
-            }
+            };           
             return value;
         }
 
         /// <summary>
-        /// Сменить формат в DataGrid при отключенном устройстве.
+        /// Сменить формат.
         /// </summary>
         /// <param name="cellData"></param>
-        public static void ChangeFormatData(CellData cellData, string prevFormat)
+        public static void ChangeFormatData(CellData cellData)
         {
-            if (cellData.Value.Length % 2 != 0 && prevFormat=="Hex")
+            byte[] dataArr;
+            bool pos_negFlag=false;
+            if (Int32.TryParse(cellData.Value,out int res)==true && res<0)
             {
-                cellData.Value = "0" + cellData.Value;
-            }            
-            byte[] dataArr = prevFormat switch
-            {
-                "Bin" => BitConverter.GetBytes(Convert.ToInt32(cellData.Value, 2)),
-                "Hex" => Convert.FromHexString(cellData.Value),
-                _ => BitConverter.GetBytes(Convert.ToInt32(cellData.Value))
-            };
-            if (cellData.Format == "Hex" || prevFormat == "Hex")
-            {
+                pos_negFlag = true;
+            } 
+            if (cellData.Value.Contains("0x"))//Если предыдущий формат Hex.
+            {                
+                cellData.Value= cellData.Value.Remove(0, 2);//Удаляем 0x
+                dataArr = Convert.FromHexString(cellData.Value);
                 Array.Reverse(dataArr);
-            }            
-            if (dataArr.Length < 4)
-            {
-                Array.Resize(ref dataArr, 4);
             }
+            else if (cellData.Value.Contains(' '))//Если предыдущий формат Bin.
+            {
+              for(int i = 0; i < cellData.Value.Length; i++)//Удаляем пробелы.
+              {
+                    if (cellData.Value[i]==' ')
+                    {
+                       cellData.Value= cellData.Value.Remove(i,1);
+                        i = 0;
+                    }
+              }
+                dataArr = BitConverter.GetBytes(Convert.ToInt32(cellData.Value, 2));
+            }
+            else
+            {
+                dataArr = BitConverter.GetBytes(Convert.ToInt32(cellData.Value));
+            }
+            if(cellData.Format=="Hex") Array.Reverse(dataArr);            
             cellData.Value = cellData.Format switch
             {
                 "Bin" => RepresentBinFormat( Convert.ToString(BitConverter.ToInt32(dataArr), 2)),
-                "Hex" => Convert.ToHexString(dataArr),
+                "Hex" => RepresentHexFormat(Convert.ToHexString(dataArr),pos_negFlag),
                 _ => Convert.ToString(BitConverter.ToInt32(dataArr))
             };
         } 
+
+        /// <summary>
+        /// Сменить формат.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static string ChangeFormatData(string data,string format)
+        {
+            byte[] dataArr;
+            bool pos_negFlag = false;
+            if (Int32.TryParse(data, out int res) == true && res < 0)
+            {
+                pos_negFlag = true;
+            }
+            if (data.Contains("0x"))//Если предыдущий формат Hex.
+            {
+                data = data.Remove(0, 2);//Удаляем 0x
+                dataArr = Convert.FromHexString(data);
+                Array.Reverse(dataArr);
+            }
+            else if (data.Contains(' '))//Если предыдущий формат Bin.
+            {
+                for (int i = 0; i < data.Length; i++)//Удаляем пробелы.
+                {
+                    if (data[i] == ' ')
+                    {
+                        data = data.Remove(i, 1);
+                        i = 0;
+                    }
+                }
+                dataArr = BitConverter.GetBytes(Convert.ToInt32(data, 2));
+            }
+            else
+            {
+                dataArr = BitConverter.GetBytes(Convert.ToInt32(data));
+            }
+            if (format == "Hex") Array.Reverse(dataArr);
+             return format switch
+                            {
+                                "Bin" => RepresentBinFormat(Convert.ToString(BitConverter.ToInt32(dataArr), 2)),
+                                "Hex" => RepresentHexFormat(Convert.ToHexString(dataArr), pos_negFlag),
+                                _ => Convert.ToString(BitConverter.ToInt32(dataArr))
+                            };
+        }
         /// <summary>
         /// Конечный бинарный вид.
         /// </summary>
@@ -88,11 +140,62 @@ namespace ModbusMonitor.Classes
                 }
                 j++;
             }
-            if(valcell.Split(' ')[0]=="0000")//Проверка на нулевое значение старшего бита.
+            if(valcell.Split(' ')[0]=="0000" && valcell.Length>16)//Проверка на нулевое значение старшего бита.
             {
                 valcell=valcell.Remove(0, 5);//Удаляем бит с нулями.
             }
             return valcell;
         }
+        /// <summary>
+        /// Конечный вид Hex.
+        /// </summary>
+        /// <param name="valueData"></param>
+        /// <returns></returns>
+        public static string RepresentHexFormat(string valueData, bool pos_negFlag)
+        {
+            int delta1 = 16 - valueData.Length < 0 ? 4 - valueData.Length % 4 : 16 - valueData.Length;            
+            string valcell = pos_negFlag == false? new string('0', delta1): new string('F', delta1);
+            valcell = "0x"+ valcell+valueData;
+            return valcell;
+        }
+
+        /// <summary>
+        /// Перевод конечного формата Hex в строку формата записи.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string RepresentHexToString(string data)
+        {
+            if (data.Contains("0x"))//Если предыдущий формат Hex.
+            {
+                byte[] dataArr;
+                data = data.Remove(0, 2);//Удаляем 0x
+                dataArr = Convert.FromHexString(data);                
+                return Convert.ToHexString(dataArr);
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Перевод конечного формата Bin в строку формата записи.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string RepresentBinToString(string data)
+        {
+            if (data.Contains(' '))//Если предыдущий формат Bin.
+            {
+                for (int i = 0; i < data.Length; i++)//Удаляем пробелы.
+                {
+                    if (data[i] == ' ')
+                    {
+                        data = data.Remove(i, 1);
+                        i = 0;
+                    }
+                }
+                return data;
+            }
+            return string.Empty;
+        }  
     }
 }

@@ -10,7 +10,7 @@ namespace ModbusMonitor.Classes
     /// <summary>
     /// Тип данных.
     /// </summary>
-    public enum TypeData
+    public enum EnumTypeData
     {
         Bin,
         Hex,

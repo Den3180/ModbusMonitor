@@ -79,7 +79,7 @@
                     </GroupBox>
                 </UniformGrid>
                 <GroupBox Grid.Row="2" Header="Значение">
-                    <TextBox Text="{Binding ValueRegister}"/>
+                    <TextBox Text="{Binding ValueRegister, UpdateSourceTrigger=PropertyChanged}"/>
                 </GroupBox>
                 <UniformGrid Grid.Row="3" Columns="2">
                     <Button Command="{Binding WriteRegistryCommand}" Content="Записать" Margin="10"/>
