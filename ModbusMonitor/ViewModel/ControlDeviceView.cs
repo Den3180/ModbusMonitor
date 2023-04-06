@@ -64,7 +64,7 @@ namespace ModbusMonitor.ViewModel
             foreach (var item in MenuItemCheck)//Ищем новый чек формата.
             {
                 //Присваиваем новый тип формата данным.
-                if (item.CheckButton == true && SelectedCell.Format != item.NameButtonProp)
+                if (SelectedCell.Format != item.NameButtonProp && item.CheckButton == true)
                 {
                     SelectedCell.Format = item.NameButtonProp;//Изменение формата в таблице.
                     break;
@@ -86,13 +86,13 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void SelectItemFormat()
         {
-            foreach(var item in MenuItemCheck)
+            foreach (var item in MenuItemCheck)
             {
-                if (SelectedCell.Format!=item.NameButtonProp && item.CheckButton==true)
+                if (SelectedCell.Format != item.NameButtonProp && item.CheckButton == true)
                 {
                     item.CheckButton = false;
                 }
-                else if(SelectedCell.Format == item.NameButtonProp)
+                else if (SelectedCell.Format == item.NameButtonProp)
                 {
                     item.CheckButton = true;
                 }

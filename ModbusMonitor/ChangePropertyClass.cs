@@ -17,17 +17,16 @@ namespace ModbusMonitor
         protected string patternHex = @"^0x[0-9ABCDEF]*$"; //Паттерн hex.
         protected string patternInt = @"^[1-9]{1}[0-9]*$"; //Паттерн Int.
 
-        private readonly ICollection<string> typeRegister = new ObservableCollection<string>()
+        protected readonly ICollection<string> typeRegister = new ObservableCollection<string>()
         {
             "None",
             "Discrete Inputs",
             "Coil",
             "Input Registers",
             "Holding Registers"
-        };
-        public IEnumerable<string> TypeRegister => typeRegister;
-        protected string[] NameButton = new string[]
-           { 
+        };        
+        protected string[] nameButton  = new string[]
+           {
                "Bin","Hex","Int","Decimal","Float","swFloat",
                "Double","swDouble"
            };

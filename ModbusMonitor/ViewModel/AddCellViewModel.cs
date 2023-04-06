@@ -20,9 +20,7 @@ namespace ModbusMonitor.ViewModel
         private string cellAddress_AC = "Пример: 1,2,3,5-15";
         private string titleText = string.Empty;
         private bool canInsertCell;
-        private readonly Command insertCellCommand;
-        private readonly ICollection<string> cellType_AC = new ObservableCollection<string>();
-        private readonly ICollection<string> cellFormat_AC = new ObservableCollection<string>();
+        private readonly Command insertCellCommand;            
         private readonly AddСellsWindow window;
         private readonly CellData cell_AC;
 
@@ -36,12 +34,13 @@ namespace ModbusMonitor.ViewModel
             DeviceName_AC = cell_AC.NameDevice;
             DeviceAddress_AC = cell_AC.DeviceAdress;
             TitleText = $"Добавление ячеек в позицию {insertionPosition}";
+            CanInsertCell = true;
             insertCellCommand = new Command(InsertCell,()=> CanInsertCell);
             PropertyChanged += AddCellViewModel_PropertyChanged;
         }
 
-        public IEnumerable<string> CellType_AC => cellType_AC;
-        public IEnumerable<string> CellFormat_AC => cellFormat_AC;
+        public IEnumerable<string> TypeRegister_AC => typeRegister;
+        public IEnumerable<string> FormatCell_AC => nameButton;
         public ICommand InsertCellCommand => insertCellCommand;
 
         private void InsertCell()

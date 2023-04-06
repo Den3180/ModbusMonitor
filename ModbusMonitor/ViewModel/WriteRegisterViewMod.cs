@@ -126,13 +126,13 @@ namespace ModbusMonitor.ViewModel
             //Выставление флажка кнопки.
             for(int i = 0; i < CheckRadioButtons.Capacity; i++)
             {
-                if (cellData.Format == NameButton[i])//Если формат выбранного элемента совпал с именем кнопки.
+                if (cellData.Format == nameButton[i])//Если формат выбранного элемента совпал с именем кнопки.
                 {
-                    CheckRadioButtons.Add(new ButtonProp(NameButton[i],true));                    
+                    CheckRadioButtons.Add(new ButtonProp(nameButton[i],true));                    
                 }
                 else
                 {
-                    CheckRadioButtons.Add(new ButtonProp(NameButton[i]));
+                    CheckRadioButtons.Add(new ButtonProp(nameButton[i]));
                 }
             }           
         }       
