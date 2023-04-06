@@ -60,18 +60,18 @@ namespace ModbusMonitor.Classes
                         i = 0;
                     }
               }
-                dataArr = BitConverter.GetBytes(Convert.ToInt32(cellData.Value, 2));
+                dataArr = BitConverter.GetBytes(Convert.ToInt16(cellData.Value, 2));
             }
             else
             {
-                dataArr = BitConverter.GetBytes(Convert.ToInt32(cellData.Value));
+                dataArr = BitConverter.GetBytes(Convert.ToInt16(cellData.Value));
             }
             if(cellData.Format=="Hex") Array.Reverse(dataArr);            
             cellData.Value = cellData.Format switch
             {
-                "Bin" => RepresentBinFormat( Convert.ToString(BitConverter.ToInt32(dataArr), 2)),
+                "Bin" => RepresentBinFormat( Convert.ToString(BitConverter.ToInt16(dataArr), 2)),
                 "Hex" => RepresentHexFormat(Convert.ToHexString(dataArr),pos_negFlag),
-                _ => Convert.ToString(BitConverter.ToInt32(dataArr))
+                _ => Convert.ToString(BitConverter.ToInt16(dataArr))
             };
         } 
 
@@ -105,18 +105,18 @@ namespace ModbusMonitor.Classes
                         i = 0;
                     }
                 }
-                dataArr = BitConverter.GetBytes(Convert.ToInt32(data, 2));
+                dataArr = BitConverter.GetBytes(Convert.ToInt16(data, 2));
             }
             else
             {
-                dataArr = BitConverter.GetBytes(Convert.ToInt32(data));
+                dataArr = BitConverter.GetBytes(Convert.ToInt16(data));
             }
             if (format == "Hex") Array.Reverse(dataArr);
              return format switch
                             {
-                                "Bin" => RepresentBinFormat(Convert.ToString(BitConverter.ToInt32(dataArr), 2)),
+                                "Bin" => RepresentBinFormat(Convert.ToString(BitConverter.ToInt16(dataArr), 2)),
                                 "Hex" => RepresentHexFormat(Convert.ToHexString(dataArr), pos_negFlag),
-                                _ => Convert.ToString(BitConverter.ToInt32(dataArr))
+                                _ => Convert.ToString(BitConverter.ToInt16(dataArr))
                             };
         }
         /// <summary>
@@ -153,12 +153,11 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         public static string RepresentHexFormat(string valueData, bool pos_negFlag)
         {
-            int delta1 = 16 - valueData.Length < 0 ? 4 - valueData.Length % 4 : 16 - valueData.Length;            
+            int delta1 = 4 - valueData.Length < 0 ? 4 - valueData.Length % 4 : 4 - valueData.Length;            
             string valcell = pos_negFlag == false? new string('0', delta1): new string('F', delta1);
             valcell = "0x"+ valcell+valueData;
             return valcell;
         }
-
         /// <summary>
         /// Перевод конечного формата Hex в строку формата записи.
         /// </summary>
@@ -175,7 +174,6 @@ namespace ModbusMonitor.Classes
             }
             return string.Empty;
         }
-
         /// <summary>
         /// Перевод конечного формата Bin в строку формата записи.
         /// </summary>
