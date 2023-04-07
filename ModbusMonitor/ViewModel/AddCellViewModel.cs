@@ -19,6 +19,8 @@ namespace ModbusMonitor.ViewModel
         private string deviceAddress_AC = string.Empty;
         private string cellAddress_AC = "Пример: 1,2,3,5-15";
         private string titleText = string.Empty;
+        private string selectedTypeReg = string.Empty;
+        private string selectedFormatData=string.Empty;
         private bool canInsertCell;
         private readonly Command insertCellCommand;            
         private readonly AddСellsWindow window;
@@ -34,6 +36,8 @@ namespace ModbusMonitor.ViewModel
             DeviceName_AC = cell_AC.NameDevice;
             DeviceAddress_AC = cell_AC.DeviceAdress;
             TitleText = $"Добавление ячеек в позицию {insertionPosition}";
+            SelectedTypeReg = TypeRegister_AC.FirstOrDefault();
+            SelectedFormatData = FormatCell_AC.FirstOrDefault(item=>item=="Int");
             CanInsertCell = true;
             insertCellCommand = new Command(InsertCell,()=> CanInsertCell);
             PropertyChanged += AddCellViewModel_PropertyChanged;
@@ -43,12 +47,37 @@ namespace ModbusMonitor.ViewModel
         public IEnumerable<string> FormatCell_AC => nameButton;
         public ICommand InsertCellCommand => insertCellCommand;
 
+
+
         private void InsertCell()
-        {
+        {            
+            window.Content = new List<string>()
+            {
+                insertionPosition,
+                CellAddress_AC,
+                SelectedTypeReg,
+                SelectedFormatData
+            };
             window.Close();
         }
 
         #region[Привязки]
+        /// <summary>
+        /// Выбранный формат данных.
+        /// </summary>
+        public string SelectedFormatData
+        {
+            get => selectedFormatData;
+            set => SetOptions(nameof(SelectedFormatData), ref selectedFormatData, value);
+        }
+        /// <summary>
+        /// Выбранный тип регистра
+        /// </summary>
+        public string SelectedTypeReg
+        {
+            get => selectedTypeReg;
+            set => SetOptions(nameof(SelectedTypeReg), ref selectedTypeReg, value);        
+        }
         /// <summary>
         /// Подключение.
         /// </summary>

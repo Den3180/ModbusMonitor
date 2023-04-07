@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ModbusMonitor"
         xmlns:src="clr-namespace:ModbusMonitor.Classes"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:loc1="clr-namespace:ModbusMonitor.ViewModel" 
         d:DataContext="{d:DesignInstance Type=local:ViewModelMain}"
         mc:Ignorable="d"
         Title="ModbusMonitor" Height="450" Width="1000" WindowStyle="ThreeDBorderWindow"
@@ -306,8 +307,12 @@
                         <RowDefinition Height="auto" MinHeight="80"/>
                     </Grid.RowDefinitions>
                     <UniformGrid Grid.Row="0" Columns="2">
-                        <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2"/>
-                        <DockPanel Width="auto">
+                            <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2">
+                                <!--<Button.DataContext>
+                                    <Binding Source="{Binding Path={loc1:}}" />
+                                </Button.DataContext>-->
+                            </Button>
+                            <DockPanel Width="auto">
                             <Button DockPanel.Dock="Right" Content="@" HorizontalAlignment="Right" Margin="2"/>
                             <Button DockPanel.Dock="Right" Content="Очистить" HorizontalAlignment="Right" Margin="2"/>
                         </DockPanel>

@@ -65,12 +65,14 @@ namespace ModbusMonitor
         }
 
         /// <summary>
-        /// Получитьт выбранную ячейку.
+        /// Получить выбранную ячейку или первую если ничего не выбрано.
         /// </summary>
         /// <returns></returns>
         private CellData GetSelectedCell()
         {
-            return (Usercontrol.DataContext as ControlDeviceView).SelectedCell;
+            return (Usercontrol.DataContext as ControlDeviceView).SelectedCell.NameDevice!=string.Empty?
+                 (Usercontrol.DataContext as ControlDeviceView).SelectedCell:
+                 (Usercontrol.DataContext as ControlDeviceView).Cells[0];
         }
 
     }

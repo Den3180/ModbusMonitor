@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor
 {

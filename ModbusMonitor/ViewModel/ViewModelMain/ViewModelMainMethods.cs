@@ -42,13 +42,10 @@ namespace ModbusMonitor
         /// </summary>
         private void AddCells()
         {           
-            CellData selecedCell = GetSelectedCell();
-            if(string.IsNullOrEmpty(selecedCell.DeviceAdress))//Если не выбрана строка.
-            {
-                selecedCell = (Usercontrol.DataContext as ControlDeviceView).Cells[0];
-            }
+            CellData selecedCell = GetSelectedCell();            
             AddСellsWindow addСellsWindow = new AddСellsWindow(selecedCell);
             addСellsWindow.ShowDialog();
+            List<string> strings = addСellsWindow.Content as List<string>;
         }
 
         /// <summary>
