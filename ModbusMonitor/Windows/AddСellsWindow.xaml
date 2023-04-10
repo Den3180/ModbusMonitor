@@ -37,7 +37,7 @@
                     </UniformGrid>
                 <UniformGrid Columns="2">
                 <GroupBox Header="Адреса ячеек">
-                    <TextBox Text="{Binding CellAddress_AC}"/>
+                    <TextBox Text="{Binding CellAddress_AC, UpdateSourceTrigger=PropertyChanged}"/>
                 </GroupBox>
                     <GroupBox Header="Адрес устройства">
                         <TextBox Text="{Binding DeviceAddress_AC}"/>

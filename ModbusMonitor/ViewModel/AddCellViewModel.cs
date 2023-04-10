@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -21,6 +22,7 @@ namespace ModbusMonitor.ViewModel
         private string titleText = string.Empty;
         private string selectedTypeReg = string.Empty;
         private string selectedFormatData=string.Empty;
+        private string patternAddressCells = @"^(\d{1,3},?-?)*\d?$";
         private bool canInsertCell;
         private readonly Command insertCellCommand;            
         private readonly AddСellsWindow window;
@@ -47,20 +49,15 @@ namespace ModbusMonitor.ViewModel
         public IEnumerable<string> FormatCell_AC => nameButton;
         public ICommand InsertCellCommand => insertCellCommand;
 
-
-
+        /// <summary>
+        /// Сохранение информации об изменениях и выход.
+        /// </summary>
         private void InsertCell()
-        {            
-            window.Content = new List<string>()
-            {
-                insertionPosition,
-                CellAddress_AC,
-                SelectedTypeReg,
-                SelectedFormatData
-            };
+        {
+            window.Content = AddCellsMethods.CheckFormatAddressCells(SelectedTypeReg,SelectedFormatData,CellAddress_AC);
             window.Close();
         }
-
+       
         #region[Привязки]
         /// <summary>
         /// Выбранный формат данных.
@@ -108,16 +105,24 @@ namespace ModbusMonitor.ViewModel
         public string CellAddress_AC
         {
             get => cellAddress_AC;
-            set => SetOptions(nameof(CellAddress_AC), ref cellAddress_AC, value);
+            set 
+            {
+                if (!Regex.IsMatch(value, patternAddressCells)) return;
+                SetOptions(nameof(CellAddress_AC), ref cellAddress_AC, value);
+            } 
         }
-
+        /// <summary>
+        /// Заголовок окна.
+        /// </summary>
         public string TitleText
         {
             get => titleText;
             set => SetOptions(nameof(TitleText), ref titleText, value);
         }
-
         #endregion
+        /// <summary>
+        /// Доступность команды вставить ячейки.
+        /// </summary>
         public bool CanInsertCell
         {
             get => canInsertCell;

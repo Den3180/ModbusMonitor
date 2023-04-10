@@ -60,6 +60,10 @@ namespace ModbusMonitor.Classes
         public string DeviceAdress { get; set; } = string.Empty;//Адрес устройства.
         public string isHaveData { get; set; } = string.Empty;//Если есть данные в карте.
 
+        ///// <summary>
+        ///// ID устройства в текущей сессии.
+        ///// </summary>
+        //public Guid DeviceID { get; set;}
 
         /// <summary>
         /// Формат регистра.

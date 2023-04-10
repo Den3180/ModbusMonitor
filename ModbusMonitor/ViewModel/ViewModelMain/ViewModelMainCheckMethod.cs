@@ -70,6 +70,7 @@ namespace ModbusMonitor
         /// <returns></returns>
         private CellData GetSelectedCell()
         {
+            //Если поле имени объекта пустое, значит выделения не произошло, значит вернуть первую ячейку.
             return (Usercontrol.DataContext as ControlDeviceView).SelectedCell.NameDevice!=string.Empty?
                  (Usercontrol.DataContext as ControlDeviceView).SelectedCell:
                  (Usercontrol.DataContext as ControlDeviceView).Cells[0];

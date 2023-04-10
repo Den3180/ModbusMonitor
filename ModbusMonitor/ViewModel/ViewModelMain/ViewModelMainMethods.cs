@@ -45,7 +45,18 @@ namespace ModbusMonitor
             CellData selecedCell = GetSelectedCell();            
             AddСellsWindow addСellsWindow = new AddСellsWindow(selecedCell);
             addСellsWindow.ShowDialog();
-            List<string> strings = addСellsWindow.Content as List<string>;
+            if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
+            device.CellsArray.AddRange(addCells);
+            for(int i=0;i<device.CellsArray.Count;i++)
+            {
+                if (string.IsNullOrEmpty(device.CellsArray[i].NumberReg))
+                {
+                    device.CellsArray[i].NumberReg = (i + 1).ToString();
+                    device.CellsArray[i].NameDevice = device.DeviceName_DC;
+                }                
+            }
+            Cells = device.CellsArray;
+            Usercontrol = new UserControlDevices(Cells,modbusRTU,device); 
         }
 
         /// <summary>
@@ -273,7 +284,6 @@ namespace ModbusMonitor
                 CanDisconnection = false;
                 CanConnection = false;
             }
-
         }
 
         /// <summary>
@@ -285,9 +295,9 @@ namespace ModbusMonitor
             var itemSelected = DefineNodeInTree(SelectedItemTree);
             foreach(var node in treeNodes)
             {
-                if (itemSelected.NameComNode == node.NameCOM)
+                if (itemSelected.NameComNode == node.NameCOM)//При совпадении узла и подузла.
                 {
-                    treeNode = node;
+                    treeNode = node;//Присваиваем текущее значение.
                 }
             }
             if (treeNode is not null && ModbusRTUASCII.Mode == eMode.PortOpen)
@@ -296,13 +306,11 @@ namespace ModbusMonitor
                 CanRequest = true;
                 CanWriteRegister = true;
                 CanDisconnection = true;
-                // DeviceClass.Link = EnumLink.LinkYes;        //Статус подключения.
                 device.LinkDevice = EnumLink.LinkYes;
                 treeNode.State = "Подключено";
                 treeNode.ColorTextTreeConnect = Brushes.Green;
                 TreeViewEnabled = false;
-                CanCreateConnect = false;
-                //ColorTextTreeConnect = Brushes.Red;
+                CanCreateConnect = false;                
             }
             else
             {
@@ -336,7 +344,7 @@ namespace ModbusMonitor
                 foreach (var ports in ModbusRTUASCII.PortsEnabled)
                 {
                     ModbusRTUASCII.SettingPortStart.PortType = ports;
-                    FillNodesTree(device);
+                    FillNodesTree(device);//Заполняем дерево новым устройством.
                     if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))//Если нет совпадения в картах.
                     {
                         //Создаем пустую карту.
@@ -347,6 +355,7 @@ namespace ModbusMonitor
                     break;
                 }
                 listDevices.Add(device);
+                
             }
             else if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
             {
@@ -744,29 +753,29 @@ namespace ModbusMonitor
         /// <param name="item"></param>
         private void SelectMapsForDevice(object item)
         {
-            SubGroupsTree itemSelected;
-            string filePath = string.Empty;
+            bool selectNewMap=false;
+            SubGroupsTree itemSelected;            
             CanConnection = true;
             //Определяем какой вид узла дерева выбран.
             itemSelected = DefineNodeInTree(item);            
             //Если нужная карта уже загружена, то ничего не меняем.
             if (itemSelected?.ContentName == (Usercontrol.DataContext as ControlDeviceView).CurrentDevice.DeviceName_DC)
             {
+                Cells = device.CellsArray;
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
                 return;
-            }
-            //Ищем по имени нужный адрес карты.
-            foreach (var listItem in listMaps)
+            }           
+            foreach(var dev in listDevices)
             {
-                if (listItem.Item2 == itemSelected?.ContentName)//Если имя устройства в кортеже совпадает с
-                                                                //с именем устройства в дереве.
+                if(itemSelected.ContentName==dev.DeviceName_DC && itemSelected.ContentAddress == dev.DeviceAdress_DC.ToString())
                 {
-                    filePath = listItem.Item1;
+                    device = dev;
+                    selectNewMap = true;
                 }
             }
-            if (!string.IsNullOrEmpty(filePath))//Если есть адрес карты.
-            {                
-                device = DeviceClass.LoadMapReg(filePath);
+
+            if (selectNewMap)//Если есть адрес карты.
+            {        
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
                 if (device.LinkDevice == EnumLink.LinkYes && DeviceAddress == device.DeviceAdress_DC)

@@ -209,7 +209,7 @@
                                   MinWidth="300" IsEnabled="{Binding TreeViewEnabled}"
                                   Height="{Binding ElementName=GBTree, Path=ActualHeight}"       
                                   MaxWidth="300"                                  
-                                  BorderBrush="White" Tag="{Binding ColorTextTreeConnect}" >
+                                  BorderBrush="White" Tag="{Binding ColorTextTreeConnect}">
                                 <TreeView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Добавить" Command="{Binding CreateConnectCommand}"/>
@@ -223,7 +223,7 @@
                                         <MenuItem Header="Удалить все" Command="{Binding ClearTreeAllCommand}"/>
                                     </ContextMenu>
                                 </TreeView.ContextMenu>
-                                <TreeView.Resources>                                
+                                <TreeView.Resources>                                    
                                     <HierarchicalDataTemplate DataType="{x:Type src:GroupsTreeNode}"
                                                               ItemsSource="{Binding SubGroups}">                                        
                                         <StackPanel Orientation="Horizontal">
@@ -249,7 +249,7 @@
                                             </TextBlock>                                        
                                     </DataTemplate>
                                     <Style TargetType="{x:Type TreeViewItem}">
-                                        <Setter Property="IsExpanded" Value="True" />                                       
+                                        <Setter Property="IsExpanded" Value="True" />                                                                               
                                     </Style>                                    
                                 </TreeView.Resources>                                  
                                 <i:Interaction.Behaviors>
@@ -258,8 +258,8 @@
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="MouseDoubleClick">
                                                     <i:InvokeCommandAction Command="{Binding ChangeDeviceCommand}"/>
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>                              
+                                                </i:EventTrigger>                                    
+                                </i:Interaction.Triggers>                              
                         </TreeView>                                                 
                     </Grid>
                 </GroupBox>
@@ -307,11 +307,7 @@
                         <RowDefinition Height="auto" MinHeight="80"/>
                     </Grid.RowDefinitions>
                     <UniformGrid Grid.Row="0" Columns="2">
-                            <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2">
-                                <!--<Button.DataContext>
-                                    <Binding Source="{Binding Path={loc1:}}" />
-                                </Button.DataContext>-->
-                            </Button>
+                            <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2"/>
                             <DockPanel Width="auto">
                             <Button DockPanel.Dock="Right" Content="@" HorizontalAlignment="Right" Margin="2"/>
                             <Button DockPanel.Dock="Right" Content="Очистить" HorizontalAlignment="Right" Margin="2"/>

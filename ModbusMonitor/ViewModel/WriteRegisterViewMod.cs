@@ -46,7 +46,8 @@ namespace ModbusMonitor.ViewModel
 
         public ModbusRTUASCII ModbusRTU { get; set; }
         public List<ButtonProp> CheckRadioButtons { get; set; } = new List<ButtonProp>(8); 
-        public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;       
+        public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
+        public IEnumerable<string> TypeRegister => typeRegister;
         public ICommand WriteRegistryCommand => writeRegistryCommand;
         public ICommand CheckTypeDataCommand => checkTypeDataCommand;
 
@@ -99,8 +100,7 @@ namespace ModbusMonitor.ViewModel
                 cellData.Format = dataFormat;
             }
             window.Close();
-        }
-      
+        }      
         /// <summary>
         /// Заполнение формы в окна записи регистра.
         /// </summary>
