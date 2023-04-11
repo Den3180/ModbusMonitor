@@ -43,7 +43,7 @@ namespace ModbusMonitor
         private readonly Command changeDeviceCommand;//Изменить устройство в дереве.
         private readonly Command addCellsCommand;//Добавить ячейки.        
         private readonly DispatcherTimer timerPoll;
-
+        
         public ViewModelMain()
         {
             exitCommand = new Command(ExitApp);

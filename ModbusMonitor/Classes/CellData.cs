@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace ModbusMonitor.Classes
     /// <summary>
     /// Класс ячеек для регистров из карты TikModbus.
     /// </summary>
-    public class CellData : ChangePropertyClass
+    public class CellData : ChangePropertyClass,IComparable<CellData>
     {
         private int adress;//Адрес регистра.
         private string numberReg = string.Empty;//Номер по порядку.
@@ -60,11 +61,10 @@ namespace ModbusMonitor.Classes
         public string DeviceAdress { get; set; } = string.Empty;//Адрес устройства.
         public string isHaveData { get; set; } = string.Empty;//Если есть данные в карте.
 
-        ///// <summary>
-        ///// ID устройства в текущей сессии.
-        ///// </summary>
-        //public Guid DeviceID { get; set;}
-
+        public int CompareTo(CellData cell)//Метод сравнения при сортировке.
+        {            
+            return Adress.CompareTo(cell.Adress);            
+        } 
         /// <summary>
         /// Формат регистра.
         /// </summary>

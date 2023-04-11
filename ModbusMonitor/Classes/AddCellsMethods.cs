@@ -52,6 +52,7 @@ namespace ModbusMonitor.Classes
                 }
             }
         }
+        resCells.Sort();
         return resCells;
     }
     }

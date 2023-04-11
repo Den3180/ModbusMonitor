@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:ModbusMonitor.Classes" 
+             xmlns:vmm="clr-namespace:ModbusMonitor"
              xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel"             
              d:DataContext="{d:DesignInstance Type=viewmodel:ControlDeviceView}"
              mc:Ignorable="d" 
@@ -16,7 +17,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="MinWidth" Value="50"/>
             <Setter Property="Width" Value="auto"/>
-        </Style>       
+        </Style>        
     </UserControl.Resources>
     <Grid>        
         <DataGrid AutoGenerateColumns="False" SelectionMode="Single"
@@ -37,8 +38,8 @@
                     <MenuItem Header="Лог"/>
                     <Separator/>
                     <MenuItem Header="Записать регистр" Command="{Binding WriteRegisterCommand}"/>
-                    <MenuItem Header="Вставить ячейки"/>
-                    <MenuItem Header="Формат" >
+                    <MenuItem Header="Добавить ячейки" Command="{Binding AddCellsCommand}"/>
+                    <MenuItem Header="Формат">
                         <MenuItem.Resources>
                             <Style x:Key="Format" TargetType="{x:Type MenuItem}">
                                 <Setter Property="IsCheckable" Value="True"/>

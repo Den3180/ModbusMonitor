@@ -21,7 +21,7 @@ namespace ModbusMonitor.Windows
     /// </summary>
     public partial class AddСellsWindow : Window
     {
-        public AddСellsWindow(CellData cellData)
+        public AddСellsWindow(DeviceClass cellData)
         {
             InitializeComponent();
             DataContext = new AddCellViewModel(cellData, this);

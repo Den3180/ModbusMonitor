@@ -69,12 +69,26 @@ namespace ModbusMonitor
         /// </summary>
         /// <returns></returns>
         private CellData GetSelectedCell()
-        {
+        {          
             //Если поле имени объекта пустое, значит выделения не произошло, значит вернуть первую ячейку.
             return (Usercontrol.DataContext as ControlDeviceView).SelectedCell.NameDevice!=string.Empty?
                  (Usercontrol.DataContext as ControlDeviceView).SelectedCell:
-                 (Usercontrol.DataContext as ControlDeviceView).Cells[0];
+                 new CellData();
+            
         }
 
+        private void SetSelectedDevice()
+        {
+            if (treeNodes.Count > 0)
+            {
+                foreach (var item in treeNodes)
+                {
+                    if (item.SubGroups.First().ContentName == device.DeviceName_DC)
+                    {
+                        SelectedItemTree = item;
+                    }
+                }
+            }
+        }
     }
 }

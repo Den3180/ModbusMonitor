@@ -41,22 +41,21 @@ namespace ModbusMonitor
         /// Добавить ячейки.
         /// </summary>
         private void AddCells()
-        {           
-            CellData selecedCell = GetSelectedCell();            
-            AddСellsWindow addСellsWindow = new AddСellsWindow(selecedCell);
+        {             
+            AddСellsWindow addСellsWindow = new AddСellsWindow(device);
             addСellsWindow.ShowDialog();
             if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
             device.CellsArray.AddRange(addCells);
-            for(int i=0;i<device.CellsArray.Count;i++)
+            for (int i = 0; i < device.CellsArray.Count; i++)
             {
                 if (string.IsNullOrEmpty(device.CellsArray[i].NumberReg))
                 {
                     device.CellsArray[i].NumberReg = (i + 1).ToString();
                     device.CellsArray[i].NameDevice = device.DeviceName_DC;
-                }                
+                }
             }
-            Cells = device.CellsArray;
-            Usercontrol = new UserControlDevices(Cells,modbusRTU,device); 
+            Cells=device.CellsArray;
+            SetSelectedDevice();
         }
 
         /// <summary>
@@ -123,7 +122,7 @@ namespace ModbusMonitor
                 {
                     treeNodes.Add(temp[i]);
                 }
-                SelectMapsForDevice(treeNodes[^1]);//Обновление карты после обновления дерева.
+                SelectMapsForDevice(treeNodes[0]);//Обновление карты после обновления дерева.
                                                    //Загружается карта для последнего узла дерева.
             }
             else //Если узлов в дереве нет - очищаем.
@@ -350,14 +349,13 @@ namespace ModbusMonitor
                         //Создаем пустую карту.
                         Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU,device);
                         CanConnection = false;//Отключаем возможность подключения.
+                        listDevices.Add(device);
                         return;
                     }
                     break;
-                }
-                listDevices.Add(device);
-                
+                }                
             }
-            else if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
+            if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
             {
                 CanConnection = true;
             }
@@ -369,6 +367,7 @@ namespace ModbusMonitor
                     CanDisconnection = true;
                 }
             }
+                listDevices.Add(device);
         }
 
         /// <summary>
@@ -687,6 +686,7 @@ namespace ModbusMonitor
             device = dialogService.OpenFileDialog();           
             if(device==null || CheckListDevice() == true)
             {
+                device = new DeviceClass();
                 return;
             }
             listDevices.Add(device);//После загрузки карты заносим устройство
@@ -718,7 +718,7 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
             FillNodesTree(device);//Заполнение дерева без подключения.
             CanRefreshTree = true;
-            SelectedItemTree = treeNodes[0];            
+            SetSelectedDevice();//Синхронизуция выбранного элемента в дереве.
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
                 Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
@@ -753,8 +753,8 @@ namespace ModbusMonitor
         /// <param name="item"></param>
         private void SelectMapsForDevice(object item)
         {
-            bool selectNewMap=false;
-            SubGroupsTree itemSelected;            
+            bool selectNewMap=false; //Флаг выбора новой карты.
+            SubGroupsTree itemSelected;  //Подузел для выбранного элемента          
             CanConnection = true;
             //Определяем какой вид узла дерева выбран.
             itemSelected = DefineNodeInTree(item);            
@@ -773,8 +773,7 @@ namespace ModbusMonitor
                     selectNewMap = true;
                 }
             }
-
-            if (selectNewMap)//Если есть адрес карты.
+            if (selectNewMap)//Если выбранв новая карта.
             {        
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
                 Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
@@ -785,9 +784,10 @@ namespace ModbusMonitor
                 DeviceName = device.DeviceName_DC;       //В группбокс "Добавление регистров".
                 DeviceAddress = device.DeviceAdress_DC;  //В группбокс "Добавление регистров".
                 CanCreateConnect = true; //Кнопку "Создать" включить.
-                                         //Установка параметров порта из данных карты устройства.
+                //Установка параметров порта из данных карты устройства.
                 if (ModbusRTUASCII.PortsEnabled.Count > 0)
                 {
+                    //Ставим первый доступный порт.
                     ModbusRTUASCII.SettingPortStart.PortType = ModbusRTUASCII.PortsEnabled.FirstOrDefault();
                 }
                 else
@@ -797,28 +797,7 @@ namespace ModbusMonitor
                 ModbusRTUASCII.SettingPortStart.BaudRate = device.ConnectFromMap.SpeedPort;
                 ModbusRTUASCII.SettingPortStart.DataBit = device.ConnectFromMap.LenghtWord;
                 ModbusRTUASCII.SettingPortStart.ParitySet = (Parity)device.ConnectFromMap.Parity;
-                ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
-                foreach(var elem in treeNodes)
-                {
-                    if(item is GroupsTreeNode)//Если выбран верхний узел.
-                    {
-                        var temp = item as GroupsTreeNode;
-                        if (elem.Equals(temp))
-                        {
-                            treeNode = elem;
-                            break;
-                        }
-                    }
-                    else if(item is SubGroupsTree)//Выбран вложенный узел дерева.
-                    {
-                        var temp = item as SubGroupsTree;
-                        if (elem.SubGroups.Contains(temp))
-                        {
-                           treeNode = elem;
-                           break;
-                        }
-                    }
-                }
+                ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;               
                 if (ModbusRTUASCII.PortsEnabled.Count == 0)
                 {
                     Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));

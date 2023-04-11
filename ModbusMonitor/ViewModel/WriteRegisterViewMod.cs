@@ -29,6 +29,10 @@ namespace ModbusMonitor.ViewModel
         private readonly CellData cellData;
         private readonly ICollection<string> connectionPortDevice = new ObservableCollection<string>();
         
+        public WriteRegisterViewMod()
+        {
+
+        }
         public WriteRegisterViewMod(params object[] objects )
         {
             foreach(var item in objects)

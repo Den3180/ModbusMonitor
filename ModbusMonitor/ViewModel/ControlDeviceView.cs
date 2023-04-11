@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ModbusMonitor.Windows;
+using ModbusMonitor.Controls;
+using System.Windows.Controls;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -15,12 +17,14 @@ namespace ModbusMonitor.ViewModel
     {
         private readonly Command writeRegisterCommand;
         private readonly Command editFormatCommand;
+        private readonly Command addCellsCommand;
         private bool canWriteRegister;
-        private CellData selectedCell;        
-        public List<CellData> Cells { get; set; }
+        private bool canAddCells;
+        private CellData selectedCell;
+        private List<CellData> cells = new List<CellData>();
         public List<ButtonProp> MenuItemCheck { get; set; } = new List<ButtonProp>(8);
         public ModbusRTUASCII ModbusRTU { get; set; }
-        public DeviceClass CurrentDevice { get; set; }
+        public DeviceClass CurrentDevice { get; set; }       
         private readonly string [] nameFormat = new string[] {"Bin","Hex","Int","Decimal", "Double", 
                                                      "swDouble","Float","swFloat" 
                                                     }; 
@@ -32,19 +36,22 @@ namespace ModbusMonitor.ViewModel
             {
                 if (item is List<CellData>) Cells = item as List<CellData>;//Это элементы уже из карты.
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
-                if (item is DeviceClass) CurrentDevice = item as DeviceClass;
+                if (item is DeviceClass) CurrentDevice = item as DeviceClass;                
             }
+            CanAddCells = CurrentDevice!=null;
             for (int i = 0; i < nameFormat.Length; i++)
             {
                 MenuItemCheck.Add(new ButtonProp(nameFormat[i]));
             }
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             editFormatCommand = new Command(EditFormat);
+            addCellsCommand = new Command(AddCells, () => CanAddCells);
             PropertyChanged += ControlDeviceView_PropertyChanged;
         }
 
         public ICommand WriteRegisterCommand => writeRegisterCommand;
         public ICommand EditFormatCommand => editFormatCommand;
+        public ICommand AddCellsCommand => addCellsCommand;
 
         #region[Обработчики команд и методы]
         /// <summary>
@@ -55,7 +62,27 @@ namespace ModbusMonitor.ViewModel
             WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
             writeRegisterWindow.ShowDialog();
             SelectItemFormat();
+        } 
+        /// <summary>
+        /// Добавление ячеек.
+        /// </summary>
+        private void AddCells()
+        {
+            AddСellsWindow addСellsWindow = new AddСellsWindow(CurrentDevice);
+            addСellsWindow.ShowDialog();
+            if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
+            CurrentDevice.CellsArray.AddRange(addCells);
+            for (int i = 0; i < CurrentDevice.CellsArray.Count; i++)
+            {
+                if (string.IsNullOrEmpty(CurrentDevice.CellsArray[i].NumberReg))
+                {
+                    CurrentDevice.CellsArray[i].NumberReg = (i + 1).ToString();
+                    CurrentDevice.CellsArray[i].NameDevice = CurrentDevice.DeviceName_DC;
+                }
+            }
+            //Cells = CurrentDevice.CellsArray;            
         }
+
         /// <summary>
         /// Редактирование формата при отключенном устройстве.
         /// </summary>
@@ -124,6 +151,12 @@ namespace ModbusMonitor.ViewModel
                 }
             }
         }
+
+        public List<CellData> Cells
+        {
+            get => cells;
+            set => SetOptions(nameof(Cells), ref cells, value);
+        }
         #endregion
 
         #region[Свойства доступности команд]
@@ -133,9 +166,14 @@ namespace ModbusMonitor.ViewModel
             get => canWriteRegister;
             set => SetOptions(nameof(CanWriteRegister),ref canWriteRegister,value);
         }
-
+        //Доступ команды "Добавить ячейки".
+        public bool CanAddCells
+        {
+            get => canAddCells;
+            set => SetOptions(nameof(CanAddCells), ref canAddCells, value);
+        }
         #endregion
-       
+
         private void ControlDeviceView_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(nameof(CanWriteRegister)))

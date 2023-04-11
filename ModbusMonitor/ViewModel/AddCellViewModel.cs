@@ -14,7 +14,7 @@ namespace ModbusMonitor.ViewModel
 {
     public class AddCellViewModel : ChangePropertyClass
     {
-        private string insertionPosition="0";
+        //private string insertionPosition="0";
         private string connectionText = string.Empty;
         private string deviceName_AC = string.Empty;
         private string deviceAddress_AC = string.Empty;
@@ -26,18 +26,18 @@ namespace ModbusMonitor.ViewModel
         private bool canInsertCell;
         private readonly Command insertCellCommand;            
         private readonly AddСellsWindow window;
-        private readonly CellData cell_AC;
+        private readonly DeviceClass device_AC;
 
-        public AddCellViewModel(CellData cell, AddСellsWindow window)
+        public AddCellViewModel(DeviceClass device, AddСellsWindow window)
         {
             this.window = window;
-            cell_AC = cell;
-            insertionPosition = string.IsNullOrEmpty(cell.NumberReg)?"0":cell.NumberReg;
+            device_AC = device;
+            //insertionPosition = string.IsNullOrEmpty(device.NumberReg)?"0":device.NumberReg;
             ConnectionText = ModbusRTUASCII.PortsEnabled.Count>0? 
-                cell_AC.NameDevice+"-"+ModbusRTUASCII.PortsEnabled.First(): cell_AC.NameDevice + "- нет доступных портов";
-            DeviceName_AC = cell_AC.NameDevice;
-            DeviceAddress_AC = cell_AC.DeviceAdress;
-            TitleText = $"Добавление ячеек в позицию {insertionPosition}";
+                device_AC.DeviceName_DC+"-"+ModbusRTUASCII.PortsEnabled.First(): device_AC.DeviceName_DC + "- нет доступных портов";
+            DeviceName_AC = device_AC.DeviceName_DC;
+            DeviceAddress_AC = device_AC.DeviceName_DC;
+            TitleText = $"Добавление ячеек";// в позицию {insertionPosition}";
             SelectedTypeReg = TypeRegister_AC.FirstOrDefault();
             SelectedFormatData = FormatCell_AC.FirstOrDefault(item=>item=="Int");
             CanInsertCell = true;

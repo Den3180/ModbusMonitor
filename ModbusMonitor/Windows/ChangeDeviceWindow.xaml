@@ -20,7 +20,11 @@
         </Style>
     </Window.Resources>
     <Grid Background="Gray">
-        <Border Background="Lavender" Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="153*"/>
+            <ColumnDefinition Width="247*"/>
+        </Grid.ColumnDefinitions>
+        <Border Background="Lavender" Margin="2,2,2,2" Grid.ColumnSpan="2">
             <GroupBox Header="Устройство">
                 <UniformGrid Rows="7">
                     <Label Content="Адрес устройства:" HorizontalContentAlignment="Stretch"/>
