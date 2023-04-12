@@ -44,6 +44,18 @@ namespace ModbusMonitor.Classes
     }
     #endregion
 
+    public class CellTypeComparer : IComparer<CellData>
+    {
+        public int Compare(CellData x, CellData y)
+        {
+            if (x is CellData && y is CellData)
+            {
+                return x.Type.CompareTo(y.Type);
+            }
+            throw new NotImplementedException();
+        }
+    }
+
     /// <summary>
     /// Класс ячеек для регистров из карты TikModbus.
     /// </summary>
@@ -60,10 +72,10 @@ namespace ModbusMonitor.Classes
         public string AdapterId { get; set; } = string.Empty;//Данные в карте.
         public string DeviceAdress { get; set; } = string.Empty;//Адрес устройства.
         public string isHaveData { get; set; } = string.Empty;//Если есть данные в карте.
-
+        
         public int CompareTo(CellData cell)//Метод сравнения при сортировке.
-        {            
-            return Adress.CompareTo(cell.Adress);            
+        {           
+           return Adress.CompareTo(cell.Adress);            
         } 
         /// <summary>
         /// Формат регистра.
@@ -71,7 +83,7 @@ namespace ModbusMonitor.Classes
         public string Format 
         { 
             get=> format;
-            set=> SetOptions<string>(nameof(Format), ref format, value);
+            set=> SetOptions(nameof(Format), ref format, value);
         }
 
         /// <summary>
@@ -80,10 +92,7 @@ namespace ModbusMonitor.Classes
         public string NumberReg
         {
             get => numberReg;
-            set
-            {
-                SetOptions<string>(nameof(NumberReg), ref numberReg, value);
-            }
+            set => SetOptions(nameof(NumberReg), ref numberReg, value);            
         }
 
         /// <summary>
@@ -92,10 +101,7 @@ namespace ModbusMonitor.Classes
         public string NameDevice
         {
             get => nameDevice;
-            set
-            {
-                SetOptions<string>(nameof(NameDevice), ref nameDevice, value);
-            }
+            set => SetOptions(nameof(NameDevice), ref nameDevice, value);            
         }
 
         /// <summary>
@@ -104,11 +110,7 @@ namespace ModbusMonitor.Classes
         public string Name
         {
             get => name;
-            set
-            {
-                SetOptions<string>(nameof(Name), ref name, value);
-            }
-
+            set => SetOptions(nameof(Name), ref name, value);
         }
 
         /// <summary>
@@ -117,10 +119,7 @@ namespace ModbusMonitor.Classes
         public string Value
         {
             get => _value;
-            set
-            {
-                SetOptions<string>(nameof(Value), ref _value, value);
-            }
+            set => SetOptions(nameof(Value), ref _value, value);            
         }
 
         /// <summary>
@@ -129,8 +128,7 @@ namespace ModbusMonitor.Classes
         public int Adress
         {
             get => adress;
-            set =>  SetOptions<int>(nameof(Adress), ref adress, value);
-            
+            set => SetOptions(nameof(Adress), ref adress, value);            
         }       
     }
 }

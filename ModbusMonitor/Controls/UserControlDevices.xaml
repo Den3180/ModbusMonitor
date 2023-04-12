@@ -67,7 +67,7 @@
                     <MenuItem Header="Вырезать"/>
                     <MenuItem Header="Копировать"/>
                     <MenuItem Header="Вставить"/>
-                    <MenuItem Header="Удалить"/>
+                    <MenuItem Header="Удалить" Command="{Binding DeleteLineCommand}"/>
                     <MenuItem Header="Очистить"/>
                     <Separator/>
                     <MenuItem Header="Свойства"/>

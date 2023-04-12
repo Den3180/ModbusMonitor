@@ -18,13 +18,16 @@ namespace ModbusMonitor.ViewModel
         private readonly Command writeRegisterCommand;
         private readonly Command editFormatCommand;
         private readonly Command addCellsCommand;
+        private readonly Command deleteLineCommand;
         private bool canWriteRegister;
         private bool canAddCells;
+        private bool canDeleteLine;
         private CellData selectedCell;
         private List<CellData> cells = new List<CellData>();
         public List<ButtonProp> MenuItemCheck { get; set; } = new List<ButtonProp>(8);
         public ModbusRTUASCII ModbusRTU { get; set; }
-        public DeviceClass CurrentDevice { get; set; }       
+        public DeviceClass CurrentDevice { get; set; }
+        private UserControlDevices userControl;
         private readonly string [] nameFormat = new string[] {"Bin","Hex","Int","Decimal", "Double", 
                                                      "swDouble","Float","swFloat" 
                                                     }; 
@@ -38,7 +41,7 @@ namespace ModbusMonitor.ViewModel
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is DeviceClass) CurrentDevice = item as DeviceClass;                
             }
-            CanAddCells = CurrentDevice!=null;
+            CanDeleteLine=CanAddCells = CurrentDevice!=null;
             for (int i = 0; i < nameFormat.Length; i++)
             {
                 MenuItemCheck.Add(new ButtonProp(nameFormat[i]));
@@ -46,14 +49,26 @@ namespace ModbusMonitor.ViewModel
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             editFormatCommand = new Command(EditFormat);
             addCellsCommand = new Command(AddCells, () => CanAddCells);
+            deleteLineCommand = new Command(DeleteLine, () => CanDeleteLine);
             PropertyChanged += ControlDeviceView_PropertyChanged;
         }
 
         public ICommand WriteRegisterCommand => writeRegisterCommand;
         public ICommand EditFormatCommand => editFormatCommand;
         public ICommand AddCellsCommand => addCellsCommand;
+        public ICommand DeleteLineCommand => deleteLineCommand;
 
         #region[Обработчики команд и методы]
+
+        private void DeleteLine()
+        {           
+            CurrentDevice.CellsArray.Remove(SelectedCell);
+            CurrentDevice.CellsArray.Sort();
+            //CurrentDevice.CellsArray.Sort(new CellTypeComparer());
+            DeviceClass.NumberTheList(CurrentDevice);
+            Cells = null;
+            Cells = CurrentDevice.CellsArray;
+        }
         /// <summary>
         /// Вызов окна записи регистров.
         /// </summary>
@@ -78,9 +93,11 @@ namespace ModbusMonitor.ViewModel
                 {
                     CurrentDevice.CellsArray[i].NumberReg = (i + 1).ToString();
                     CurrentDevice.CellsArray[i].NameDevice = CurrentDevice.DeviceName_DC;
+                    CurrentDevice.CellsArray[i].Value = "0";
                 }
             }
-            //Cells = CurrentDevice.CellsArray;            
+           Cells = null;
+           Cells = CurrentDevice.CellsArray;            
         }
 
         /// <summary>
@@ -160,6 +177,12 @@ namespace ModbusMonitor.ViewModel
         #endregion
 
         #region[Свойства доступности команд]
+
+        public bool CanDeleteLine
+        {
+            get => canDeleteLine;
+            set => SetOptions(nameof(CanDeleteLine), ref canDeleteLine, value);
+        }
         //Доступ команды "Записать регистр".
         public bool CanWriteRegister
         {

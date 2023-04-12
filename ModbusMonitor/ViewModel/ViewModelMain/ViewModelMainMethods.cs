@@ -52,10 +52,11 @@ namespace ModbusMonitor
                 {
                     device.CellsArray[i].NumberReg = (i + 1).ToString();
                     device.CellsArray[i].NameDevice = device.DeviceName_DC;
+                    device.CellsArray[i].Value = "0";
                 }
-            }
-            Cells=device.CellsArray;
-            SetSelectedDevice();
+            }            
+            (Usercontrol.DataContext as ControlDeviceView).Cells = null;
+            (Usercontrol.DataContext as ControlDeviceView).Cells=device.CellsArray;            
         }
 
         /// <summary>
@@ -650,7 +651,7 @@ namespace ModbusMonitor
         /// </summary>
         private void ShowAbout()
         {
-            
+            //(Usercontrol.DataContext as ControlDeviceView).Cells.Sort();
         }
 
         /// <summary>
@@ -762,7 +763,7 @@ namespace ModbusMonitor
             if (itemSelected?.ContentName == (Usercontrol.DataContext as ControlDeviceView).CurrentDevice.DeviceName_DC)
             {
                 Cells = device.CellsArray;
-                Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
+                //Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
                 return;
             }           
             foreach(var dev in listDevices)

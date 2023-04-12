@@ -20,10 +20,10 @@
         <Border Background="Lavender" Margin="2">
             <UniformGrid Rows="5">
                 <GroupBox Header="Подключение">
-                    <TextBox Text="{Binding ConnectionText}" IsEnabled="False"/>
+                    <TextBox Text="{Binding ConnectionText}" IsReadOnly="True"/>
                 </GroupBox>
                 <GroupBox Header="Имя устройства">
-                    <TextBox Text="{Binding DeviceName_AC}" IsEnabled="False"/>
+                    <TextBox Text="{Binding DeviceName_AC}" IsReadOnly="True"/>
                 </GroupBox>
                     <UniformGrid Columns="2">
                 <GroupBox Header="Тип ячейки">
@@ -37,10 +37,11 @@
                     </UniformGrid>
                 <UniformGrid Columns="2">
                 <GroupBox Header="Адреса ячеек">
-                    <TextBox Text="{Binding CellAddress_AC, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Text="{Binding CellAddress_AC, UpdateSourceTrigger=PropertyChanged}" 
+                             Foreground="{Binding ForegrounBrush}" GotFocus="TextBox_GotFocus"/>
                 </GroupBox>
                     <GroupBox Header="Адрес устройства">
-                        <TextBox Text="{Binding DeviceAddress_AC}"/>
+                        <TextBox Text="{Binding DeviceAddress_AC}" IsReadOnly="True"/>
                     </GroupBox>
                 </UniformGrid>
                 <UniformGrid Columns="2">

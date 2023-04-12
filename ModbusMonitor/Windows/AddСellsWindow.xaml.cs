@@ -24,7 +24,16 @@ namespace ModbusMonitor.Windows
         public AddСellsWindow(DeviceClass cellData)
         {
             InitializeComponent();
-            DataContext = new AddCellViewModel(cellData, this);
+            DataContext = new AddCellViewModel(cellData, this);            
+           
         }
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            textBox.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                textBox.SelectAll();
+            }));
+        }        
     }
 }

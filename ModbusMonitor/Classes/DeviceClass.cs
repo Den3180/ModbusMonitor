@@ -142,6 +142,8 @@ namespace ModbusMonitor.Classes
         {
             string pattern = @"\d*";
             Regex regex = new Regex(pattern);
+            //Выход, если строка пуста.
+            if (string.IsNullOrEmpty(AdaptersArray.AdapterData.FullAdapterInf)) return;
             //Разбиваем строку общих данных на лексемы.
             string[] tempDataArray = AdaptersArray.AdapterData.FullAdapterInf.Split(';');
             List<string> strings = new List<string>();
@@ -160,6 +162,37 @@ namespace ModbusMonitor.Classes
             ConnectFromMap.LenghtWord = Convert.ToInt32(strings[5]);
             ConnectFromMap.TimeOutRead = Convert.ToInt32(strings[6]);
             ConnectFromMap.TimeOutWrite = Convert.ToInt32(strings[7]);
+        }
+/// <summary>
+/// Нумерация списка.
+/// </summary>
+/// <param name="device"></param>
+        public static void NumberTheList(DeviceClass device)
+        {
+            int i = 1;
+            List<CellData> listDO=new();
+            List<CellData> listDI=new();
+            List<CellData> listAI=new();
+            List<CellData> listAO=new();
+            List<CellData> listNone=new();
+            foreach (var cell in device.CellsArray)
+            {
+                if (cell.Type == "DO") listDO.Add(cell);
+                else if (cell.Type == "DI") listDI.Add(cell);
+                else if (cell.Type == "AI") listAI.Add(cell);
+                else if (cell.Type == "AO") listAO.Add(cell);
+                else if (cell.Type == "None") listNone.Add(cell);  
+            }
+            listDO.Sort();
+            listDI.Sort();
+            listAI.Sort();
+            listAO.Sort();
+
+            foreach (var cell in device.CellsArray)
+            {
+                cell.NumberReg = i.ToString();
+                i++;
+            }
         }
 
         public override bool Equals(object obj)

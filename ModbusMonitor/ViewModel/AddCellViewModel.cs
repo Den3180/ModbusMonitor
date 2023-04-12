@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -27,12 +28,12 @@ namespace ModbusMonitor.ViewModel
         private readonly Command insertCellCommand;            
         private readonly AddСellsWindow window;
         private readonly DeviceClass device_AC;
+        private Brush foregrounBrush = Brushes.Gray;
 
         public AddCellViewModel(DeviceClass device, AddСellsWindow window)
         {
             this.window = window;
-            device_AC = device;
-            //insertionPosition = string.IsNullOrEmpty(device.NumberReg)?"0":device.NumberReg;
+            device_AC = device;            
             ConnectionText = ModbusRTUASCII.PortsEnabled.Count>0? 
                 device_AC.DeviceName_DC+"-"+ModbusRTUASCII.PortsEnabled.First(): device_AC.DeviceName_DC + "- нет доступных портов";
             DeviceName_AC = device_AC.DeviceName_DC;
@@ -59,6 +60,15 @@ namespace ModbusMonitor.ViewModel
         }
        
         #region[Привязки]
+
+        /// <summary>
+        /// Привязка к цветц текста.
+        /// </summary>
+        public Brush ForegrounBrush
+        {
+            get => foregrounBrush;
+            set => SetOptions(nameof(ForegrounBrush), ref foregrounBrush, value);
+        }
         /// <summary>
         /// Выбранный формат данных.
         /// </summary>
@@ -109,6 +119,7 @@ namespace ModbusMonitor.ViewModel
             {
                 if (!Regex.IsMatch(value, patternAddressCells)) return;
                 SetOptions(nameof(CellAddress_AC), ref cellAddress_AC, value);
+                ForegrounBrush = Brushes.Black;
             } 
         }
         /// <summary>
