@@ -52,11 +52,13 @@ namespace ModbusMonitor
                 {
                     device.CellsArray[i].NumberReg = (i + 1).ToString();
                     device.CellsArray[i].NameDevice = device.DeviceName_DC;
+                    device.CellsArray[i].DeviceAdress = device.DeviceAdress_DC.ToString();
                     device.CellsArray[i].Value = "0";
                 }
             }            
             (Usercontrol.DataContext as ControlDeviceView).Cells = null;
-            (Usercontrol.DataContext as ControlDeviceView).Cells=device.CellsArray;            
+            (Usercontrol.DataContext as ControlDeviceView).Cells=device.CellsArray;
+            CanColorType = true;
         }
 
         /// <summary>
@@ -150,6 +152,7 @@ namespace ModbusMonitor
             CanRefreshTree = false;// отключение команды "Удалить все".
             CanChangeDevice = false;//Отключение команды изменить устройство.
             CanAddCells = false;
+            CanColorType = false;
             SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
         }
 
@@ -226,6 +229,7 @@ namespace ModbusMonitor
                 CanRefreshTree = false;
                 CanChangeDevice = false;
                 CanAddCells = false;
+                CanColorType = false;
                 listDevices.Clear();
             }                
         }
@@ -651,7 +655,7 @@ namespace ModbusMonitor
         /// </summary>
         private void ShowAbout()
         {
-            //(Usercontrol.DataContext as ControlDeviceView).Cells.Sort();
+            
         }
 
         /// <summary>
@@ -719,6 +723,7 @@ namespace ModbusMonitor
             ModbusRTUASCII.SettingPortStart.StopBit = device.ConnectFromMap.Stop_Bit;
             FillNodesTree(device);//Заполнение дерева без подключения.
             CanRefreshTree = true;
+            CanColorType = true;
             SetSelectedDevice();//Синхронизуция выбранного элемента в дереве.
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
@@ -768,7 +773,7 @@ namespace ModbusMonitor
             }           
             foreach(var dev in listDevices)
             {
-                if(itemSelected.ContentName==dev.DeviceName_DC && itemSelected.ContentAddress == dev.DeviceAdress_DC.ToString())
+                if(itemSelected?.ContentName==dev.DeviceName_DC && itemSelected?.ContentAddress == dev.DeviceAdress_DC.ToString())
                 {
                     device = dev;
                     selectNewMap = true;

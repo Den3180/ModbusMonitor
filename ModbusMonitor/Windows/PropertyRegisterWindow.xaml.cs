@@ -11,17 +11,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для writeRegisterWindow.xaml
+    /// Логика взаимодействия для PropertyRegisterWindow.xaml
     /// </summary>
-    public partial class WriteRegisterWindow : Window
+    public partial class PropertyRegisterWindow : Window
     {
-        public WriteRegisterWindow(params object[] objects)
+        public PropertyRegisterWindow(params object[] objects)
         {
             InitializeComponent();
             object[] outgoingParam = new object[objects.Length + 1];

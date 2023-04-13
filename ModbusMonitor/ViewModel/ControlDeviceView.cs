@@ -19,15 +19,17 @@ namespace ModbusMonitor.ViewModel
         private readonly Command editFormatCommand;
         private readonly Command addCellsCommand;
         private readonly Command deleteLineCommand;
+        private readonly Command showPropertiesCommand;
         private bool canWriteRegister;
         private bool canAddCells;
         private bool canDeleteLine;
+        private bool canShowProperties;
         private CellData selectedCell;
+        private DataGridColumn gridColumn;
         private List<CellData> cells = new List<CellData>();
         public List<ButtonProp> MenuItemCheck { get; set; } = new List<ButtonProp>(8);
         public ModbusRTUASCII ModbusRTU { get; set; }
-        public DeviceClass CurrentDevice { get; set; }
-        private UserControlDevices userControl;
+        public DeviceClass CurrentDevice { get; set; }        
         private readonly string [] nameFormat = new string[] {"Bin","Hex","Int","Decimal", "Double", 
                                                      "swDouble","Float","swFloat" 
                                                     }; 
@@ -41,15 +43,16 @@ namespace ModbusMonitor.ViewModel
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is DeviceClass) CurrentDevice = item as DeviceClass;                
             }
-            CanDeleteLine=CanAddCells = CurrentDevice!=null;
+            CanDeleteLine=CanAddCells=CanShowProperties = CurrentDevice!=null;
             for (int i = 0; i < nameFormat.Length; i++)
             {
                 MenuItemCheck.Add(new ButtonProp(nameFormat[i]));
-            }
+            }            
             writeRegisterCommand = new Command(WriteRegister,()=>CanWriteRegister);
             editFormatCommand = new Command(EditFormat);
             addCellsCommand = new Command(AddCells, () => CanAddCells);
             deleteLineCommand = new Command(DeleteLine, () => CanDeleteLine);
+            showPropertiesCommand = new Command(ShowProperties,()=>CanShowProperties);
             PropertyChanged += ControlDeviceView_PropertyChanged;
         }
 
@@ -57,14 +60,26 @@ namespace ModbusMonitor.ViewModel
         public ICommand EditFormatCommand => editFormatCommand;
         public ICommand AddCellsCommand => addCellsCommand;
         public ICommand DeleteLineCommand => deleteLineCommand;
+        public ICommand ShowPropertiesCommand => showPropertiesCommand;
 
         #region[Обработчики команд и методы]
+        /// <summary>
+        /// Свойства регистра.
+        /// </summary>
+        private void ShowProperties()
+        {
+            PropertyRegisterWindow propertyRegisterWindow = new PropertyRegisterWindow(SelectedCell, ModbusRTU, false);
+            propertyRegisterWindow.Title = "Свойства регистра";
+            propertyRegisterWindow.ShowDialog();        
+            SelectItemFormat();            
+        }
 
+        /// <summary>
+        /// Удалить строку.
+        /// </summary>
         private void DeleteLine()
         {           
-            CurrentDevice.CellsArray.Remove(SelectedCell);
-            CurrentDevice.CellsArray.Sort();
-            //CurrentDevice.CellsArray.Sort(new CellTypeComparer());
+            CurrentDevice.CellsArray.Remove(SelectedCell);           
             DeviceClass.NumberTheList(CurrentDevice);
             Cells = null;
             Cells = CurrentDevice.CellsArray;
@@ -73,10 +88,21 @@ namespace ModbusMonitor.ViewModel
         /// Вызов окна записи регистров.
         /// </summary>
         private void WriteRegister()
-        {           
-            WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
-            writeRegisterWindow.ShowDialog();
-            SelectItemFormat();
+        {
+            bool mode=false;//Флаг выбора действия.
+            if (GridColumn?.Header.ToString() == "Значение")
+            {
+                mode = true;
+                WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU,mode);
+                writeRegisterWindow.ShowDialog();
+            }
+            else
+            {
+                PropertyRegisterWindow propertyRegisterWindow = new PropertyRegisterWindow(SelectedCell, ModbusRTU,mode);
+                propertyRegisterWindow.Title = "Свойства регистра";
+                propertyRegisterWindow.ShowDialog();
+            }
+                SelectItemFormat();
         } 
         /// <summary>
         /// Добавление ячеек.
@@ -86,16 +112,8 @@ namespace ModbusMonitor.ViewModel
             AddСellsWindow addСellsWindow = new AddСellsWindow(CurrentDevice);
             addСellsWindow.ShowDialog();
             if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
-            CurrentDevice.CellsArray.AddRange(addCells);
-            for (int i = 0; i < CurrentDevice.CellsArray.Count; i++)
-            {
-                if (string.IsNullOrEmpty(CurrentDevice.CellsArray[i].NumberReg))
-                {
-                    CurrentDevice.CellsArray[i].NumberReg = (i + 1).ToString();
-                    CurrentDevice.CellsArray[i].NameDevice = CurrentDevice.DeviceName_DC;
-                    CurrentDevice.CellsArray[i].Value = "0";
-                }
-            }
+            CurrentDevice.CellsArray.AddRange(addCells);            
+           DeviceClass.NumberTheList(CurrentDevice);
            Cells = null;
            Cells = CurrentDevice.CellsArray;            
         }
@@ -145,6 +163,18 @@ namespace ModbusMonitor.ViewModel
         #endregion
 
         #region[Свойства-привязки]
+
+        /// <summary>
+        /// Привязка к колонке DataGrid.
+        /// </summary>
+        public DataGridColumn GridColumn
+        {
+            get => gridColumn;
+            set 
+            {
+                SetOptions(nameof(GridColumn), ref gridColumn, value);
+            } 
+        }
         //Привязка к выделенному элементу DataGrid.
         public CellData SelectedCell
         {
@@ -168,7 +198,9 @@ namespace ModbusMonitor.ViewModel
                 }
             }
         }
-
+        /// <summary>
+        /// Привязка к списку источника данных.
+        /// </summary>
         public List<CellData> Cells
         {
             get => cells;
@@ -178,6 +210,13 @@ namespace ModbusMonitor.ViewModel
 
         #region[Свойства доступности команд]
 
+        //Доступ команды Свойства.
+        public bool CanShowProperties
+        {
+            get => canShowProperties;
+            set => SetOptions(nameof(CanShowProperties), ref canShowProperties, value);
+        }
+        //Доступ команды удалить.
         public bool CanDeleteLine
         {
             get => canDeleteLine;
@@ -202,6 +241,10 @@ namespace ModbusMonitor.ViewModel
             if (e.PropertyName.Equals(nameof(CanWriteRegister)))
             {
                 writeRegisterCommand.RaiseCanExecuteChanged();
+            }
+            if(e.PropertyName.Equals(nameof(CanShowProperties)))
+            {
+                showPropertiesCommand.RaiseCanExecuteChanged();
             }
         }
        

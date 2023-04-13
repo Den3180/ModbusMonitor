@@ -37,7 +37,7 @@ namespace ModbusMonitor.ViewModel
             ConnectionText = ModbusRTUASCII.PortsEnabled.Count>0? 
                 device_AC.DeviceName_DC+"-"+ModbusRTUASCII.PortsEnabled.First(): device_AC.DeviceName_DC + "- нет доступных портов";
             DeviceName_AC = device_AC.DeviceName_DC;
-            DeviceAddress_AC = device_AC.DeviceName_DC;
+            DeviceAddress_AC = device_AC.DeviceAdress_DC.ToString();
             TitleText = $"Добавление ячеек";// в позицию {insertionPosition}";
             SelectedTypeReg = TypeRegister_AC.FirstOrDefault();
             SelectedFormatData = FormatCell_AC.FirstOrDefault(item=>item=="Int");

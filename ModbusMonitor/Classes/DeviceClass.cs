@@ -187,10 +187,20 @@ namespace ModbusMonitor.Classes
             listDI.Sort();
             listAI.Sort();
             listAO.Sort();
-
+            device.CellsArray.Clear();
+            device.CellsArray.AddRange(listDO);
+            device.CellsArray.AddRange(listDI);
+            device.CellsArray.AddRange(listAI);
+            device.CellsArray.AddRange(listAO);
+            device.CellsArray.AddRange(listNone);
             foreach (var cell in device.CellsArray)
             {
-                cell.NumberReg = i.ToString();
+                if (string.IsNullOrEmpty(cell.Value))
+                {
+                    cell.NameDevice = device.DeviceName_DC;
+                    cell.Value = "0";
+                }
+                    cell.NumberReg = i.ToString();
                 i++;
             }
         }

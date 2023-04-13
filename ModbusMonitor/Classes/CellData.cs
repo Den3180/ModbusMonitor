@@ -49,8 +49,8 @@ namespace ModbusMonitor.Classes
         public int Compare(CellData x, CellData y)
         {
             if (x is CellData && y is CellData)
-            {
-                return x.Type.CompareTo(y.Type);
+            {               
+                return x.Adress.CompareTo(y.Adress);                
             }
             throw new NotImplementedException();
         }

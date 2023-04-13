@@ -20,6 +20,7 @@ namespace ModbusMonitor.ViewModel
         private string addressDevice=string.Empty;
         private string valueRegister=string.Empty;
         private string dataFormat=string.Empty;
+        private string nameRegister = string.Empty;
         private int selectedTypeRegister;
         private int addressregister;
         private bool canWriteRegistry;
@@ -30,9 +31,7 @@ namespace ModbusMonitor.ViewModel
         private readonly ICollection<string> connectionPortDevice = new ObservableCollection<string>();
         
         public WriteRegisterViewMod()
-        {
-
-        }
+        {}
         public WriteRegisterViewMod(params object[] objects )
         {
             foreach(var item in objects)
@@ -40,6 +39,7 @@ namespace ModbusMonitor.ViewModel
                 if(item is CellData)   cellData = item as CellData;
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
                 if (item is Window) window = item as Window;
+                if (item is bool) ModeAction = (bool)item;
             }
             dataFormat = cellData.Format;            
             if(cellData!=null) SelectItemTypeRegister();
@@ -49,6 +49,7 @@ namespace ModbusMonitor.ViewModel
         }
 
         public ModbusRTUASCII ModbusRTU { get; set; }
+        public bool ModeAction { get; set; }
         public List<ButtonProp> CheckRadioButtons { get; set; } = new List<ButtonProp>(8); 
         public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
         public IEnumerable<string> TypeRegister => typeRegister;
@@ -71,37 +72,46 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void WriteRegistry()
         {
-            int slaveID = Convert.ToInt32(AddressDevice);
-            int regAddress = Convert.ToInt32(AddressRegister);
-            if (cellData.Type == "DO")
+            if (ModeAction == true)
             {
-                bool value = Convert.ToBoolean(Int32.Parse(ValueRegister));
-                ModbusRTU.WriteCoilRegister(slaveID, regAddress, value);
+                int slaveID = Convert.ToInt32(AddressDevice);
+                int regAddress = Convert.ToInt32(AddressRegister);
+                if (cellData.Type == "DO")
+                {
+                    bool value = Convert.ToBoolean(Int32.Parse(ValueRegister));
+                    ModbusRTU.WriteCoilRegister(slaveID, regAddress, value);
+                }
+                else if (cellData.Type == "AO")
+                {
+                    int value;
+                    string valString;
+                    if(dataFormat=="Bin" && Regex.IsMatch(ValueRegister, patternBin))
+                    {
+                        valString = ValueConverter.RepresentBinToString(ValueRegister);
+                        value = Convert.ToInt32(valString, 2);
+                    }
+                    else if (dataFormat == "Hex" && Regex.IsMatch(ValueRegister,patternHex))
+                    {
+                        valString = ValueConverter.RepresentHexToString(ValueRegister);
+                        value = Convert.ToInt32(valString, 16);
+                    }
+                    else if (dataFormat == "Int" && Regex.IsMatch(ValueRegister, patternInt))
+                    {                    
+                        value = Convert.ToInt32(ValueRegister);
+                    }
+                    else
+                    {                    
+                        value = Convert.ToInt32(ValueRegister);
+                    }
+                    ModbusRTU.WriteHoldingRegister(slaveID, regAddress, value);
+                    cellData.Format = dataFormat;
+                }
             }
-            else if (cellData.Type == "AO")
+            else
             {
-                int value;
-                string valString;
-                if(dataFormat=="Bin" && Regex.IsMatch(ValueRegister, patternBin))
-                {
-                    valString = ValueConverter.RepresentBinToString(ValueRegister);
-                    value = Convert.ToInt32(valString, 2);
-                }
-                else if (dataFormat == "Hex" && Regex.IsMatch(ValueRegister,patternHex))
-                {
-                    valString = ValueConverter.RepresentHexToString(ValueRegister);
-                    value = Convert.ToInt32(valString, 16);
-                }
-                else if (dataFormat == "Int" && Regex.IsMatch(ValueRegister, patternInt))
-                {                    
-                    value = Convert.ToInt32(ValueRegister);
-                }
-                else
-                {                    
-                    value = Convert.ToInt32(ValueRegister);
-                }
-                ModbusRTU.WriteHoldingRegister(slaveID, regAddress, value);
-                cellData.Format = dataFormat;
+                cellData.Name = NameRegister;
+                cellData.Value = ValueRegister;
+                cellData.Format = dataFormat;                
             }
             window.Close();
         }      
@@ -117,6 +127,7 @@ namespace ModbusMonitor.ViewModel
             connectionPortDevice.Add(ModbusRTUASCII.SettingPortStart.PortType + " --- " + cellData.NameDevice);
             AddressDevice = cellData.DeviceAdress;
             AddressRegister = cellData.Adress;
+            NameRegister = cellData.Name;
             ValueRegister = cellData.Value;
             SelectedTypeRegister = cellData.Type switch
             {
@@ -167,6 +178,14 @@ namespace ModbusMonitor.ViewModel
         {
             get => addressDevice;
             set => SetOptions(nameof(AddressDevice), ref addressDevice, value);
+        }
+        /// <summary>
+        /// Имя регистра.
+        /// </summary>
+        public string NameRegister
+        {
+            get => nameRegister;
+            set => SetOptions(nameof(NameRegister), ref nameRegister, value);
         }
         /// <summary>
         /// Привязка выбранного элемента поля "Тип регистра".

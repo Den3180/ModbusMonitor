@@ -28,5 +28,10 @@ namespace ModbusMonitor.Controls
             InitializeComponent();           
             DataContext = new ControlDeviceView(objects);
         }        
+        //private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    var sen = (DataGrid)sender;
+        //    var t= sen.CurrentCell.Column.Header.ToString();
+        //}
     }
 }

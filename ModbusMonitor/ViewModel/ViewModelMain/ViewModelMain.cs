@@ -56,7 +56,7 @@ namespace ModbusMonitor
             listenPortCommand = new Command(ListenPort, () => CanRequest);
             ratioCommand = new Command(EditRatio);
             formatCommand = new Command(EditFormat);
-            colorTypeCommand = new Command(EditColorType);
+            colorTypeCommand = new Command(EditColorType,()=>CanColorType);
             resetColCommand = new Command(ResetColumn);
             writeRegisterCommand = new Command(WriteRegister, () => CanWriteRegister);
             sendRequestCommand = new Command(SendRequest, () => CanRequest);
@@ -89,8 +89,7 @@ namespace ModbusMonitor
             PropertyChanged += ViewModelMain_PropertyChanged;
             timerPoll.Tick += TimerSec_Tick;
             CheckStartParam();
-            Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart));
-            
+            Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart));            
         }
       
         //Комманды.Вкладка "Файл".

@@ -8,7 +8,19 @@
         d:DataContext="{d:DesignInstance Type=viewmodel:ConnectViewModel}"
         mc:Ignorable="d"
         Title="Новое подключение" Height="auto" Width="500" SizeToContent="Height">
-    <Grid>
+    <Window.Resources>
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="Gray">
+        <Border Background="Lavender" Margin="2">
+            <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -156,5 +168,7 @@
             <Button Grid.Column="1" Command="{Binding AddCommand}" Content="Добавить" HorizontalAlignment="Right" Width="100"/>
             <Button Grid.Column="2" Command="{Binding CanselCommand}" Content="Отмена" HorizontalAlignment="Center" Width="100"/>
         </UniformGrid>
+    </Grid>            
+        </Border>
     </Grid>
 </Window>

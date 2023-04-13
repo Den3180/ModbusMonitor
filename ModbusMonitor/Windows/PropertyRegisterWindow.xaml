@@ -1,0 +1,93 @@
+﻿<Window x:Class="ModbusMonitor.Windows.PropertyRegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModbusMonitor.Windows" 
+        xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:WriteRegisterViewMod}"
+        mc:Ignorable="d"
+        Height="auto" Width="350" MaxWidth="400" ResizeMode="CanMinimize" 
+        WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="Gray">
+        <Border Background="Lavender" Margin="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" Header="Подключение">
+                    <ComboBox ItemsSource="{Binding ConnectionPortDevice}"
+                              SelectedIndex="0"/>
+                </GroupBox>
+                <UniformGrid Grid.Row="1" Rows="1" Columns="2">
+                    <StackPanel Orientation="Vertical">
+                        <GroupBox Header="Адрес устройства">
+                            <TextBox Text="{Binding AddressDevice}" IsReadOnly="True"/>
+                        </GroupBox>
+                        <GroupBox Header="Тип регистра">
+                            <ComboBox ItemsSource="{Binding TypeRegister}" 
+                                      SelectedIndex="{Binding SelectedTypeRegister}"
+                                      IsReadOnly="true" IsEditable="False"/>
+                        </GroupBox>
+                        <GroupBox Header="Адрес регистра" >
+                            <TextBox Text="{Binding AddressRegister}" IsReadOnly="True"/>
+                        </GroupBox>
+                    </StackPanel>
+                    <GroupBox Header="Формат" VerticalAlignment="Stretch">
+                        <UniformGrid Columns="2">
+                            <UniformGrid.Resources>
+                                <Style TargetType="{x:Type RadioButton}">
+                                    <Setter Property="Command" Value="{Binding CheckTypeDataCommand}"/>
+                                </Style>
+                            </UniformGrid.Resources>
+                            <UniformGrid VerticalAlignment="Stretch" Rows="4">
+                                <RadioButton Content="Bin" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[0].CheckButton}"/>
+                                <RadioButton Content="Hex" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[1].CheckButton}"/>
+                                <RadioButton Content="Int" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[2].CheckButton}"/>
+                                <RadioButton Content="Decimal" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[3].CheckButton}"/>
+                            </UniformGrid>
+                            <UniformGrid VerticalAlignment="Stretch" Rows="4">
+                                <RadioButton Content="Float" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[4].CheckButton}"/>
+                                <RadioButton Content="swFloat" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[5].CheckButton}"/>
+                                <RadioButton Content="Double" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[6].CheckButton}"/>
+                                <RadioButton Content="swDouble" GroupName="Type" 
+                                             IsChecked="{Binding CheckRadioButtons[7].CheckButton}"/>
+                            </UniformGrid>
+                        </UniformGrid>
+                    </GroupBox>
+                </UniformGrid>
+                <GroupBox Grid.Row="2" Header="Имя регистра">
+                    <TextBox Text="{Binding NameRegister, UpdateSourceTrigger=PropertyChanged}"/>
+                </GroupBox>
+                <GroupBox Grid.Row="3" Header="Значение">
+                    <TextBox Text="{Binding ValueRegister, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
+                </GroupBox>
+                <UniformGrid Grid.Row="4" Columns="2">
+                    <Button Command="{Binding WriteRegistryCommand}" Content="Сохранить" Margin="10"/>
+                    <Button Content="Отмена" Margin="10" IsCancel="True" IsDefault="True"/>
+                </UniformGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

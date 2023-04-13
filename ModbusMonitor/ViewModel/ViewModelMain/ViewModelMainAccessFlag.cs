@@ -38,17 +38,27 @@ namespace ModbusMonitor
         private bool canRefreshTree;
         private bool canChangeDevice;
         private bool canAddCells;
+        private bool canColorType;
 
         #region [Флаги доступности]
 
         /// <summary>
+        /// Доступность команды Цвета типов.
+        /// </summary>
+        public bool CanColorType
+        {
+            get => canColorType;
+            set => SetOptions(nameof(CanColorType), ref canColorType, value);
+        }
+      
+        /// <summary>
         /// Доступность команды Добавить ячейки.
         /// </summary>
         public bool CanAddCells
-        {
-            get => canAddCells;
-            set => SetOptions(nameof(CanAddCells), ref canAddCells, value);
-        }
+    {
+        get => canAddCells;
+        set => SetOptions(nameof(CanAddCells), ref canAddCells, value);
+    }
 
         /// <summary>
         /// Доступность команды Изменить устройчтво.
@@ -210,7 +220,11 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanAddCells)))
             {
                 addCellsCommand.RaiseCanExecuteChanged();
+            } if (e.PropertyName.Equals(nameof(CanColorType)))
+            {
+                colorTypeCommand.RaiseCanExecuteChanged();
             }
+
         }
     }
 }
