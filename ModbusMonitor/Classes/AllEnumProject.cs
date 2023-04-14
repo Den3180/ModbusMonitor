@@ -84,7 +84,7 @@ namespace ModbusMonitor.Classes
     {
         public int DeviceAdress { get; set; }
         public string PortType { get; set; } = string.Empty;
-        public int SpeedPort { get; set; }
+        public int SpeedPort { get; set; } 
         public int Parity { get; set; }
         public int Stop_Bit { get; set; }
         public int LenghtWord { get; set; }

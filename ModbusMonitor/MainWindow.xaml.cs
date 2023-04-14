@@ -32,6 +32,14 @@ namespace ModbusMonitor
             InitializeComponent();
             DataContext = new ViewModelMain();
         }
-
+        
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            var dContext = DataContext as ViewModelMain;
+            if (dContext.treeNodes.Count == 0) return;
+            if(MessageBox.Show("Сохранить карту?", string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes)          {
+                dContext.SaveMapcomman.Execute(null);
+            }
+        }
     }
 }

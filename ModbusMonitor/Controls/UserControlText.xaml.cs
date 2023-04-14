@@ -10,21 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ModbusMonitor.Classes;
-using ModbusMonitor.ViewModel;
 
-namespace ModbusMonitor.Windows
+namespace ModbusMonitor.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для PropertyRegisterWindow.xaml
+    /// Логика взаимодействия для UserControlText.xaml
     /// </summary>
-    public partial class PropertyRegisterWindow : Window
+    public partial class UserControlText : UserControl
     {
-        public PropertyRegisterWindow(CellData cell)
+        public UserControlText()
         {
-            InitializeComponent();           
-            DataContext = new RegisterPropertiesViewModel(cell);
+            InitializeComponent();
         }
     }
 }

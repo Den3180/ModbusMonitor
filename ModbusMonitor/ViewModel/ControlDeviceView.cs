@@ -68,8 +68,7 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void ShowProperties()
         {
-            PropertyRegisterWindow propertyRegisterWindow = new PropertyRegisterWindow(SelectedCell, ModbusRTU, false);
-            propertyRegisterWindow.Title = "Свойства регистра";
+            PropertyRegisterWindow propertyRegisterWindow = new PropertyRegisterWindow(SelectedCell);            
             propertyRegisterWindow.ShowDialog();        
             SelectItemFormat();            
         }
@@ -89,19 +88,9 @@ namespace ModbusMonitor.ViewModel
         /// </summary>
         private void WriteRegister()
         {
-            bool mode=false;//Флаг выбора действия.
-            if (GridColumn?.Header.ToString() == "Значение")
-            {
-                mode = true;
-                WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU,mode);
-                writeRegisterWindow.ShowDialog();
-            }
-            else
-            {
-                PropertyRegisterWindow propertyRegisterWindow = new PropertyRegisterWindow(SelectedCell, ModbusRTU,mode);
-                propertyRegisterWindow.Title = "Свойства регистра";
-                propertyRegisterWindow.ShowDialog();
-            }
+            if (GridColumn.Header.ToString() != "Значение") return;
+                WriteRegisterWindow writeRegisterWindow = new WriteRegisterWindow(SelectedCell,ModbusRTU);
+                writeRegisterWindow.ShowDialog();                      
                 SelectItemFormat();
         } 
         /// <summary>
@@ -170,10 +159,10 @@ namespace ModbusMonitor.ViewModel
         public DataGridColumn GridColumn
         {
             get => gridColumn;
-            set 
+            set
             {
                 SetOptions(nameof(GridColumn), ref gridColumn, value);
-            } 
+            }
         }
         //Привязка к выделенному элементу DataGrid.
         public CellData SelectedCell

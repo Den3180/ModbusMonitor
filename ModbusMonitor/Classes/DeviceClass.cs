@@ -18,7 +18,7 @@ namespace ModbusMonitor.Classes
         {
             AdaptersArray = new AdaptersArray();
             CellsArray = new List<CellData>();
-            ConnectFromMap = new SettingConnectFromMap();
+            ConnectFromMap = new SettingConnectFromMap();           
             ID = Guid.NewGuid();            
         }
 

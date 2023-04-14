@@ -38,7 +38,7 @@ namespace ModbusMonitor.Classes
             SettingPortStart = new SettingPortStart();
         }
         
-        public string TextMessage { get; set; } = string.Empty;
+        public string RequestStatusMessage { get; set; } = string.Empty;
         public List<int> AdressSearch { get; set; } //Найденый адрес устройства.
         public static eMode Mode { get; set; }
         public static List<string> PortsEnabled { get; set; } //Список портов доступных
@@ -124,9 +124,9 @@ namespace ModbusMonitor.Classes
                 ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);                
                 return tempData;
             }
-            catch (Exception ex)
-            {
-                //Mode = eMode.None;
+            catch 
+            {                
+               RequestStatusMessage = $"Чтение регистров АО.Таймаут превышен!";
             }
             return null;
         }
@@ -144,9 +144,9 @@ namespace ModbusMonitor.Classes
                 ushort[] tempData = MasterRTU.ReadInputRegisters(adresDevice, startAdress, numOfPoint);
                 return tempData;
             }
-            catch (Exception ex)
+            catch 
             {
-                //Mode = eMode.None;
+                RequestStatusMessage = "Чтение регистров AI.Таймаут превышен!";
             }
             return null;
         }
@@ -170,9 +170,9 @@ namespace ModbusMonitor.Classes
                 }
                 return dataCoils;
             }
-            catch (Exception ex)
+            catch 
             {
-                //Mode = eMode.None;               
+                RequestStatusMessage = "Чтение регистров DO.Таймаут превышен!";
             }
             return null;
         }
@@ -197,9 +197,9 @@ namespace ModbusMonitor.Classes
                 }
                 return dataCoils;
             }
-            catch (Exception ex)
+            catch 
             {
-                //Mode = eMode.None;               
+                RequestStatusMessage = "Чтение регистров DI.Таймаут превышен!";
             }
             return null;
         }
@@ -220,7 +220,7 @@ namespace ModbusMonitor.Classes
             }
             catch
             {
-
+                RequestStatusMessage = "Запись регистров DO.Таймаут превышен!";
             }
         }
 
@@ -238,7 +238,7 @@ namespace ModbusMonitor.Classes
             }
             catch
             {
-
+                RequestStatusMessage = "Запись регистров АО.Таймаут превышен!";
             }
         }
 
@@ -302,7 +302,7 @@ namespace ModbusMonitor.Classes
                     //Thread.Sleep(800);
                     PortsEnabled.Add(serialPort.PortName);
                 }
-                catch (Exception ex)
+                catch 
                 {
                     serialPort.Close();
                     Mode = eMode.None;
@@ -361,7 +361,7 @@ namespace ModbusMonitor.Classes
                 {
                     serialPort.Write(mes, 0, mes.Length);                    
                 }
-                catch (Exception ex)
+                catch
                 {
                     serialPort.Close();
                     Mode = eMode.None;

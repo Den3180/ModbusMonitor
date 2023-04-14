@@ -35,6 +35,7 @@ namespace ModbusMonitor
         private List<(string, string)> listMaps;//Хранение загруженных карт.
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
+        public UserControl UserTemp { get; set; }
         #region[Обработчики комманд]
 
         /// <summary>
@@ -419,7 +420,7 @@ namespace ModbusMonitor
         /// </summary>
         private void MakeTable()
         {
-
+            Usercontrol = UserTemp;
         }
 
         /// <summary>
@@ -427,6 +428,8 @@ namespace ModbusMonitor
         /// </summary>
         private void MakeText()
         {
+            UserTemp ??= Usercontrol;
+            Usercontrol = new UserControlText();
         }
 
         /// <summary>
@@ -434,7 +437,8 @@ namespace ModbusMonitor
         /// </summary>
         private void ViewingPackages()
         {
-
+            UserTemp??= Usercontrol;
+            Usercontrol = new UserControlText();
         }
 
         /// <summary>
@@ -501,6 +505,7 @@ namespace ModbusMonitor
         /// </summary>
         private void SendRequest()
         {
+            Dispatcher disp = App.Current.Dispatcher;
             NumberRequest = (++countReqTot).ToString();
             byte adressDev = Convert.ToByte(device.DeviceAdress_DC);
             short startAdressDI = -1;
@@ -524,6 +529,7 @@ namespace ModbusMonitor
                     if (tempDI == null)
                     {
                         answerRequest = false;
+                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempDI);
@@ -535,6 +541,7 @@ namespace ModbusMonitor
                     if (tempDO == null)
                     {
                         answerRequest = false;
+                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempDO);
@@ -546,6 +553,7 @@ namespace ModbusMonitor
                     if (tempAI == null)
                     {
                         answerRequest = false;
+                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempAI);
@@ -556,8 +564,9 @@ namespace ModbusMonitor
                     tempAO = modbusRTU.ReadHoldingRegs(adressDev, (ushort)startAdressAO, numOfAO);
                     if (tempAO == null)
                     {
-                        answerRequest = false;
-                        return;
+                       answerRequest = false;
+                       disp.Invoke(()=> logItemSource.Add(modbusRTU.RequestStatusMessage));
+                       return;
                     }
                     Array.Reverse(tempAO);
                 }
@@ -767,8 +776,7 @@ namespace ModbusMonitor
             //Если нужная карта уже загружена, то ничего не меняем.
             if (itemSelected?.ContentName == (Usercontrol.DataContext as ControlDeviceView).CurrentDevice.DeviceName_DC)
             {
-                Cells = device.CellsArray;
-                //Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
+                Cells = device.CellsArray;               
                 return;
             }           
             foreach(var dev in listDevices)
@@ -782,7 +790,7 @@ namespace ModbusMonitor
             if (selectNewMap)//Если выбранв новая карта.
             {        
                 Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.
-                Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
+                Usercontrol = new UserControlDevices(Cells, modbusRTU, device);                
                 if (device.LinkDevice == EnumLink.LinkYes && DeviceAddress == device.DeviceAdress_DC)
                 {
                     Disconnection();  //Отключение подключения.          

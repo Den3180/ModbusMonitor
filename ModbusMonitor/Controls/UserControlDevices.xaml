@@ -1,5 +1,4 @@
-﻿<UserControl Name="Cell"
-             x:Class="ModbusMonitor.Controls.UserControlDevices"
+﻿<UserControl x:Class="ModbusMonitor.Controls.UserControlDevices"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,29 +9,26 @@
              xmlns:viewmodel="clr-namespace:ModbusMonitor.ViewModel"             
              d:DataContext="{d:DesignInstance Type=viewmodel:ControlDeviceView}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="1000" Width="Auto">
+             d:DesignHeight="450" d:DesignWidth="1000" Width="auto">
     <UserControl.Resources>
         <Style TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Width" Value="auto"/>
-        </Style>        
+            <Setter Property="MinWidth" Value="80"/>
+            <Setter Property="Width" Value="auto"/>            
+        </Style>       
     </UserControl.Resources>
     <Grid>        
         <DataGrid AutoGenerateColumns="False" SelectionMode="Single"
                   ItemsSource="{Binding Cells}"
-                  SelectionUnit="FullRow" 
-                  HorizontalGridLinesBrush="#FFBDB3B3" 
-                  FontSize="16"                  
-                  SelectedItem="{Binding SelectedCell}" CanUserSortColumns="False"
-                  CurrentColumn="{Binding GridColumn, Mode=TwoWay}" Width="auto" >            
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding WriteRegisterCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <!--Контексное меню-->
+                  SelectionUnit="FullRow"                   
+                  FontSize="14"                  
+                  SelectedItem="{Binding SelectedCell}" 
+                  CanUserSortColumns="False" 
+                  CurrentColumn="{Binding GridColumn, Mode=TwoWay}" 
+                  Width="auto" 
+                  MouseDoubleClick="DataGrid_MouseDoubleClick" HorizontalAlignment="Left" BorderThickness="1">            
+                       <!--Контексное меню-->
             <DataGrid.ContextMenu>
                 <ContextMenu>                   
                     <MenuItem Header="График"/>
@@ -78,14 +74,14 @@
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="#FFBFF4F5"/>
+                            <Setter Property="Background" Value="#FF9AD2F5"/>
                         </Trigger>                        
-                    </Style.Triggers>                    
+                    </Style.Triggers>                                                    
                 </Style>
-            </DataGrid.RowStyle>
+            </DataGrid.RowStyle>           
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">                    
-                    <Setter Property="Margin" Value="1.5 3 1.5 3" />
+                    <Setter Property="Margin" Value="0" />                    
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Type}" Value="AO">
                             <Setter Property="Background" Value="#FFDFFDDF" />
@@ -108,7 +104,7 @@
                 </Style>                                    
             </DataGrid.CellStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="№ п/п" Binding="{Binding NumberReg }" IsReadOnly="True" Width="auto">                    
+                <DataGridTextColumn Header="№ п/п" Binding="{Binding NumberReg }" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -116,7 +112,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Устройство" Binding="{Binding NameDevice}" IsReadOnly="True" Width="auto">
+                <DataGridTextColumn Header="Устройство" Binding="{Binding NameDevice}" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle >
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -124,7 +120,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>                    
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Команда" Binding="{Binding Prop2}" IsReadOnly="True" Width="auto">
+                <DataGridTextColumn Header="Команда" Binding="{Binding Prop2}" IsReadOnly="True" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -132,7 +128,8 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Тип регистра" Binding="{Binding Type}" IsReadOnly="True" Width="auto" >
+                <DataGridTextColumn Header="Тип регистра" Binding="{Binding Type, UpdateSourceTrigger=PropertyChanged}" 
+                                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -140,7 +137,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>                    
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Адрес" Binding="{Binding Adress}" IsReadOnly="True" Width="auto">
+                <DataGridTextColumn Header="Адрес" Binding="{Binding Adress}" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -148,7 +145,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Имя регистра" MinWidth="100" Width="*" 
+                <DataGridTextColumn Header="Имя регистра" MaxWidth="400" Width="400" MinWidth="100"
                                     Binding="{Binding Name}" IsReadOnly="False">                   
                     <DataGridTextColumn.ElementStyle>                        
                         <Style TargetType="TextBlock">
@@ -158,7 +155,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Формат" Width="auto" IsReadOnly="True" 
+                <DataGridTextColumn Header="Формат" IsReadOnly="True" 
                                     Binding="{Binding Format}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -167,10 +164,10 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Значение" Width="auto" MinWidth="300" IsReadOnly="True" 
-                                    Binding="{Binding Value}">                    
+                <DataGridTextColumn Header="Значение" MinWidth="200" IsReadOnly="True" 
+                                    Binding="{Binding Value}">                   
                     <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
+                        <Style TargetType="TextBlock">                           
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="FontWeight" Value="Bold"/>

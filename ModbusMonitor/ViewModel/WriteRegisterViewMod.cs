@@ -38,8 +38,7 @@ namespace ModbusMonitor.ViewModel
             {
                 if(item is CellData)   cellData = item as CellData;
                 if (item is ModbusRTUASCII) ModbusRTU = item as ModbusRTUASCII;
-                if (item is Window) window = item as Window;
-                if (item is bool) ModeAction = (bool)item;
+                if (item is Window) window = item as Window;                
             }
             dataFormat = cellData.Format;            
             if(cellData!=null) SelectItemTypeRegister();
@@ -49,7 +48,6 @@ namespace ModbusMonitor.ViewModel
         }
 
         public ModbusRTUASCII ModbusRTU { get; set; }
-        public bool ModeAction { get; set; }
         public List<ButtonProp> CheckRadioButtons { get; set; } = new List<ButtonProp>(8); 
         public IEnumerable<string> ConnectionPortDevice => connectionPortDevice;
         public IEnumerable<string> TypeRegister => typeRegister;
@@ -71,9 +69,7 @@ namespace ModbusMonitor.ViewModel
         /// Запись в одиночный регистр.
         /// </summary>
         private void WriteRegistry()
-        {
-            if (ModeAction == true)
-            {
+        {            
                 int slaveID = Convert.ToInt32(AddressDevice);
                 int regAddress = Convert.ToInt32(AddressRegister);
                 if (cellData.Type == "DO")
@@ -105,14 +101,8 @@ namespace ModbusMonitor.ViewModel
                     }
                     ModbusRTU.WriteHoldingRegister(slaveID, regAddress, value);
                     cellData.Format = dataFormat;
-                }
-            }
-            else
-            {
-                cellData.Name = NameRegister;
-                cellData.Value = ValueRegister;
-                cellData.Format = dataFormat;                
-            }
+                }            
+           
             window.Close();
         }      
         /// <summary>

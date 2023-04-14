@@ -27,11 +27,20 @@ namespace ModbusMonitor.Controls
         {
             InitializeComponent();           
             DataContext = new ControlDeviceView(objects);
-        }        
-        //private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //    var sen = (DataGrid)sender;
-        //    var t= sen.CurrentCell.Column.Header.ToString();
-        //}
+        }
+
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var sen = (DataGrid)sender;
+            var sourceCommand = DataContext as ControlDeviceView;
+            if (sen.CurrentCell.Column.Header.ToString() == "Значение" && sourceCommand.CanWriteRegister==true )
+            {
+                sourceCommand.WriteRegisterCommand.Execute(new object());
+            }
+            else if(sen.CurrentCell.Column.Header.ToString() != "Значение")
+            {
+                sourceCommand.ShowPropertiesCommand.Execute(new object());
+            }
+        }
     }
 }

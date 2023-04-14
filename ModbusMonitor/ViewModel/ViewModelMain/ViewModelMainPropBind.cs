@@ -35,10 +35,13 @@ namespace ModbusMonitor
         private string numberRequest = "0";  //Общее количество запросов.
         private object selectedItemTree=new object();
         private Brush colorTextTreeConnect = Brushes.Black;
-        private UserControlDevices userControl; 
+        private UserControl userControl; 
 
         public ObservableCollection<GroupsTreeNode> treeNodes;//Источник данных для дерева.
-        public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.        
+        public ObservableCollection<string> logItemSource;//Источник данных для listbox.
+
+        public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.
+        public IEnumerable<string> LogItemSource => logItemSource;//Свойство данных лога listbox.
 
         #region[Свойства-привязки]
 
@@ -95,7 +98,7 @@ namespace ModbusMonitor
         /// <summary>
         /// Свойство-привязка отображения таблицы.
         /// </summary>
-        public UserControlDevices Usercontrol
+        public UserControl Usercontrol
         {
             get => userControl;
             set

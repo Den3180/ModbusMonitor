@@ -29,15 +29,15 @@ namespace ModbusMonitor.ViewModel
         private string selectedItem = string.Empty;
         private string headerCombobox = "--выберите подключение--";
         private string headerAddress=string.Empty;
-        private int speedPort_VM;
-        private int wordLength_VM;
-        private int timeoutRead_VM;
-        private int timeoutWrite_VM;
+        private int speedPort_VM=9600;
+        private int wordLength_VM=8;
+        private int timeoutRead_VM=1000;
+        private int timeoutWrite_VM=1000;
         private bool canAddConnect;
         private bool canAdd;
         private bool canTextIP;
-        private Parity parity_VM;
-        private StopBits stopBits_VM;
+        private Parity parity_VM=Parity.None;
+        private StopBits stopBits_VM=StopBits.One;
         private DeviceClass device;
         public ICollection<string> sourceTypeConnect = new ObservableCollection<string>();
         private ConnectSettingWindow window;
@@ -53,15 +53,13 @@ namespace ModbusMonitor.ViewModel
             "IP-адрес/Хост(Modbus IP)"
         };
         
-
-
         public ConnectViewModel(DeviceClass device,ModbusRTUASCII modbus, ConnectSettingWindow window)
         {
             this.device = device;
             this.window = window;
             modbusMaster = modbus;
             DeviceName_VM = device.DeviceName_DC;
-            HeaderAddress = typeOfAddress[0];
+            HeaderAddress = typeOfAddress[0];            
             SetSourceConnect();
             addConnectCommand = new Command(AddConnect, () => CanAddConnect);
             addCommand = new Command(Add, () => CanAdd);

@@ -10,7 +10,7 @@
         d:DataContext="{d:DesignInstance Type=local:ViewModelMain}"
         mc:Ignorable="d"
         Title="ModbusMonitor" Height="450" Width="1000" WindowStyle="ThreeDBorderWindow"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="Window_Closing">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
@@ -315,12 +315,13 @@
                     </UniformGrid>
                     <Border Grid.Row="1" Background="#FFDDD6D6">
                         <!--Окно данных-->
-                        <ContentControl Content="{Binding Usercontrol}"/>
+                        <ContentControl Content="{Binding Usercontrol}" 
+                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
                     </Border>
                     <GridSplitter Grid.Row="2" Height="2" 
                                   HorizontalAlignment="Stretch"/>
-                    <ListBox Grid.Row="3" VerticalAlignment="Stretch" 
-                             HorizontalAlignment="Stretch"
+                    <ListBox Grid.Row="3" VerticalAlignment="Stretch" ItemsSource="{Binding LogItemSource}"
+                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
                              MinHeight="80"/>
                 </Grid>
             </Border>
