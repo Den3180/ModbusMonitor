@@ -41,6 +41,6 @@ namespace ModbusMonitor.Controls
             {
                 sourceCommand.ShowPropertiesCommand.Execute(new object());
             }
-        }
+        }      
     }
 }

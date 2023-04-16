@@ -8,6 +8,16 @@ using System.Threading.Tasks;
 namespace ModbusMonitor.Classes
 {
     /// <summary>
+    /// Режим отображения данных.
+    /// </summary>
+    public enum EnumView
+    {
+        Table,
+        Text,
+        Packages,
+        None
+    }
+    /// <summary>
     /// Тип данных.
     /// </summary>
     public enum EnumTypeData

@@ -44,10 +44,11 @@ namespace ModbusMonitor
         /// </summary>
         private void AddCells()
         {             
-            AddСellsWindow addСellsWindow = new AddСellsWindow(device);
+            AddСellsWindow addСellsWindow = new AddСellsWindow(device??new DeviceClass());
             addСellsWindow.ShowDialog();
             if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
             device.CellsArray.AddRange(addCells);
+            device.CountingRegisters();
             for (int i = 0; i < device.CellsArray.Count; i++)
             {
                 if (string.IsNullOrEmpty(device.CellsArray[i].NumberReg))
@@ -62,7 +63,6 @@ namespace ModbusMonitor
             (Usercontrol.DataContext as ControlDeviceView).Cells=device.CellsArray;
             CanColorType = true;
         }
-
         /// <summary>
         /// Изменить устройство.
         /// </summary>
@@ -95,7 +95,6 @@ namespace ModbusMonitor
                 SaveMapTemp();//Сохранение карт во временный файл.
             }
         }
-
         /// <summary>
         /// Сохранение карт во временный файл.
         /// </summary>
@@ -112,7 +111,6 @@ namespace ModbusMonitor
             listDevices.Add(device);//???
             listMaps.Add((filePath, device.DeviceName_DC));
         }
-
         /// <summary>
         /// Обновить дерево.
         /// </summary>
@@ -135,7 +133,6 @@ namespace ModbusMonitor
                 treeNodes.Clear();
             }
         }
-
         /// <summary>
         /// Очистка всего дерева.
         /// </summary>
@@ -145,9 +142,10 @@ namespace ModbusMonitor
             {
                 treeNodes.Clear();
                 Disconnection();
-                device = new DeviceClass();
-                Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
-                listDevices.Clear();
+                //device = new DeviceClass();
+                //Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                Usercontrol = null;
+                listDevices.Clear();//Очистка списка устройств.
             }
             CanClearTreeAll = false;//Отключение команды "Обновить".
             CanClearTreeSingle = false;//Отключение команды "Удалить".
@@ -157,7 +155,6 @@ namespace ModbusMonitor
             CanColorType = false;
             SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
         }
-
         /// <summary>
         /// Удаление одного элемента дерева.
         /// </summary>
@@ -223,8 +220,9 @@ namespace ModbusMonitor
             treeNodes.Remove(treeNode);//Удаляем элемент из дерева. 
             if (treeNodes.Count == 0) //Если дерево пустое.
             {
-                device = new DeviceClass();
-                Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                //device = new DeviceClass();
+                //Usercontrol = new UserControlDevices(new List<CellData>(), modbusRTU, device);
+                Usercontrol = null;
                 Disconnection();
                 CanClearTreeAll = false;
                 CanClearTreeSingle = false;
@@ -234,8 +232,7 @@ namespace ModbusMonitor
                 CanColorType = false;
                 listDevices.Clear();
             }                
-        }
-        
+        }        
         /// <summary>
         /// Обработчик команнды "Отключить опрос".
         /// </summary>
@@ -248,7 +245,6 @@ namespace ModbusMonitor
             CanRequest = true;
             CanDisablePoll = false;
         }
-
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -257,7 +253,6 @@ namespace ModbusMonitor
             SearchAddressWindow searchAddress = new SearchAddressWindow(modbusRTU);
             searchAddress.ShowDialog();
         }
-
         /// <summary>
         /// Отключение карты.
         /// </summary>
@@ -291,7 +286,6 @@ namespace ModbusMonitor
                 CanConnection = false;
             }
         }
-
         /// <summary>
         /// Подключение карты.
         /// </summary>
@@ -326,7 +320,6 @@ namespace ModbusMonitor
                 CanDisconnection = false;
             }
         }
-
         /// <summary>
         /// Создание подключения.
         /// </summary>
@@ -345,20 +338,22 @@ namespace ModbusMonitor
             {
                 return;
             }
-            foreach(var ports in ModbusRTUASCII.PortsEnabled)
-            {
-                if (ports == device.ConnectFromMap.PortType)
-                {
-                    ModbusRTUASCII.SettingPortStart.PortType = ports;
-                }
-            }
+            //foreach(var ports in ModbusRTUASCII.PortsEnabled)
+            //{
+            //    if (ports == device.ConnectFromMap.PortType)
+            //    {
+            //        ModbusRTUASCII.SettingPortStart.PortType = ports;
+            //    }
+            //}
+            ModbusRTUASCII.SettingPortStart.PortType = 
+                ModbusRTUASCII.PortsEnabled.FirstOrDefault(port=>port== device.ConnectFromMap.PortType);
 
             //Если не нажата кнопка отмены.
             //if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
             //{
-                //foreach (var ports in ModbusRTUASCII.PortsEnabled)
-                //{
-                   // ModbusRTUASCII.SettingPortStart.PortType = ports;
+            //foreach (var ports in ModbusRTUASCII.PortsEnabled)
+            //{
+            // ModbusRTUASCII.SettingPortStart.PortType = ports;
                     FillNodesTree(device);//Заполняем дерево новым устройством.
                     if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))//Если нет совпадения в картах.
                     {
@@ -385,7 +380,6 @@ namespace ModbusMonitor
             }
                 listDevices.Add(device);
         }
-
         /// <summary>
         /// Поиск совпадений имени создаваемого устройства и имени в реестре карт. 
         /// </summary>
@@ -403,7 +397,6 @@ namespace ModbusMonitor
             }
             return false;
         }
-
         /// <summary>
         /// Заполнение узлов дерева.
         /// </summary>
@@ -424,33 +417,32 @@ namespace ModbusMonitor
             CanAddCells = true;
             treeNodes.Add(treeNode);//Добавление в коллекцию источника данных дерева.
         }
-
         /// <summary>
         /// Отображение в виде таблицы.
         /// </summary>
         private void MakeTable()
         {
             Usercontrol = UserTemp;
+            viewMode = EnumView.Table;
         }
-
         /// <summary>
         /// Отображение в виде текста.
         /// </summary>
         private void MakeText()
         {
-            UserTemp ??= Usercontrol;
+            if (Usercontrol != null && UserTemp==null) UserTemp = Usercontrol;
             Usercontrol = new UserControlText();
+            viewMode = EnumView.Text;
         }
-
         /// <summary>
         /// Просмотр пакетов.
         /// </summary>
         private void ViewingPackages()
         {
-            UserTemp??= Usercontrol;
+            if (Usercontrol != null && UserTemp == null) UserTemp = Usercontrol;
             Usercontrol = new UserControlText();
+            viewMode = EnumView.Packages;
         }
-
         /// <summary>
         /// Слушать порт
         /// </summary>
@@ -462,14 +454,12 @@ namespace ModbusMonitor
             TreeViewEnabled = false;
             timerPoll.Start();
         }
-
         /// <summary>
         /// Коэффициенты.
         /// </summary>
         private void EditRatio()
         {
         }
-
         /// <summary>
         /// Формат
         /// </summary>
@@ -478,7 +468,6 @@ namespace ModbusMonitor
             var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
             ValueConverter.ChangeFormatData(cellData); 
         }
-
         /// <summary>
         /// Цвета для типов.
         /// </summary>
@@ -486,7 +475,6 @@ namespace ModbusMonitor
         {           
             
         }
-
         /// <summary>
         /// Сброс ширины столбцов.
         /// </summary>
@@ -494,7 +482,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         /// Записать регистр.
         /// </summary>
@@ -509,13 +496,11 @@ namespace ModbusMonitor
             WriteRegisterWindow writeRegister = new WriteRegisterWindow(modbusRTU, cellData);
             writeRegister.ShowDialog();
         }
-
         /// <summary>
         /// отправка запроса.
         /// </summary>
         private void SendRequest()
-        {
-            Dispatcher disp = App.Current.Dispatcher;
+        {            
             NumberRequest = (++countReqTot).ToString();
             byte adressDev = Convert.ToByte(device.DeviceAdress_DC);
             short startAdressDI = -1;
@@ -539,7 +524,7 @@ namespace ModbusMonitor
                     if (tempDI == null)
                     {
                         answerRequest = false;
-                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempDI);
@@ -551,7 +536,7 @@ namespace ModbusMonitor
                     if (tempDO == null)
                     {
                         answerRequest = false;
-                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempDO);
@@ -563,7 +548,7 @@ namespace ModbusMonitor
                     if (tempAI == null)
                     {
                         answerRequest = false;
-                        disp.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                         return;
                     }
                     Array.Reverse(tempAI);
@@ -575,12 +560,12 @@ namespace ModbusMonitor
                     if (tempAO == null)
                     {
                        answerRequest = false;
-                       disp.Invoke(()=> logItemSource.Add(modbusRTU.RequestStatusMessage));
+                       dispatcher.Invoke(()=> logItemSource.Add(modbusRTU.RequestStatusMessage));
                        return;
                     }
                     Array.Reverse(tempAO);
                 }
-                if (item == Cells?[^1])//Считывание закончено.
+                if (item == Cells?[^1] && viewMode==EnumView.Table)//Считывание закончено.
                 {
                     FillCells(tempDI, tempDO, tempAO, tempAI, numOfDI, numOfDO, numOfAO, numOfAI);
                     startAdressDI = -1;
@@ -590,9 +575,12 @@ namespace ModbusMonitor
                     CorrectRequest = (++countReqgood).ToString();
                     return;
                 }
+                else if (item == Cells?[^1] && viewMode == EnumView.Packages)
+                {
+                    dispatcher.Invoke(()=> (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(tempAO.ToString()));
+                }
             }
         }
-
         /// <summary>
         /// Заполнить таблицу.
         /// </summary>
@@ -636,7 +624,6 @@ namespace ModbusMonitor
                 }
             }
         }      
-
         /// <summary>
         /// Открыть лог ошибок.
         /// </summary>
@@ -644,7 +631,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         /// Очистить лог ошибок.
         /// </summary>
@@ -652,7 +638,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         /// Параметры.
         /// </summary>
@@ -660,7 +645,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         /// Показать помощ.
         /// </summary>
@@ -668,7 +652,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         ///О программе.
         /// </summary>
@@ -676,7 +659,6 @@ namespace ModbusMonitor
         {
             
         }
-
         /// <summary>
         /// Активация комманд.
         /// </summary>
@@ -691,7 +673,6 @@ namespace ModbusMonitor
                 Directory.CreateDirectory("./Maps");
             }
         }
-
         /// <summary>
         /// Сохранить карту регистров.
         /// </summary>
@@ -700,7 +681,6 @@ namespace ModbusMonitor
             SaveLoadService dialogService = new SaveLoadService();
             dialogService.SaveFileDialog(device);
         }
-
         /// <summary>
         /// Загрузить карту регистров.
         /// </summary>
@@ -750,7 +730,6 @@ namespace ModbusMonitor
                 Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));
             }
         }
-
         /// <summary>
         /// Открыть файл логов.
         /// </summary>
@@ -758,7 +737,6 @@ namespace ModbusMonitor
         {
 
         }
-
         /// <summary>
         /// Закрыть приложение.
         /// </summary>
@@ -772,7 +750,6 @@ namespace ModbusMonitor
             SaveLoadService.CheckAndSaveUnsavedMaps(listMaps);
             App.Current.MainWindow.Close();
         }      
-
         /// <summary>
         /// Выбор карты для выбранного устройства дерева.
         /// </summary>
@@ -834,7 +811,6 @@ namespace ModbusMonitor
                 CanConnection = false;//При пустой карте не подключить.
             }
         }
-
         /// <summary>
         /// Обработчик таймера.
         /// </summary>

@@ -34,7 +34,6 @@ namespace ModbusMonitor.Classes
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
         public static EnumLink Link { get; set; } //Устройство подключено/отключено.        
         public Guid ID { get; set; }//ID устройства.
-
         public EnumLink LinkDevice { get; set; } = EnumLink.Unknown;
 
         /// <summary>
@@ -61,7 +60,6 @@ namespace ModbusMonitor.Classes
             }
             return device;
         }
-
         /// <summary>
         /// Сохранение карты.
         /// </summary>
@@ -75,7 +73,6 @@ namespace ModbusMonitor.Classes
             writer.Close();
             return true;
         }
-
         /// <summary>
         /// Изменение формата данных из TikModbus в ModbusMonitor.
         /// </summary>
@@ -112,22 +109,22 @@ namespace ModbusMonitor.Classes
                     item.Format = item.Represent;
                     item.Value = ValueConverter.RepresentBinFormat(Convert.ToString(Convert.ToUInt16(item.Value), 2));
                 }
-                if (item.Type.Contains("Coil"))
+                if (item.Type.Contains("Coil") || item.Type.Contains("DO"))
                 {
                     item.Type = "DO";
                     device.NumOfDO++;
                 }
-                if (item.Type.Contains("HoldingRegister"))
+                if (item.Type.Contains("HoldingRegister") || item.Type.Contains("AO"))
                 {
                     item.Type = "AO";
                     device.NumOfAO++;
                 }
-                if (item.Type.Contains("InputRegister"))
+                if (item.Type.Contains("InputRegister") || item.Type.Contains("AI"))
                 {
                     item.Type = "AI";
                     device.NumOfAI++;
                 }
-                if (item.Type.Contains("DiscreteInput"))
+                if (item.Type.Contains("DiscreteInput") || item.Type.Contains("DI"))
                 {
                     item.Type = "DI";
                     device.NumOfDI++;
@@ -137,7 +134,6 @@ namespace ModbusMonitor.Classes
             device.ConvertConnectData();//Выборка объедененной информации карты.
             return device;
         }
-
         /// <summary>
         /// Перевод данных подключения из карты регистров TicModscan.
         /// </summary>
@@ -205,6 +201,19 @@ namespace ModbusMonitor.Classes
                 }
                     cell.NumberReg = i.ToString();
                 i++;
+            }
+        }
+        /// <summary>
+        /// Подсчет регистров по типам.
+        /// </summary>
+        public void CountingRegisters()
+        {
+            foreach(var cell in CellsArray)
+            {
+                if (cell.Type == "DO") NumOfDO++;
+                if (cell.Type == "DI") NumOfDI++;
+                if (cell.Type == "AI") NumOfAI++;
+                if (cell.Type == "AO") NumOfAO++;
             }
         }
 

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ModbusMonitor.ViewModel;
 
 namespace ModbusMonitor.Controls
 {
@@ -23,6 +24,7 @@ namespace ModbusMonitor.Controls
         public UserControlText()
         {
             InitializeComponent();
+            DataContext = new ViewingPackagesViewModel();
         }
     }
 }

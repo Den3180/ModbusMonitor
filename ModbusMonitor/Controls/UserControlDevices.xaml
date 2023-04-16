@@ -19,9 +19,9 @@
         </Style>       
     </UserControl.Resources>
     <Grid>        
-        <DataGrid AutoGenerateColumns="False" SelectionMode="Single"
+        <DataGrid AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
                   ItemsSource="{Binding Cells}"
-                  SelectionUnit="FullRow"                   
+                  SelectionUnit="FullRow"               
                   FontSize="14"                  
                   SelectedItem="{Binding SelectedCell}" 
                   CanUserSortColumns="False" 
