@@ -32,7 +32,7 @@ namespace ModbusMonitor.Classes
         public ushort NumOfAI { get; set; } = 0;//Количество регистров АI в устройстве.
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
         public ushort NumOfDI { get; set; } = 0;//Количество регистров DI в устройстве.
-        public static EnumLink Link { get; set; } //Устройство подключено/отключено.
+        public static EnumLink Link { get; set; } //Устройство подключено/отключено.        
         public Guid ID { get; set; }//ID устройства.
 
         public EnumLink LinkDevice { get; set; } = EnumLink.Unknown;
@@ -83,17 +83,20 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         private static DeviceClass ChangeTIKFormat(DeviceClass device)
         {
-            if (string.IsNullOrEmpty(device.AdaptersArray.AdapterData.Devices.Device.Adress) ||
-                Convert.ToInt32(device.AdaptersArray.AdapterData.Devices.Device.Adress) == 0)
+            if ((string.IsNullOrEmpty(device.AdaptersArray.AdapterData.Devices.Device.Adress) ||
+                Convert.ToInt32(device.AdaptersArray.AdapterData.Devices.Device.Adress) == 0) 
+                && device.DeviceAdress_DC==0)
             {
                 MessageBox.Show("Адрес устройства - 0!");
                 return null;
             }
             int count = 1;//Стартовое значение номеров по порядку.
                           //В "Добавление регистров".
-            device.DeviceName_DC = device.AdaptersArray.AdapterData.Devices.Device.Name;
+            if(string.IsNullOrEmpty(device.DeviceName_DC))
+                device.DeviceName_DC = device.AdaptersArray.AdapterData.Devices.Device.Name;
             //В "Добавление регистров".
-            device.DeviceAdress_DC = Convert.ToInt32(device.AdaptersArray.AdapterData.Devices.Device.Adress);
+            if (device.DeviceAdress_DC==0)
+                device.DeviceAdress_DC = Convert.ToInt32(device.AdaptersArray.AdapterData.Devices.Device.Adress);
 
             foreach (var item in device.CellsArray)
             {                
@@ -163,10 +166,10 @@ namespace ModbusMonitor.Classes
             ConnectFromMap.TimeOutRead = Convert.ToInt32(strings[6]);
             ConnectFromMap.TimeOutWrite = Convert.ToInt32(strings[7]);
         }
-/// <summary>
-/// Нумерация списка.
-/// </summary>
-/// <param name="device"></param>
+        /// <summary>
+        /// Нумерация и сортировка списка.
+        /// </summary>
+        /// <param name="device"></param>
         public static void NumberTheList(DeviceClass device)
         {
             int i = 1;

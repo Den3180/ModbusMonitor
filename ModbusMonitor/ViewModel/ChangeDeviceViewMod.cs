@@ -38,7 +38,7 @@ namespace ModbusMonitor.ViewModel
             {                
                 typePortList.Add(item);
             }
-            SelectedItem=typePortList?.FirstOrDefault();
+            SelectedItem=typePortList?.FirstOrDefault(port=>port==device.ConnectFromMap.PortType);
         }
 
         private void ChangeDeviceViewMod_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -64,8 +64,8 @@ namespace ModbusMonitor.ViewModel
                 device.DeviceName_DC = !string.IsNullOrEmpty(Name_ChD)? Name_ChD : device.DeviceName_DC;
                 device.ConnectFromMap.PortType = SelectedItem;
                 window.DialogResult = true;
-                window.Close();
             }
+                window.Close();
         }
 
         /// <summary>

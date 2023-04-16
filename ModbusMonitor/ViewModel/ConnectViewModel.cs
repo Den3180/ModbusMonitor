@@ -59,8 +59,9 @@ namespace ModbusMonitor.ViewModel
             this.window = window;
             modbusMaster = modbus;
             DeviceName_VM = device.DeviceName_DC;
-            HeaderAddress = typeOfAddress[0];            
-            SetSourceConnect();
+            HeaderAddress = typeOfAddress[1];
+            SetSourceConnect();           
+            AdressIP_VM = device.DeviceAdress_DC.ToString();
             addConnectCommand = new Command(AddConnect, () => CanAddConnect);
             addCommand = new Command(Add, () => CanAdd);
             canselCommand = new Command(Cansel);
@@ -145,10 +146,8 @@ namespace ModbusMonitor.ViewModel
                 CanAdd = true;
                 CanTextIP = true;
                 HeaderAddress = typeOfAddress[1];
-                Port_VM = conn;
-                AdressIP_VM = device.DeviceAdress_DC.ToString();
-                device.ConnectFromMap.PortType = Port_VM;
-                sourceTypeConnect.Remove(HeaderCombobox);
+                Port_VM = conn;                
+                device.ConnectFromMap.PortType = Port_VM;                
                 if (!ModbusRTUASCII.PortsEnabled.Contains(SelectedItem))
                 {
                     ModbusRTUASCII.PortsEnabled.Add(SelectedItem);
@@ -173,7 +172,6 @@ namespace ModbusMonitor.ViewModel
             device.ConnectFromMap.TimeOutRead = TimeoutRead_VM;
             device.ConnectFromMap.TimeOutWrite = TimeoutWrite_VM;
             device.ConnectFromMap.PortType = Port_VM;
-
             device.DeviceName_DC = DeviceName_VM;
             device.DeviceAdress_DC = Int32.Parse(AdressIP_VM);
         }
@@ -182,13 +180,16 @@ namespace ModbusMonitor.ViewModel
         /// Поиск и добавление всех портов на устройстве.
         /// </summary>
         private void SetSourceConnect()
-        {
-            sourceTypeConnect.Add(HeaderCombobox); //Добавление заголовка в Combobox.
+        {            
             string[] temp = ModbusRTUASCII.PortsEnabled.ToArray();
-            //string[] temp = ModbusRTUASCII.GetListPorts();
             if (temp.Length == 0)
             {
                 sourceTypeConnect.Add(Port_VM);
+            }
+            else 
+            {
+                Port_VM = temp[0];
+                CanTextIP = true;
             }
             foreach (var item in temp)
             {

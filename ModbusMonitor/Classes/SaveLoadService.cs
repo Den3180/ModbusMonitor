@@ -43,7 +43,7 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         public bool SaveFileDialog(object obj)
         {
-            DeviceClass device = obj as DeviceClass;//Кастуем класс устройства.
+            DeviceClass device = obj as DeviceClass;//Кастуем класс устройства.            
             FileInfo file = new FileInfo("ModbusMonitor.exe");//Собираем файловую информацию о исполняемом файле.
             string dir = file.DirectoryName + FileNameMap.MapsOrigin;//Добавляем в путь к исполняемому файлу каталог с картами.
             if (!Directory.Exists(dir))//Если каталога с картами по этому пути нет,то создаем его.
@@ -53,6 +53,7 @@ namespace ModbusMonitor.Classes
             SaveFileDialog saveFile = new SaveFileDialog();//Создаем диалоговое окно сохранения карты.
             saveFile.Filter = "Файлы XML (*.xml)|*.xml|Все файлы (*.*)|*.*";//Устанавливаем фильтр расширений.
             saveFile.InitialDirectory = dir;//Указывем директорию сохранения карты.
+            saveFile.FileName = device.DeviceName_DC;
             if (saveFile.ShowDialog() == true)//Открываем окно.
             {
                 FilePath = saveFile.FileName;//Путь хранения файла.

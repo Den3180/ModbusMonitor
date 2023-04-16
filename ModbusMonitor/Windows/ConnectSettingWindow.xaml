@@ -21,154 +21,154 @@
     <Grid Background="Gray">
         <Border Background="Lavender" Margin="2">
             <Grid >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Header="Подключение" Margin="5">
-            <StackPanel Orientation="Vertical">
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="239"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="0.5*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Устройство:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding DeviceName_VM}" VerticalAlignment="Center"/>
-                </Grid>
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="239"/>                        
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.5*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0" Width="38"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding SourceTypeConnect}" 
-                              Text="{Binding HeaderCombobox}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" Header="Подключение" Margin="5">
+                    <StackPanel Orientation="Vertical">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="239"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Устройство:" HorizontalAlignment="Left" Margin="80,0,0,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding DeviceName_VM}" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="239"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Тип:" HorizontalAlignment="Left" Margin="80,0,0,0" Width="38"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding SourceTypeConnect}" 
+                               SelectedIndex="0"                             
                               SelectedItem="{Binding SelectedItem}"                              
                               VerticalAlignment="Center"
                               IsReadOnly="True"  
                               IsEditable="False" Height="26"/>
-                    <Button Grid.Column="2" Command="{Binding RefreshPortCommand}" Margin="20,0,20,0">
-                        <Button.Resources>
-                            <Style TargetType="Button">
-                                <Setter Property="Margin" Value="20,0,20,0"/>
-                                <Setter Property="BorderBrush" Value="#FF292C31"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="Background">
-                                    <Setter.Value>
-                                        <ImageBrush ImageSource="/Resources/Refresh.JPG" Stretch="UniformToFill"/>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" 
+                            <Button Grid.Column="2" Command="{Binding RefreshPortCommand}" Margin="20,0,20,0">
+                                <Button.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="20,0,20,0"/>
+                                        <Setter Property="BorderBrush" Value="#FF292C31"/>
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <ImageBrush ImageSource="/Resources/Refresh.JPG" Stretch="UniformToFill"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" 
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness= "{TemplateBinding BorderThickness}"                                                
                                                 CornerRadius="5">
-                                                <ContentPresenter 
+                                                        <ContentPresenter 
                                             Content="{TemplateBinding Content}"
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             Margin="{TemplateBinding Margin}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background">
-                                                        <Setter.Value>
-                                                            <ImageBrush ImageSource="/Resources/Refresh1.JPG"
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background">
+                                                                <Setter.Value>
+                                                                    <ImageBrush ImageSource="/Resources/Refresh1.JPG"
                                                                         Stretch="UniformToFill"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Resources>
-                        <Button.ToolTip>
-                            <ToolTip Content="Обновить список портов!"/>
-                        </Button.ToolTip>
-                    </Button>
-                </Grid>
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="239"/>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.5*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0"  
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Resources>
+                                <Button.ToolTip>
+                                    <ToolTip Content="Обновить список портов!"/>
+                                </Button.ToolTip>
+                            </Button>
+                        </Grid>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="239"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0"  
                            HorizontalAlignment="Left" Margin="80,0,0,0" >
-                        <TextBlock Text="{Binding HeaderAddress}" TextWrapping="WrapWithOverflow"/>
-                    </Label>
-                    <TextBox Grid.Column="1" 
+                                <TextBlock Text="{Binding HeaderAddress}" TextWrapping="WrapWithOverflow"/>
+                            </Label>
+                            <TextBox Grid.Column="1" 
                              Text="{Binding AdressIP_VM}" 
                              IsEnabled="{Binding CanTextIP}" 
                              VerticalAlignment="Center"/>
-                </Grid>
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="239"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="0.5*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="COM-порт:" HorizontalAlignment="Left" 
-                           Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" HorizontalAlignment="Stretch"
+                        </Grid>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="239"/>
+                                <ColumnDefinition Width="34*"/>
+                                <ColumnDefinition Width="123*"/>
+                                <ColumnDefinition Width="78*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="COM-порт:" HorizontalAlignment="Center"/>
+                            <TextBox Grid.Column="1"
                              Text="{Binding Port_VM}" 
-                             VerticalAlignment="Center"/>
-                </Grid>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Grid.Row="1" Header="Параметры COM-порта" Margin="5">
-            <StackPanel Orientation="Vertical">
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Скорость порта (бод):" HorizontalAlignment="Left" 
+                             VerticalAlignment="Center" Grid.ColumnSpan="3" Margin="0,0,78,0"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Параметры COM-порта" Margin="5">
+                    <StackPanel Orientation="Vertical">
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Скорость порта (бод):" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding SpeedPort_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
-                </UniformGrid>
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Четность:" HorizontalAlignment="Left" 
+                            <TextBox Grid.Column="1" Text="{Binding SpeedPort_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Четность:" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding Parity_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
-                </UniformGrid>
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Стоп-биты:" HorizontalAlignment="Left" 
+                            <TextBox Grid.Column="1" Text="{Binding Parity_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Стоп-биты:" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding StopBits_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
-                </UniformGrid>
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Длина слова:" HorizontalAlignment="Left" 
+                            <TextBox Grid.Column="1" Text="{Binding StopBits_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Длина слова:" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding WordLength_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
-                </UniformGrid>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Grid.Row="2" Header="Дополнительные параметры" Margin="5">
-            <StackPanel Orientation="Vertical">
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Таймаут чтения (мс):" HorizontalAlignment="Left" 
+                            <TextBox Grid.Column="1" Text="{Binding WordLength_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="2" Header="Дополнительные параметры" Margin="5">
+                    <StackPanel Orientation="Vertical">
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Таймаут чтения (мс):" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding TimeoutRead_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
-                </UniformGrid>
-                <UniformGrid Columns="2" Rows="1">
-                    <Label Grid.Column="0" Content="Таймаут записи (мс):" HorizontalAlignment="Left" 
+                            <TextBox Grid.Column="1" Text="{Binding TimeoutRead_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Label Grid.Column="0" Content="Таймаут записи (мс):" HorizontalAlignment="Left" 
                            Margin="80,0,0,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding TimeoutWrite_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding TimeoutWrite_VM}" VerticalAlignment="Center" Margin="0,0,80,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </GroupBox>
+                <UniformGrid Grid.Row="3" Rows="0" Columns="3" Margin="10" >
+                    <Button Grid.Column="0" Command="{Binding AddConnectCommand}" Content="Добавить и Подключить" Margin="0,0,-22,0" />
+                    <Button Grid.Column="1" Command="{Binding AddCommand}" Content="Добавить" HorizontalAlignment="Right" Width="100"/>
+                    <Button Grid.Column="2" Command="{Binding CanselCommand}" Content="Отмена" HorizontalAlignment="Center" Width="100"/>
                 </UniformGrid>
-            </StackPanel>
-        </GroupBox>
-        <UniformGrid Grid.Row="3" Rows="0" Columns="3" Margin="10" >
-            <Button Grid.Column="0" Command="{Binding AddConnectCommand}" Content="Добавить и Подключить" Margin="0,0,-22,0" />
-            <Button Grid.Column="1" Command="{Binding AddCommand}" Content="Добавить" HorizontalAlignment="Right" Width="100"/>
-            <Button Grid.Column="2" Command="{Binding CanselCommand}" Content="Отмена" HorizontalAlignment="Center" Width="100"/>
-        </UniformGrid>
-    </Grid>            
+            </Grid>
         </Border>
     </Grid>
 </Window>

@@ -264,7 +264,7 @@
                     </Grid>
                 </GroupBox>
                 <!--Добавление регистров-->
-                <GroupBox Grid.Row="1" Header="Добавление регистров" Margin="2">
+                <GroupBox Name="RegAdd" Grid.Row="1" Header="Добавление регистров" Margin="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -304,7 +304,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition/>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto" MinHeight="80"/>
+                            <RowDefinition MaxHeight="{Binding ElementName=RegAdd, Path=ActualHeight}"/>
                     </Grid.RowDefinitions>
                     <UniformGrid Grid.Row="0" Columns="2">
                             <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2"/>
@@ -322,7 +322,7 @@
                                   HorizontalAlignment="Stretch"/>
                     <ListBox Grid.Row="3" VerticalAlignment="Stretch" ItemsSource="{Binding LogItemSource}"
                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                             MinHeight="80"/>
+                             MinHeight="100" Height="{Binding ElementName=RegAdd, Path=ActualHeight}"/>
                 </Grid>
             </Border>
         </Grid>

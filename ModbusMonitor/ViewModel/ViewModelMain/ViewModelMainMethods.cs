@@ -36,6 +36,7 @@ namespace ModbusMonitor
         public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
 
         public UserControl UserTemp { get; set; }
+
         #region[Обработчики комманд]
 
         /// <summary>
@@ -339,16 +340,25 @@ namespace ModbusMonitor
             ConnectSettingWindow connectSetting = new ConnectSettingWindow(device, modbusRTU);//Создание объекта соединения.
             connectSetting.ShowDialog();//Открытие окна создания соединения.
             //Поиск совпадений уже существующих стройств с вновь создаваемыми.
-            if (CheckForRepeatabilityOfNodes() == true)
+            if (CheckForRepeatabilityOfNodes() == true || 
+                (CommandTypeConnection)connectSetting.Content == CommandTypeConnection.None)
             {
                 return;
             }
-            //Если не нажата кнопка отмены.
-            if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
+            foreach(var ports in ModbusRTUASCII.PortsEnabled)
             {
-                foreach (var ports in ModbusRTUASCII.PortsEnabled)
+                if (ports == device.ConnectFromMap.PortType)
                 {
                     ModbusRTUASCII.SettingPortStart.PortType = ports;
+                }
+            }
+
+            //Если не нажата кнопка отмены.
+            //if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
+            //{
+                //foreach (var ports in ModbusRTUASCII.PortsEnabled)
+                //{
+                   // ModbusRTUASCII.SettingPortStart.PortType = ports;
                     FillNodesTree(device);//Заполняем дерево новым устройством.
                     if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))//Если нет совпадения в картах.
                     {
@@ -358,9 +368,9 @@ namespace ModbusMonitor
                         listDevices.Add(device);
                         return;
                     }
-                    break;
-                }                
-            }
+                    //break;
+               //}                
+           // }
             if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
             {
                 CanConnection = true;
@@ -720,7 +730,8 @@ namespace ModbusMonitor
             //Установка параметров порта из данных карты устройства.
             if (ModbusRTUASCII.PortsEnabled.Count > 0)
             {
-                ModbusRTUASCII.SettingPortStart.PortType = ModbusRTUASCII.PortsEnabled.FirstOrDefault();
+                ModbusRTUASCII.SettingPortStart.PortType =
+                    ModbusRTUASCII.PortsEnabled.FirstOrDefault(port=>port==device.ConnectFromMap.PortType);
             }
             else
             {
