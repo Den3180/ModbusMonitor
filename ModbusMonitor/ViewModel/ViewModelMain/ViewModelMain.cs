@@ -55,7 +55,7 @@ namespace ModbusMonitor
             saveMapCommand = new Command(SaveMap);
             tableCommand = new Command(MakeTable);
             textCommand = new Command(MakeText);
-            viewingPackagesCommand = new Command(ViewingPackages);
+            viewingPackagesCommand = new Command(ViewingPackages,()=>CanViewingPackages);
             listenPortCommand = new Command(ListenPort, () => CanRequest);
             ratioCommand = new Command(EditRatio);
             formatCommand = new Command(EditFormat);

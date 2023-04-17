@@ -27,7 +27,7 @@ namespace ModbusMonitor.Classes
         public AdaptersArray AdaptersArray { get; set; } //Содержит инвормацию о подключении.
         public List<CellData> CellsArray { get; set; }//Список регистров в устройстве.
         public string DeviceName_DC { get; set; } = string.Empty;//Имя устройства.
-        public int DeviceAdress_DC { get; set; }//Адрес устройства.
+        public int DeviceAdress_DC { get; set; }//Адрес устройства.        
         public ushort NumOfAO { get; set; } = 0;//Количество регистров АО в устройстве.
         public ushort NumOfAI { get; set; } = 0;//Количество регистров АI в устройстве.
         public ushort NumOfDO { get; set; } = 0;//Количество регистров DO в устройстве.
@@ -67,6 +67,10 @@ namespace ModbusMonitor.Classes
         /// <returns></returns>
         public bool SaveMapReg(string FileName)
         {
+            this.NumOfAI = 0;
+            this.NumOfDI = 0;
+            this.NumOfAO = 0;
+            this.NumOfDO = 0;
             TextWriter writer = new StreamWriter(FileName);
             XmlSerializer serializer = new XmlSerializer(typeof(DeviceClass));
             serializer.Serialize(writer, this);
@@ -110,12 +114,12 @@ namespace ModbusMonitor.Classes
                     item.Value = ValueConverter.RepresentBinFormat(Convert.ToString(Convert.ToUInt16(item.Value), 2));
                 }
                 if (item.Type.Contains("Coil") || item.Type.Contains("DO"))
-                {
+                {                    
                     item.Type = "DO";
                     device.NumOfDO++;
                 }
-                if (item.Type.Contains("HoldingRegister") || item.Type.Contains("AO"))
-                {
+                if (item.Type.Contains("HoldingRegister") || item.Type=="AO")
+                {           
                     item.Type = "AO";
                     device.NumOfAO++;
                 }
@@ -125,7 +129,7 @@ namespace ModbusMonitor.Classes
                     device.NumOfAI++;
                 }
                 if (item.Type.Contains("DiscreteInput") || item.Type.Contains("DI"))
-                {
+                {                   
                     item.Type = "DI";
                     device.NumOfDI++;
                 }

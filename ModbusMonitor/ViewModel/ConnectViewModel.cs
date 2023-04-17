@@ -187,6 +187,8 @@ namespace ModbusMonitor.ViewModel
             {
                 Port_VM = temp[0];
                 CanTextIP = true;
+                CanAdd = true;
+                CanAddConnect = true;
             }
             foreach (var item in temp)
             {

@@ -39,9 +39,17 @@ namespace ModbusMonitor
         private bool canChangeDevice;
         private bool canAddCells;
         private bool canColorType;
+        private bool canViewingPackages;
 
         #region [Флаги доступности]
-
+        /// <summary>
+        /// Доступность команды Просмотр пакетов.
+        /// </summary>
+        public bool CanViewingPackages
+        {
+            get => canViewingPackages;
+            set => SetOptions(nameof(CanViewingPackages), ref canViewingPackages, value);
+        }
         /// <summary>
         /// Доступность команды Цвета типов.
         /// </summary>
@@ -220,9 +228,14 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanAddCells)))
             {
                 addCellsCommand.RaiseCanExecuteChanged();
-            } if (e.PropertyName.Equals(nameof(CanColorType)))
+            } 
+            if (e.PropertyName.Equals(nameof(CanColorType)))
             {
                 colorTypeCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanViewingPackages)))
+            {
+                viewingPackagesCommand.RaiseCanExecuteChanged();
             }
 
         }

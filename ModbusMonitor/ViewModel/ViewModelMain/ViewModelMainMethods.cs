@@ -107,8 +107,7 @@ namespace ModbusMonitor
                 Directory.CreateDirectory(dir);
             }
             string filePath = $"{dir}/{device.DeviceName_DC}.xml";
-            device.SaveMapReg(filePath);
-            listDevices.Add(device);//???
+            device.SaveMapReg(filePath);            
             listMaps.Add((filePath, device.DeviceName_DC));
         }
         /// <summary>
@@ -192,20 +191,21 @@ namespace ModbusMonitor
                     }
                 }
             }            
+
             
             //Если есть имя устройства.
             if (!string.IsNullOrEmpty(nameDev))
             {
-                (string, string) mapTemp;//=(string.Empty,string.Empty);//Локальная переменна списка карт.                
+                (string, string) mapTemp;//Локальная переменна списка карт.                
                 foreach(var map in listMaps)//Проходим по списку карт.
                 {
-                    if(map.Item2==nameDev && map.Item1.Contains(FileNameMap.MapsTemp)) //Находим в списке карт карту с нужным именем.
+                    if(map.Item2==nameDev /*&& map.Item1.Contains(FileNameMap.MapsTemp)*/) //Находим в списке карт карту с нужным именем.
                     {
                         SaveLoadService.CheckAndSaveUnsavedMaps(map.Item1);//Сохраняем или удаляем карту.
                         mapTemp = map;
                         listMaps.Remove(mapTemp);//Удаляем карту из списка.
                         break;
-                    }
+                    }                     
                 }
             }
             //Поиск и удаление устройства по ID.
@@ -231,20 +231,9 @@ namespace ModbusMonitor
                 CanAddCells = false;
                 CanColorType = false;
                 listDevices.Clear();
+                listMaps.Clear();
             }                
         }        
-        /// <summary>
-        /// Обработчик команнды "Отключить опрос".
-        /// </summary>
-        private void DisablePoll()
-        {
-            if (timerPoll.IsEnabled)
-            {
-                timerPoll.Stop();
-            }
-            CanRequest = true;
-            CanDisablePoll = false;
-        }
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -263,6 +252,7 @@ namespace ModbusMonitor
                 timerPoll.Stop();
             }
             modbusRTU.PortClose();
+            CanViewingPackages = false;
             CanDisconnection = false;
             CanDisablePoll = false;
             CanRequest = false;
@@ -302,6 +292,7 @@ namespace ModbusMonitor
             }
             if (treeNode is not null && ModbusRTUASCII.Mode == eMode.PortOpen)
             {
+                CanViewingPackages = true;
                 CanConnection = false;
                 CanRequest = true;
                 CanWriteRegister = true;
@@ -337,23 +328,9 @@ namespace ModbusMonitor
                 (CommandTypeConnection)connectSetting.Content == CommandTypeConnection.None)
             {
                 return;
-            }
-            //foreach(var ports in ModbusRTUASCII.PortsEnabled)
-            //{
-            //    if (ports == device.ConnectFromMap.PortType)
-            //    {
-            //        ModbusRTUASCII.SettingPortStart.PortType = ports;
-            //    }
-            //}
+            }           
             ModbusRTUASCII.SettingPortStart.PortType = 
-                ModbusRTUASCII.PortsEnabled.FirstOrDefault(port=>port== device.ConnectFromMap.PortType);
-
-            //Если не нажата кнопка отмены.
-            //if ((CommandTypeConnection)connectSetting.Content != CommandTypeConnection.None)
-            //{
-            //foreach (var ports in ModbusRTUASCII.PortsEnabled)
-            //{
-            // ModbusRTUASCII.SettingPortStart.PortType = ports;
+                ModbusRTUASCII.PortsEnabled.FirstOrDefault(port=>port== device.ConnectFromMap.PortType);          
                     FillNodesTree(device);//Заполняем дерево новым устройством.
                     if (!SearchForMatchesNameDevice(listMaps, device.DeviceName_DC))//Если нет совпадения в картах.
                     {
@@ -362,10 +339,7 @@ namespace ModbusMonitor
                         CanConnection = false;//Отключаем возможность подключения.
                         listDevices.Add(device);
                         return;
-                    }
-                    //break;
-               //}                
-           // }
+                    }                   
             if ((CommandTypeConnection)connectSetting.Content == CommandTypeConnection.Add)
             {
                 CanConnection = true;
@@ -423,6 +397,7 @@ namespace ModbusMonitor
         private void MakeTable()
         {
             Usercontrol = UserTemp;
+            if(UserTemp!=null) UserTemp = null;
             viewMode = EnumView.Table;
         }
         /// <summary>
@@ -452,7 +427,21 @@ namespace ModbusMonitor
             CanRequest = false;
             CanDisablePoll = true;
             TreeViewEnabled = false;
+            CanViewingPackages = true;
             timerPoll.Start();
+        }
+        /// <summary>
+        /// Обработчик команнды "Отключить опрос".
+        /// </summary>
+        private void DisablePoll()
+        {
+            if (timerPoll.IsEnabled)
+            {
+                timerPoll.Stop();
+            }
+            CanRequest = true;
+            CanDisablePoll = false;
+            CanViewingPackages = false;
         }
         /// <summary>
         /// Коэффициенты.
@@ -577,7 +566,19 @@ namespace ModbusMonitor
                 }
                 else if (item == Cells?[^1] && viewMode == EnumView.Packages)
                 {
-                    dispatcher.Invoke(()=> (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(tempAO.ToString()));
+                    Array.Reverse(tempAO);
+                    byte[] y = new byte[tempAO.Length];
+                    string temp=string.Empty;
+                    for(int i = 0; i < y.Length; i++)
+                    {
+                        y[i] = (byte)tempAO[i];
+                        temp+= " | " + Convert.ToString(tempAO[i],16); 
+                    }
+                    //var temp = Convert.ToHexString(y);
+                    dispatcher.Invoke(()=> (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(temp));
+                    answerRequest = false;
+                    CorrectRequest = (++countReqgood).ToString();
+                    return;
                 }
             }
         }
@@ -605,13 +606,15 @@ namespace ModbusMonitor
                     item.Value = tempDO[--numOfDO];
                 }
                 else if (item.Type == "AO")
-                {                    
+                {
                     //Если отрицательное значение.
+                    var val=tempAO[--numOfAO];
+                    item.Value = val.ToString();
                     if (ushort.TryParse(item.Value, out ushort res) && res > 32767)
                     {                      
                         item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();                       
                     }
-                    item.Value = ValueConverter.ConvertFormatData(tempAO[--numOfAO], item.Format);
+                    item.Value = ValueConverter.ConvertFormatData(val, item.Format);
                 }
                 else if (item.Type == "AI")
                 {                    
