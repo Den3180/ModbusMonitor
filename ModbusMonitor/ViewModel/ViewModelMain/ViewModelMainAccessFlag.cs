@@ -40,8 +40,18 @@ namespace ModbusMonitor
         private bool canAddCells;
         private bool canColorType;
         private bool canViewingPackages;
+        private bool canClearLog;
 
         #region [Флаги доступности]
+
+        /// <summary>
+        /// Доступность команды Очистить лист-лог ошибок.
+        /// </summary>
+        public bool CanClearLog
+        {
+            get => canClearLog;
+            set => SetOptions(nameof(CanClearLog), ref canClearLog, value);
+        }
         /// <summary>
         /// Доступность команды Просмотр пакетов.
         /// </summary>
@@ -236,6 +246,10 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanViewingPackages)))
             {
                 viewingPackagesCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanClearLog)))
+            {
+                clearLogErrCommand.RaiseCanExecuteChanged();
             }
 
         }

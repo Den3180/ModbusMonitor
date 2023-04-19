@@ -422,7 +422,7 @@ namespace ModbusMonitor
         /// Слушать порт
         /// </summary>
         private void ListenPort()
-        {
+        {            
             answerRequest = false;
             CanRequest = false;
             CanDisablePoll = true;
@@ -503,7 +503,7 @@ namespace ModbusMonitor
             string[] tempDI = null;
             string[] tempDO = null;
             ushort[] tempAO = null;
-            ushort[] tempAI = null;
+            ushort[] tempAI = null;            
             foreach (var item in device.CellsArray)
             {
                 if (item.Type == "DI" && startAdressDI == -1)
@@ -639,7 +639,11 @@ namespace ModbusMonitor
         /// </summary>
         private void ClearLogError()
         {
-
+            if (logItemSource.Count > 0)
+            {
+                logItemSource.Clear();
+                CanClearLog = false;
+            }
         }
         /// <summary>
         /// Параметры.
@@ -831,6 +835,10 @@ namespace ModbusMonitor
                 CanRequest = true;
                 MessageBox.Show("Потеря соединения!");
                 return;
+            }
+            if (logItemSource.Count > 0)//Вклчаем кнопку Очистка лога ошибок.
+            {
+                CanClearLog = true;
             }
             if (answerRequest == false)
             {

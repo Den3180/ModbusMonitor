@@ -310,7 +310,7 @@
                             <Button Command="{Binding AddCellsCommand}" Content="Добавить ячейки" HorizontalAlignment="Left" Margin="2"/>
                             <DockPanel Width="auto">
                             <Button DockPanel.Dock="Right" Content="@" HorizontalAlignment="Right" Margin="2"/>
-                            <Button DockPanel.Dock="Right" Content="Очистить" HorizontalAlignment="Right" Margin="2"/>
+                            <Button DockPanel.Dock="Right" Command="{Binding ClearAllCells}" Content="Очистить" HorizontalAlignment="Right" Margin="2"/>
                         </DockPanel>
                     </UniformGrid>
                     <Border Grid.Row="1" Background="#FFDDD6D6">

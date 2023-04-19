@@ -64,7 +64,7 @@ namespace ModbusMonitor
             writeRegisterCommand = new Command(WriteRegister, () => CanWriteRegister);
             sendRequestCommand = new Command(SendRequest, () => CanRequest);
             openLogErrCommand = new Command(OpenLogError);
-            clearLogErrCommand = new Command(ClearLogError);
+            clearLogErrCommand = new Command(ClearLogError,()=>CanClearLog);
             paramCommand = new Command(ShowParam);
             helpCommand = new Command(ShowHelp);
             aboutCommand = new Command(ShowAbout);

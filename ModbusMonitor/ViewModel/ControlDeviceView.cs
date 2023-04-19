@@ -106,7 +106,6 @@ namespace ModbusMonitor.ViewModel
            Cells = null;
            Cells = CurrentDevice.CellsArray;            
         }
-
         /// <summary>
         /// Редактирование формата при отключенном устройстве.
         /// </summary>
