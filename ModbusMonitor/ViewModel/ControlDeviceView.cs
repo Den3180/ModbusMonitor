@@ -79,7 +79,7 @@ namespace ModbusMonitor.ViewModel
         private void DeleteLine()
         {           
             CurrentDevice.CellsArray.Remove(SelectedCell);           
-            DeviceClass.NumberTheList(CurrentDevice);
+            DeviceClass.NumberSortList(CurrentDevice);
             Cells = null;
             Cells = CurrentDevice.CellsArray;
         }
@@ -101,8 +101,9 @@ namespace ModbusMonitor.ViewModel
             AddСellsWindow addСellsWindow = new AddСellsWindow(CurrentDevice);
             addСellsWindow.ShowDialog();
             if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
-            CurrentDevice.CellsArray.AddRange(addCells);            
-           DeviceClass.NumberTheList(CurrentDevice);
+            CurrentDevice.CellsArray.AddRange(addCells);
+            CurrentDevice.CountingRegisters();
+           DeviceClass.NumberSortList(CurrentDevice);
            Cells = null;
            Cells = CurrentDevice.CellsArray;            
         }

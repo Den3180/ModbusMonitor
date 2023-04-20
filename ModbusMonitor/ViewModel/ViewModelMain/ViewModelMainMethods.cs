@@ -40,6 +40,16 @@ namespace ModbusMonitor
         #region[Обработчики комманд]
 
         /// <summary>
+        /// Удаление всех ячеек карты.
+        /// </summary>
+        private void ClearAllCells()
+        {
+            (Usercontrol.DataContext as ControlDeviceView).Cells=null;
+            device.CellsArray.Clear();
+            ClearLogError();
+            (Usercontrol.DataContext as ControlDeviceView).Cells = device.CellsArray;            
+        }
+        /// <summary>
         /// Добавить ячейки.
         /// </summary>
         private void AddCells()
@@ -48,18 +58,9 @@ namespace ModbusMonitor
             addСellsWindow.ShowDialog();
             if (addСellsWindow.Content is not List<CellData> addCells || addCells.Count == 0) return;//Выход, если список пуст.
             device.CellsArray.AddRange(addCells);
-            device.CountingRegisters();
-            for (int i = 0; i < device.CellsArray.Count; i++)
-            {
-                if (string.IsNullOrEmpty(device.CellsArray[i].NumberReg))
-                {
-                    device.CellsArray[i].NumberReg = (i + 1).ToString();
-                    device.CellsArray[i].NameDevice = device.DeviceName_DC;
-                    device.CellsArray[i].DeviceAdress = device.DeviceAdress_DC.ToString();
-                    device.CellsArray[i].Value = "0";
-                }
-            }            
-            (Usercontrol.DataContext as ControlDeviceView).Cells = null;
+            device.CountingRegisters();           
+            DeviceClass.NumberSortList(device);
+            (Usercontrol.DataContext as ControlDeviceView).Cells = null;           
             (Usercontrol.DataContext as ControlDeviceView).Cells=device.CellsArray;
             CanColorType = true;
         }
@@ -692,17 +693,19 @@ namespace ModbusMonitor
         /// Загрузить карту регистров.
         /// </summary>
         private void LoadMap()
-        {
+        {             
             SaveLoadService dialogService = new SaveLoadService();
             device = dialogService.OpenFileDialog();           
-            if(device==null || CheckListDevice() == true)
+            if(device==null)
             {
                 device = new DeviceClass();
                 return;
             }
-            listDevices.Add(device);//После загрузки карты заносим устройство
-            listMaps.Add((dialogService.FilePath, device.DeviceName_DC));
-                                    //в список устройств на этой линии.
+            if (!CheckListDevice())
+            {
+                listDevices.Add(device);//После загрузки карты заносим устройство
+                listMaps.Add((dialogService.FilePath, device.DeviceName_DC));//в список устройств на этой линии.
+            }            
             Cells = device.CellsArray; //Коллекция, которая заполняет DataGrid.           
             //Привязано к свойству Content основного окна.
             Usercontrol = new UserControlDevices(Cells, modbusRTU, device);
@@ -731,6 +734,7 @@ namespace ModbusMonitor
             FillNodesTree(device);//Заполнение дерева без подключения.
             CanRefreshTree = true;
             CanColorType = true;
+            CanClearAllCells = true;
             SetSelectedDevice();//Синхронизуция выбранного элемента в дереве.
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {

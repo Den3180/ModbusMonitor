@@ -42,7 +42,8 @@ namespace ModbusMonitor
         private readonly Command clearTreeAllCommand;//Удалить все дерево.
         private readonly Command refreshTreeCommand; //Обновить все дерево.
         private readonly Command changeDeviceCommand;//Изменить устройство в дереве.
-        private readonly Command addCellsCommand;//Добавить ячейки.        
+        private readonly Command addCellsCommand;//Добавить ячейки.
+        private readonly Command clearAllCellsCommand;//Очистка полей ячеек.
         private readonly DispatcherTimer timerPoll;
         private readonly Dispatcher dispatcher; 
         private EnumView viewMode;
@@ -78,6 +79,7 @@ namespace ModbusMonitor
             refreshTreeCommand = new Command(RefreshTree,()=>CanRefreshTree);
             changeDeviceCommand = new Command(ChangeDevice, () => CanChangeDevice);
             addCellsCommand = new Command(AddCells,()=>CanAddCells);
+            clearAllCellsCommand = new Command(ClearAllCells,()=> CanClearAllCells);
             
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
@@ -134,5 +136,6 @@ namespace ModbusMonitor
         public ICommand RefreshTreeCommand => refreshTreeCommand;
         public ICommand ChangeDeviceCommand => changeDeviceCommand;
         public ICommand AddCellsCommand => addCellsCommand;
+        public ICommand ClearAllCellsCommand => clearAllCellsCommand;
     }
 }

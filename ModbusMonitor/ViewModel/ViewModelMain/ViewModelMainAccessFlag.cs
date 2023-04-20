@@ -41,9 +41,17 @@ namespace ModbusMonitor
         private bool canColorType;
         private bool canViewingPackages;
         private bool canClearLog;
+        private bool canClearAllCells;
 
         #region [Флаги доступности]
-
+        /// <summary>
+        /// Доступность команды Очистить ячейки карты. 
+        /// </summary>
+        public bool CanClearAllCells
+        {
+            get => canClearAllCells;
+            set => SetOptions(nameof(CanClearAllCells), ref canClearAllCells, value);
+        }
         /// <summary>
         /// Доступность команды Очистить лист-лог ошибок.
         /// </summary>
@@ -250,6 +258,10 @@ namespace ModbusMonitor
             if (e.PropertyName.Equals(nameof(CanClearLog)))
             {
                 clearLogErrCommand.RaiseCanExecuteChanged();
+            }
+            if (e.PropertyName.Equals(nameof(CanClearAllCells)))
+            {
+                clearAllCellsCommand.RaiseCanExecuteChanged();
             }
 
         }

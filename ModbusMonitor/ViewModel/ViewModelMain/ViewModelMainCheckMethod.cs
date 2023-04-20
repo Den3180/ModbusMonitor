@@ -57,7 +57,7 @@ namespace ModbusMonitor
             {
                 if (dev.Equals(device))
                 {
-                    device = dev;
+                    //device = dev;
                     return true;
                 }
             }

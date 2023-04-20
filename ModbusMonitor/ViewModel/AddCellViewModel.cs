@@ -14,8 +14,7 @@ using System.Windows.Media;
 namespace ModbusMonitor.ViewModel
 {
     public class AddCellViewModel : ChangePropertyClass
-    {
-        //private string insertionPosition="0";
+    {        
         private string connectionText = string.Empty;
         private string deviceName_AC = string.Empty;
         private string deviceAddress_AC = string.Empty;

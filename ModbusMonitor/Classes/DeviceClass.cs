@@ -170,7 +170,7 @@ namespace ModbusMonitor.Classes
         /// Нумерация и сортировка списка.
         /// </summary>
         /// <param name="device"></param>
-        public static void NumberTheList(DeviceClass device)
+        public static void NumberSortList(DeviceClass device)
         {
             int i = 1;
             List<CellData> listDO=new();
@@ -202,6 +202,7 @@ namespace ModbusMonitor.Classes
                 {
                     cell.NameDevice = device.DeviceName_DC;
                     cell.Value = "0";
+                    ValueConverter.ChangeFormatData(cell);
                 }
                     cell.NumberReg = i.ToString();
                 i++;

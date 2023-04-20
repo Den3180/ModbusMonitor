@@ -20,7 +20,7 @@
     </UserControl.Resources>
     <Grid>        
         <DataGrid AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
-                  ItemsSource="{Binding Cells}"
+                  ItemsSource="{Binding Cells, UpdateSourceTrigger=PropertyChanged}"
                   SelectionUnit="FullRow"               
                   FontSize="14"                  
                   SelectedItem="{Binding SelectedCell}" 
@@ -90,7 +90,7 @@
                             <Setter Property="Background" Value="#FFEDED96" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Type}" Value="None">
-                            <Setter Property="Background" Value="#FFFBB8A4" />
+                            <Setter Property="Background" Value="White" />
                         </DataTrigger><DataTrigger Binding="{Binding Type}" Value="AI">
                             <Setter Property="Background" Value="#FFE8D5F5" />
                         </DataTrigger><DataTrigger Binding="{Binding Type}" Value="DI">
@@ -173,9 +173,15 @@
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="Width" Value="auto"/>
                             <Style.Triggers>
-                                <Trigger Property="Text" Value="0">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="0">
                                     <Setter Property="Foreground" Value="red" />
-                                </Trigger>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="0000 0000 0000">
+                                    <Setter Property="Foreground" Value="red" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" Value="0x0000">
+                                    <Setter Property="Foreground" Value="red" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>                        
                     </DataGridTextColumn.ElementStyle>                   
