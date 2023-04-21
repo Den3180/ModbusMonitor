@@ -80,8 +80,7 @@
                 </Style>
             </DataGrid.RowStyle>           
             <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">                    
-                    <Setter Property="Margin" Value="0" />                    
+                <Style TargetType="DataGridCell">                                
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Type}" Value="AO">
                             <Setter Property="Background" Value="#FFDFFDDF" />

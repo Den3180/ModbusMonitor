@@ -121,7 +121,8 @@ namespace ModbusMonitor.Classes
         {
             try
             {
-                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);                
+                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
+                
                 return tempData;
             }
             catch 
@@ -298,19 +299,21 @@ namespace ModbusMonitor.Classes
                 crc.CopyTo(mes, mes.Length - crc.Length);
                 try
                 {
-                    serialPort.Write(mes, 0, mes.Length);
-                    //Thread.Sleep(800);
+                    serialPort.Write(mes, 0, mes.Length);                    
                     PortsEnabled.Add(serialPort.PortName);
                 }
                 catch 
                 {
                     serialPort.Close();
-                    Mode = eMode.None;
-                    //PortsEnabled?.Clear();
+                    Mode = eMode.None;                    
                     settingPort.PortType = string.Empty;
                 }
             }
             serialPort.DataReceived -= Port_DataReceived;
+            if (string.IsNullOrEmpty(settingPort.PortType))
+            {
+                settingPort.PortType = GetListPorts()?[0];
+            }
         }  
         
         int tempAdr;

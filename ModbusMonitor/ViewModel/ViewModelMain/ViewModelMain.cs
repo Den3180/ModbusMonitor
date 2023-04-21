@@ -84,7 +84,6 @@ namespace ModbusMonitor
             TreeViewEnabled = true;
             modbusRTU = new ModbusRTUASCII();
             listMaps = new List<(string, string)>();//Список кортежей(путь к карте, имя устройства).
-            //userControl = new UserControlDevices(new List<CellData>(), modbusRTU);            
             device = new DeviceClass();
             listDevices = new List<DeviceClass>();//Список устройств на линии.
             treeNodes = new ObservableCollection<GroupsTreeNode>();//Источник данных дерева.
@@ -92,7 +91,7 @@ namespace ModbusMonitor
             timerPoll = new DispatcherTimer();
             timerPoll.Interval = TimeSpan.FromMilliseconds(1000);
             dispatcher = App.Current.Dispatcher;
-            viewMode = EnumView.Table;
+            viewMode = EnumView.Table;//Сигнализирует о режиме таблицы.
 
             PropertyChanged += ViewModelMain_PropertyChanged;
             timerPoll.Tick += TimerSec_Tick;

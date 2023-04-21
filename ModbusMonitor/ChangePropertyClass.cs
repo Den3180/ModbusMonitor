@@ -39,12 +39,9 @@ namespace ModbusMonitor
         /// <param name="variable"></param>
         /// <param name="value"></param>
         protected void SetOptions<T>(string Property, ref T variable, T value)
-            {
-                //if (variable != null && !variable.Equals(value))
-                //{
+            {               
                     variable = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(Property));
-                //}
+                    OnPropertyChanged(new PropertyChangedEventArgs(Property));                
             }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(PropertyChangedEventArgs e)

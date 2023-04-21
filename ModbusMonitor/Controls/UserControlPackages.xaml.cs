@@ -13,17 +13,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ModbusMonitor.ViewModel;
-
 namespace ModbusMonitor.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для UserControlText.xaml
+    /// Логика взаимодействия для UserControlPackages.xaml
     /// </summary>
-    public partial class UserControlText : UserControl
+    public partial class UserControlPackages : UserControl
     {
-        public UserControlText()
+        public UserControlPackages()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            DataContext = new ViewingPackagesViewModel();
         }
     }
 }

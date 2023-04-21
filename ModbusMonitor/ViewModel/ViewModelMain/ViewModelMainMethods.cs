@@ -25,6 +25,7 @@ namespace ModbusMonitor
 {
     public partial class ViewModelMain 
     {
+        private readonly object locker = new();// Заглушка локера.
         private bool answerRequest = false;//Флаг завершения опроса.        
         private int countReqTot = 0; //Общее количество запросов.
         private int countReqgood = 0;//Количество корректных запросов.       
@@ -405,10 +406,7 @@ namespace ModbusMonitor
         /// Отображение в виде текста.
         /// </summary>
         private void MakeText()
-        {
-            if (Usercontrol != null && UserTemp==null) UserTemp = Usercontrol;
-            Usercontrol = new UserControlText();
-            viewMode = EnumView.Text;
+        {           
         }
         /// <summary>
         /// Просмотр пакетов.
@@ -416,7 +414,7 @@ namespace ModbusMonitor
         private void ViewingPackages()
         {
             if (Usercontrol != null && UserTemp == null) UserTemp = Usercontrol;
-            Usercontrol = new UserControlText();
+            Usercontrol = new UserControlPackages();
             viewMode = EnumView.Packages;
         }
         /// <summary>
@@ -491,97 +489,88 @@ namespace ModbusMonitor
         /// </summary>
         private void SendRequest()
         {            
-            NumberRequest = (++countReqTot).ToString();
-            byte adressDev = Convert.ToByte(device.DeviceAdress_DC);
-            short startAdressDI = -1;
-            short startAdressDO = -1;
-            short startAdressAO = -1;
-            short startAdressAI = -1;
-            ushort numOfDI = device.NumOfDI;
-            ushort numOfDO = device.NumOfDO;
-            ushort numOfAO = device.NumOfAO;
-            ushort numOfAI = device.NumOfAI;
-            string[] tempDI = null;
-            string[] tempDO = null;
-            ushort[] tempAO = null;
-            ushort[] tempAI = null;            
-            foreach (var item in device.CellsArray)
-            {
-                if (item.Type == "DI" && startAdressDI == -1)
+            lock (locker) 
+            { 
+                NumberRequest = (++countReqTot).ToString();
+                byte adressDev = Convert.ToByte(device.DeviceAdress_DC);
+                short startAdressDI = -1;
+                short startAdressDO = -1;
+                short startAdressAO = -1;
+                short startAdressAI = -1;
+                ushort numOfDI = device.NumOfDI;
+                ushort numOfDO = device.NumOfDO;
+                ushort numOfAO = device.NumOfAO;
+                ushort numOfAI = device.NumOfAI;
+                string[] tempDI = null;
+                string[] tempDO = null;
+                ushort[] tempAO = null;
+                ushort[] tempAI = null;
+                foreach(var item in device.CellsArray)
                 {
-                    startAdressDI = (short)item.Adress;
-                    tempDI = modbusRTU.ReadInputs(adressDev, (ushort)startAdressDI, numOfDI);
-                    if (tempDI == null)
+                    if (startAdressDI < 0 && item.Type == "DI") startAdressDI = (short)item.Adress;
+                    if (startAdressDO < 0 && item.Type == "DO") startAdressDO = (short)item.Adress;
+                    if (startAdressAI < 0 && item.Type == "AI") startAdressAI = (short)item.Adress;
+                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;                
+                }
+                    if (numOfDI>0)
+                    {                    
+                        tempDI = modbusRTU.ReadInputs(adressDev, (ushort)startAdressDI, numOfDI);
+                        if (tempDI == null)
+                        {
+                            answerRequest = false;
+                            dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        }
+                    }
+                    if (numOfDO>0)
+                    {                    
+                        tempDO = modbusRTU.ReadCoilRegs(adressDev, (ushort)startAdressDO, numOfDO);
+                        if (tempDO == null)
+                        {
+                            answerRequest = false;
+                            dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        }
+                    }
+                    if (numOfAI>0)
                     {
+                        tempAI = modbusRTU.ReadInputRegs(adressDev, (ushort)startAdressAI, numOfAI);
+                        if (tempAI == null)
+                        {
+                            answerRequest = false;
+                            dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                        }
+                    }
+                    if (numOfAO>0)
+                    {
+                        tempAO = modbusRTU.ReadHoldingRegs(adressDev, (ushort)startAdressAO, numOfAO);
+                         if (tempAO == null)
+                         {
+                            answerRequest = false;
+                            dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
+                         }
+                    }
+                    if (viewMode == EnumView.Table)//Считывание закончено.
+                    {
+                        FillCells(tempDI, tempDO, tempAO, tempAI);                        
                         answerRequest = false;
-                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
-                        return;
                     }
-                    Array.Reverse(tempDI);
-                }
-                else if (item.Type == "DO" && startAdressDO == -1)
-                {
-                    startAdressDO = (short)item.Adress;
-                    tempDO = modbusRTU.ReadCoilRegs(adressDev, (ushort)startAdressDO, numOfDO);
-                    if (tempDO == null)
+                    else if (viewMode == EnumView.Packages && tempAO!=null)//Передача пакетов в окно просмотра пакетов.
                     {
+                        byte[] y = new byte[tempAO.Length];
+                        string temp = string.Empty;
+                        for (int i = 0; i < y.Length; i++)
+                        {
+                            y[i] = (byte)tempAO[i];
+                            temp += " | " + Convert.ToString(tempAO[i], 16);
+                        }
+                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(temp));
                         answerRequest = false;
-                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
-                        return;
                     }
-                    Array.Reverse(tempDO);
-                }
-                else if (item.Type == "AI" && startAdressAI == -1)
-                {
-                    startAdressAI = (short)item.Adress;
-                    tempAI = modbusRTU.ReadInputRegs(adressDev, (ushort)startAdressAI, numOfAI);
-                    if (tempAI == null)
+                    if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
+                        || (numOfDI > 0 && tempDI != null))
                     {
-                        answerRequest = false;
-                        dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
-                        return;
+                        CorrectRequest = (++countReqgood).ToString();
                     }
-                    Array.Reverse(tempAI);
-                }
-                else if (item.Type == "AO" && startAdressAO == -1)
-                {
-                    startAdressAO = (short)item.Adress;
-                    tempAO = modbusRTU.ReadHoldingRegs(adressDev, (ushort)startAdressAO, numOfAO);
-                    if (tempAO == null)
-                    {
-                       answerRequest = false;
-                       dispatcher.Invoke(()=> logItemSource.Add(modbusRTU.RequestStatusMessage));
-                       return;
-                    }
-                    Array.Reverse(tempAO);
-                }
-                if (item == Cells?[^1] && viewMode==EnumView.Table)//Считывание закончено.
-                {
-                    FillCells(tempDI, tempDO, tempAO, tempAI, numOfDI, numOfDO, numOfAO, numOfAI);
-                    startAdressDI = -1;
-                    startAdressDO = -1;
-                    startAdressAO = -1;
-                    answerRequest = false;
-                    CorrectRequest = (++countReqgood).ToString();
-                    return;
-                }
-                else if (item == Cells?[^1] && viewMode == EnumView.Packages)
-                {
-                    Array.Reverse(tempAO);
-                    byte[] y = new byte[tempAO.Length];
-                    string temp=string.Empty;
-                    for(int i = 0; i < y.Length; i++)
-                    {
-                        y[i] = (byte)tempAO[i];
-                        temp+= " | " + Convert.ToString(tempAO[i],16); 
-                    }
-                    //var temp = Convert.ToHexString(y);
-                    dispatcher.Invoke(()=> (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(temp));
-                    answerRequest = false;
-                    CorrectRequest = (++countReqgood).ToString();
-                    return;
-                }
-            }
+            }       
         }
         /// <summary>
         /// Заполнить таблицу.
@@ -592,40 +581,44 @@ namespace ModbusMonitor
         /// <param name="numOfDI"></param>
         /// <param name="numOfDO"></param>
         /// <param name="numOfAO"></param>
-        private void FillCells(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI,
-            ushort numOfDI, ushort numOfDO, ushort numOfAO, ushort numOfAI)
-        {
-            //Заполнение ячеек привязанных к DataGrid. 
+        private void FillCells(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI)
+        {           
+            int iDI = 0;
+            int iDO = 0;
+            int iAI = 0;
+            int iAO = 0;
             foreach (var item in device.CellsArray)
             {
-                if (item.Type == "DI")
+                if (item.Type == "DI" && tempDI!=null)
                 {
-                    item.Value = tempDI[--numOfDI];
+                    item.Value = tempDI[iDI++];
                 }
-                else if (item.Type == "DO")
+                else if (item.Type == "DO" && tempDO!=null)
                 {
-                    item.Value = tempDO[--numOfDO];
+                    item.Value = tempDO[iDO++];
                 }
-                else if (item.Type == "AO")
+                else if (item.Type == "AO" && tempAO!=null)
                 {
                     //Если отрицательное значение.
-                    var val=tempAO[--numOfAO];
+                    var val = tempAO[iAO++];
                     item.Value = val.ToString();
                     if (ushort.TryParse(item.Value, out ushort res) && res > 32767)
-                    {                      
-                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();                       
+                    {
+                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                        continue;
                     }
                     item.Value = ValueConverter.ConvertFormatData(val, item.Format);
                 }
-                else if (item.Type == "AI")
-                {                    
+                else if (item.Type == "AI" && tempAI!=null)
+                {
                     //Если отрицательное значение.
-                    if (ushort.TryParse(item.Value, out ushort res) && res>32767) 
-                    {                       
-                         item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();                       
+                    if (ushort.TryParse(item.Value, out ushort res) && res > 32767)
+                    {
+                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
+                        continue;
                     }
-                    item.Value =ValueConverter.ConvertFormatData(tempAI[--numOfAI],item.Format);
-                }
+                    item.Value = ValueConverter.ConvertFormatData(tempAI[iAI++], item.Format);
+                }                
             }
         }      
         /// <summary>
@@ -665,7 +658,7 @@ namespace ModbusMonitor
         /// </summary>
         private void ShowAbout()
         {
-            
+            Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart));
         }
         /// <summary>
         /// Активация комманд.
