@@ -73,8 +73,7 @@ namespace ModbusMonitor
             //Если поле имени объекта пустое, значит выделения не произошло, значит вернуть первую ячейку.
             return (Usercontrol.DataContext as ControlDeviceView).SelectedCell.NameDevice!=string.Empty?
                  (Usercontrol.DataContext as ControlDeviceView).SelectedCell:
-                 new CellData();
-            
+                 new CellData();           
         }
 
         private void SetSelectedDevice()

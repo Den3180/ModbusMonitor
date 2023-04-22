@@ -94,6 +94,7 @@ namespace ModbusMonitor
                 device.AdaptersArray.AdapterData.Devices.Device.Adress = device.DeviceAdress_DC.ToString();//Сохранение в поля адаптера.
                 device.AdaptersArray.AdapterData.Devices.Device.Name = device.DeviceName_DC;//Сохранение в поля адаптера.
                 device.ConnectFromMap.DeviceAdress = device.DeviceAdress_DC;//Сохранение в поле карты.
+                ModbusRTUASCII.SettingPortStart.PortType = device.ConnectFromMap.PortType;
                 SaveMapTemp();//Сохранение карт во временный файл.
             }
         }
@@ -102,15 +103,20 @@ namespace ModbusMonitor
         /// </summary>
         private void SaveMapTemp()
         {
+            ushort[] regTypeNum = new ushort[] {device.NumOfDI,device.NumOfDI,device.NumOfAI,device.NumOfAO };
             FileInfo file = new FileInfo("ModbusMonitor.exe");
             string dir = file.DirectoryName + FileNameMap.MapsTemp;
             if (!Directory.Exists(dir))//Если каталога с картами по этому пути нет,то создаем его.
             {
                 Directory.CreateDirectory(dir);
             }
-            string filePath = $"{dir}/{device.DeviceName_DC}.xml";
+            string filePath = $"{dir}\\{device.DeviceName_DC}.xml";
             device.SaveMapReg(filePath);            
             listMaps.Add((filePath, device.DeviceName_DC));
+            device.NumOfDI = regTypeNum[0];
+            device.NumOfDO = regTypeNum[1];
+            device.NumOfAI = regTypeNum[2];
+            device.NumOfAO = regTypeNum[3];
         }
         /// <summary>
         /// Обновить дерево.
@@ -192,16 +198,14 @@ namespace ModbusMonitor
                         break;
                     }
                 }
-            }            
-
-            
+            }       
             //Если есть имя устройства.
             if (!string.IsNullOrEmpty(nameDev))
             {
                 (string, string) mapTemp;//Локальная переменна списка карт.                
                 foreach(var map in listMaps)//Проходим по списку карт.
                 {
-                    if(map.Item2==nameDev /*&& map.Item1.Contains(FileNameMap.MapsTemp)*/) //Находим в списке карт карту с нужным именем.
+                    if(map.Item2==nameDev && map.Item1.Contains(FileNameMap.MapsTemp)) //Находим в списке карт карту с нужным именем.
                     {
                         SaveLoadService.CheckAndSaveUnsavedMaps(map.Item1);//Сохраняем или удаляем карту.
                         mapTemp = map;
@@ -510,7 +514,7 @@ namespace ModbusMonitor
                     if (startAdressDI < 0 && item.Type == "DI") startAdressDI = (short)item.Adress;
                     if (startAdressDO < 0 && item.Type == "DO") startAdressDO = (short)item.Adress;
                     if (startAdressAI < 0 && item.Type == "AI") startAdressAI = (short)item.Adress;
-                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;                
+                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;                    
                 }
                     if (numOfDI>0)
                     {                    

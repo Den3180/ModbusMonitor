@@ -322,13 +322,8 @@
                                   HorizontalAlignment="Stretch"/>
                         <ListBox Grid.Row="3" VerticalAlignment="Stretch" ItemsSource="{Binding LogItemSource}"
                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            ScrollViewer.VerticalScrollBarVisibility="Disabled"                             
-                             MinHeight="100" Height="{Binding ElementName=RegAdd, Path=ActualHeight}">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Vertical" />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"                             
+                             MinHeight="100" Height="{Binding ElementName=RegAdd, Path=ActualHeight}">                           
                         </ListBox>
                     </Grid>
             </Border>

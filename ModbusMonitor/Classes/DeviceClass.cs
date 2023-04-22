@@ -104,8 +104,7 @@ namespace ModbusMonitor.Classes
                 if (ushort.TryParse(item.Value,out ushort val) && ushort.Parse(item.Value) > 32767)//Приведение данных из карты.
                 {
                     item.Value = (Convert.ToInt32(item.Value) - ushort.MaxValue - 1).ToString();//Со знаком минус.
-                }
-                
+                }                
                 item.NumberReg = count++.ToString();
                 //Преобразование в бинарный формат.
                 if (item.Represent == "Bin" && ushort.TryParse(item.Value, out val))

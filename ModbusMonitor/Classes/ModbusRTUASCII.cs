@@ -89,6 +89,10 @@ namespace ModbusMonitor.Classes
             }
         }
 
+        public void SetPortsSetting(string port)
+        {
+            serialPort.PortName = port;
+        }
         /// <summary>
         /// Закрытие порта.
         /// </summary>
