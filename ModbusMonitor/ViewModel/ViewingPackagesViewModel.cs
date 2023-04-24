@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModbusMonitor.Classes;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,14 +12,14 @@ namespace ModbusMonitor.ViewModel
    public class ViewingPackagesViewModel:ChangePropertyClass
    {
         private string temp = string.Empty;
-        public ICollection<string> sourceData = new ObservableCollection<string>();
+        public ICollection<DataStruct> sourceData = new ObservableCollection<DataStruct>();
 
         public ViewingPackagesViewModel()
         {
             
         }        
         
-        public IEnumerable<string> SourceData => sourceData;
+        public IEnumerable<DataStruct> SourceData => sourceData;
         public string Temp
         {
             get => temp;

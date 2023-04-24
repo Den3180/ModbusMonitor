@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="DataGridCell">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="AO">
+                <Setter Property="Background" Value="#FFDFFDDF" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="DO">
+                <Setter Property="Background" Value="#FFEDED96" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="None">
+                <Setter Property="Background" Value="White" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="AI">
+                <Setter Property="Background" Value="#FFE8D5F5" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="DI">
+                <Setter Property="Background" Value="#FFDAD1CE" />
+            </DataTrigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#FFACCEF3"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

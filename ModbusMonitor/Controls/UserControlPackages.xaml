@@ -8,6 +8,13 @@
              d:DataContext="{d:DesignInstance Type=viewmodel:ViewingPackagesViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\Resources\Dictionaries\ControlStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <DataGrid AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
                   ItemsSource="{Binding SourceData, UpdateSourceTrigger=PropertyChanged}"
@@ -25,7 +32,7 @@
                 </Style>               
             </DataGrid.ColumnHeaderStyle>           
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Направление" IsReadOnly="True" >
+                <DataGridTextColumn Header="Направление" Binding="{Binding DataTransmissionDirection}" Width="auto" IsReadOnly="True" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -33,7 +40,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Тип" IsReadOnly="True">
+                <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="auto" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -41,7 +48,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Команда" IsReadOnly="True">
+                <DataGridTextColumn Header="Команда" Binding="{Binding FunctionalCode}" Width="auto" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -49,10 +56,18 @@
                     </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Адрес" IsReadOnly="True">
+                <DataGridTextColumn Header="Адрес" Binding="{Binding AddressRegister}" 
+                                    MaxWidth="100" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Пакет данных" Binding="{Binding SourceData[0]}"
-                                    MaxWidth="400" Width="400" MinWidth="100" IsReadOnly="True">
+                <DataGridTextColumn Header="Пакет данных" Binding="{Binding Data}"
+                                    Width="*" MinWidth="100" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -61,7 +76,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>                    
-                <DataGridTextColumn Header="CRC" IsReadOnly="True">
+                <DataGridTextColumn Header="CRC" Binding="{Binding CRC}" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>

@@ -492,7 +492,7 @@ namespace ModbusMonitor
         /// отправка запроса.
         /// </summary>
         private void SendRequest()
-        {            
+        {
             lock (locker) 
             { 
                 NumberRequest = (++countReqTot).ToString();
@@ -509,6 +509,7 @@ namespace ModbusMonitor
                 string[] tempDO = null;
                 ushort[] tempAO = null;
                 ushort[] tempAI = null;
+                //Ищем первый адрес каждого типа регистров.
                 foreach(var item in device.CellsArray)
                 {
                     if (startAdressDI < 0 && item.Type == "DI") startAdressDI = (short)item.Adress;
@@ -557,16 +558,15 @@ namespace ModbusMonitor
                         FillCells(tempDI, tempDO, tempAO, tempAI);                        
                         answerRequest = false;
                     }
-                    else if (viewMode == EnumView.Packages && tempAO!=null)//Передача пакетов в окно просмотра пакетов.
-                    {
-                        byte[] y = new byte[tempAO.Length];
-                        string temp = string.Empty;
-                        for (int i = 0; i < y.Length; i++)
-                        {
-                            y[i] = (byte)tempAO[i];
-                            temp += " | " + Convert.ToString(tempAO[i], 16);
-                        }
-                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(temp));
+                    else if (viewMode == EnumView.Packages)//Передача пакетов в окно просмотра пакетов.
+                    {                    
+                       DataStruct dataPackage=new DataStruct();
+                       if(tempAO!=null) dataPackage = PackagesData.GetDataStruct(tempAO,"AO",device);
+                       //else if(tempDO!=null) dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
+                       //else if(tempDI!=null) dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
+                       else if(tempAI!=null) dataPackage = PackagesData.GetDataStruct(tempAI, "DO", device);
+
+                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
                         answerRequest = false;
                     }
                     if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
