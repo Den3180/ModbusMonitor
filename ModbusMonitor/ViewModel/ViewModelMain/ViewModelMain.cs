@@ -54,7 +54,7 @@ namespace ModbusMonitor
             openLogCommand = new Command(OpenLog, () => CanOpenLog);
             loadMapCommand = new Command(LoadMap);
             saveMapCommand = new Command(SaveMap);
-            tableCommand = new Command(MakeTable);
+            tableCommand = new Command(MakeTable,()=>CanMakeTable);
             textCommand = new Command(MakeText);
             viewingPackagesCommand = new Command(ViewingPackages,()=>CanViewingPackages);
             listenPortCommand = new Command(ListenPort, () => CanRequest);

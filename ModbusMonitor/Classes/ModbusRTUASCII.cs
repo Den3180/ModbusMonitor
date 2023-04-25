@@ -164,7 +164,7 @@ namespace ModbusMonitor.Classes
         /// <param name="numOfPoint"></param>
         /// <returns></returns>
         public string[] ReadCoilRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
-        {
+        {            
             try
             {               
                 bool[] tempcoil = MasterRTU.ReadCoils(adresDevice, startAdress, numOfPoint);
@@ -321,6 +321,7 @@ namespace ModbusMonitor.Classes
         }  
         
         int tempAdr;
+        object locker = new object();
         /// <summary>
         /// Поиск адреса устройства.
         /// </summary>
@@ -330,52 +331,55 @@ namespace ModbusMonitor.Classes
         /// <param name="stopBit"></param>
         public void SearchAddress(int addressStart, int addressEnd, SettingPortStart settingPortStart, 
             SearchAddrViewMod windowSearch=null)
-        {   
-            TimeOnly timeOnly = new TimeOnly(0,0,0);
-            serialPort ??= new SerialPort();
-            if (AdressSearch.Count > 0)
+        {
+            lock (locker)
             {
-                AdressSearch.Clear();
-            }
-            if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
-            {
-                PortsEnabled.Clear();
-            }
-                PortOpen(settingPortStart);            
-                serialPort.DataReceived += Port_DataReceived;            
-            for (int i = addressStart; i <=addressEnd; i++)
-            {
-                if (windowSearch.CanSearch)
+                TimeOnly timeOnly = new TimeOnly(0,0,0);
+                serialPort ??= new SerialPort();
+                if (AdressSearch.Count > 0)
                 {
-                    break;
+                    AdressSearch.Clear();
                 }
-                windowSearch.Address = i;
-                windowSearch.TimeCount = timeOnly.Add(TimeSpan.FromSeconds(addressEnd-i)).ToLongTimeString();
-                tempAdr = i;//Временно
-                windowSearch.ProgBarValue++;
-                byte[] b = new byte[6];
-                b[0] = (byte)i;     //Адрес устройства.
-                b[1] = 0x3;         //Команда 3.
-                b[2] = 0x0;         //Адрес регистра.
-                b[3] = 0x0;         //Адрес регистра.
-                b[4] = 0;           //Количество регистров.
-                b[5] = 0x1;         //Количество регистров.
-                byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high
-                byte[] mes = new byte[b.Length + crc.Length];
-                b.CopyTo(mes, 0);
-                crc.CopyTo(mes, mes.Length - crc.Length);
-                try
+                if (PortsEnabled.Count != 0)//Очистка списка доступных портов.
                 {
-                    serialPort.Write(mes, 0, mes.Length);                    
+                    PortsEnabled.Clear();
                 }
-                catch
+                    PortOpen(settingPortStart);            
+                    serialPort.DataReceived += Port_DataReceived;            
+                for (int i = addressStart; i <=addressEnd; i++)
                 {
-                    serialPort.Close();
-                    Mode = eMode.None;
-                }               
-                Thread.Sleep(settingPortStart.TimeOutWrite);
-            }           
-                serialPort.DataReceived -= Port_DataReceived;//Отключить прослушку порта.
+                    if (windowSearch.CanSearch)
+                    {
+                        break;
+                    }
+                    windowSearch.Address = i;
+                    windowSearch.TimeCount = timeOnly.Add(TimeSpan.FromSeconds(addressEnd-i)).ToLongTimeString();
+                    tempAdr = i;//Временно
+                    windowSearch.ProgBarValue++;
+                    byte[] b = new byte[6];
+                    b[0] = (byte)i;     //Адрес устройства.
+                    b[1] = 0x3;         //Команда 3.
+                    b[2] = 0x0;         //Адрес регистра.
+                    b[3] = 0x0;         //Адрес регистра.
+                    b[4] = 0;           //Количество регистров.
+                    b[5] = 0x1;         //Количество регистров.
+                    byte[] crc = ModbusUtility.CalculateCrc(b); //0-low, 1-high
+                    byte[] mes = new byte[b.Length + crc.Length];
+                    b.CopyTo(mes, 0);
+                    crc.CopyTo(mes, mes.Length - crc.Length);
+                    try
+                    {
+                        serialPort.Write(mes, 0, mes.Length);                    
+                    }
+                    catch
+                    {
+                        serialPort.Close();
+                        Mode = eMode.None;                    
+                    }               
+                    Thread.Sleep(settingPortStart.TimeOutWrite);
+                }           
+                    serialPort.DataReceived -= Port_DataReceived;//Отключить прослушку порта.
+            }
         }
     
         /// <summary>

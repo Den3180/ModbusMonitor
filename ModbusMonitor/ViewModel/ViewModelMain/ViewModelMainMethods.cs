@@ -103,7 +103,7 @@ namespace ModbusMonitor
         /// </summary>
         private void SaveMapTemp()
         {
-            ushort[] regTypeNum = new ushort[] {device.NumOfDI,device.NumOfDI,device.NumOfAI,device.NumOfAO };
+            ushort[] regTypeNum = new ushort[] {device.NumOfDI,device.NumOfDO,device.NumOfAI,device.NumOfAO };
             FileInfo file = new FileInfo("ModbusMonitor.exe");
             string dir = file.DirectoryName + FileNameMap.MapsTemp;
             if (!Directory.Exists(dir))//Если каталога с картами по этому пути нет,то создаем его.
@@ -405,6 +405,8 @@ namespace ModbusMonitor
             Usercontrol = UserTemp;
             if(UserTemp!=null) UserTemp = null;
             viewMode = EnumView.Table;
+            CanViewingPackages = true;
+            CanMakeTable = false;
         }
         /// <summary>
         /// Отображение в виде текста.
@@ -420,6 +422,8 @@ namespace ModbusMonitor
             if (Usercontrol != null && UserTemp == null) UserTemp = Usercontrol;
             Usercontrol = new UserControlPackages();
             viewMode = EnumView.Packages;
+            CanViewingPackages = false;
+            CanMakeTable = true;
         }
         /// <summary>
         /// Слушать порт
@@ -515,7 +519,8 @@ namespace ModbusMonitor
                     if (startAdressDI < 0 && item.Type == "DI") startAdressDI = (short)item.Adress;
                     if (startAdressDO < 0 && item.Type == "DO") startAdressDO = (short)item.Adress;
                     if (startAdressAI < 0 && item.Type == "AI") startAdressAI = (short)item.Adress;
-                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;                    
+                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;
+                    
                 }
                     if (numOfDI>0)
                     {                    
@@ -560,13 +565,31 @@ namespace ModbusMonitor
                     }
                     else if (viewMode == EnumView.Packages)//Передача пакетов в окно просмотра пакетов.
                     {                    
-                       DataStruct dataPackage=new DataStruct();
-                       if(tempAO!=null) dataPackage = PackagesData.GetDataStruct(tempAO,"AO",device);
-                       //else if(tempDO!=null) dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
-                       //else if(tempDI!=null) dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
-                       else if(tempAI!=null) dataPackage = PackagesData.GetDataStruct(tempAI, "DO", device);
+                    DataStruct dataPackage=new DataStruct();
+                    if (tempDO != null)
+                    {
+                        dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
+                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
 
-                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
+                    }
+                    if (tempDI != null)
+                    {
+                        dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
+                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+
+                    }
+                    if (tempAO != null) 
+                    { 
+                        dataPackage = PackagesData.GetDataStruct(tempAO,"AO",device);
+                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+                    }
+                    if (tempAI != null)
+                    {
+                        dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
+                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+
+                    }
+                        //dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
                         answerRequest = false;
                     }
                     if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
@@ -595,7 +618,7 @@ namespace ModbusMonitor
             {
                 if (item.Type == "DI" && tempDI!=null)
                 {
-                    item.Value = tempDI[iDI++];
+                    item.Value = tempDO[iDI++];
                 }
                 else if (item.Type == "DO" && tempDO!=null)
                 {
@@ -770,7 +793,7 @@ namespace ModbusMonitor
             //Определяем какой вид узла дерева выбран.
             itemSelected = DefineNodeInTree(item);            
             //Если нужная карта уже загружена, то ничего не меняем.
-            if (itemSelected?.ContentName == (Usercontrol.DataContext as ControlDeviceView).CurrentDevice.DeviceName_DC)
+            if (itemSelected?.ContentName == (Usercontrol.DataContext as ControlDeviceView)?.CurrentDevice.DeviceName_DC)
             {
                 Cells = device.CellsArray;               
                 return;

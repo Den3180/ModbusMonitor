@@ -42,15 +42,24 @@ namespace ModbusMonitor
         private bool canViewingPackages;
         private bool canClearLog;
         private bool canClearAllCells;
+        private bool canMakeTable;
 
         #region [Флаги доступности]
+        /// <summary>
+        /// Доступность команды отображения таблицы.
+        /// </summary>
+        public bool CanMakeTable 
+        {     
+            get => canMakeTable;
+            set => SetOptions(nameof(CanMakeTable), ref canMakeTable, value);
+        }
         /// <summary>
         /// Доступность команды Очистить ячейки карты. 
         /// </summary>
         public bool CanClearAllCells
         {
-            get => canClearAllCells;
-            set => SetOptions(nameof(CanClearAllCells), ref canClearAllCells, value);
+        get => canClearAllCells;
+        set => SetOptions(nameof(CanClearAllCells), ref canClearAllCells, value);
         }
         /// <summary>
         /// Доступность команды Очистить лист-лог ошибок.
@@ -263,6 +272,11 @@ namespace ModbusMonitor
             {
                 clearAllCellsCommand.RaiseCanExecuteChanged();
             }
+            if (e.PropertyName.Equals(nameof(CanMakeTable)))
+            {
+                tableCommand.RaiseCanExecuteChanged();
+            }
+
 
         }
     }

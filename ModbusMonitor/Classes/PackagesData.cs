@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,15 +25,29 @@ namespace ModbusMonitor.Classes
         /// <param name="dataArray"></param>
         /// <param name="startAddress"></param>
         /// <returns></returns>
-        public static DataStruct GetDataStruct(ushort[] dataArray,string type ,DeviceClass device)
+        public static DataStruct GetDataStruct<T>(T dataArray,string type ,DeviceClass device)
         {
             string tempData = string.Empty;
-            string tempFcode = string.Empty;
-            byte[] y = new byte[dataArray.Length];
-            for (int i = 0; i < y.Length; i++)
-            {                
-                y[i] = (byte)dataArray[i];
-                tempData += "  " + Convert.ToString(dataArray[i], 16);
+            string tempFcode;
+            byte[] y=null;
+            if (dataArray.GetType().Name == "UInt16[]")
+            {
+                ushort[] arrtemp = dataArray as ushort[];
+                y = new byte[arrtemp.Length];
+                for (int i = 0; i < y.Length; i++)
+                {                
+                    y[i] = (byte)arrtemp[i];
+                    tempData += "  " + Convert.ToString(arrtemp[i], 16);
+                }
+            }
+            else
+            {
+                y = new byte[(dataArray as string[]).Length];                 
+                for(int i=0;i<(dataArray as string[]).Length;i++)
+                {
+                    y[i] = Convert.ToByte((dataArray as string[])[i]);
+                    tempData += " " + Convert.ToString(y[i],16);
+                }                
             }
             tempFcode = type switch
             {
@@ -72,7 +87,7 @@ namespace ModbusMonitor.Classes
                     start = list[i].Adress;
                     addr = start.ToString();
                 }
-                else if ((list[i].Adress - list[i-1].Adress) > 1)
+                else if ((list[i].Adress - list[i-1].Adress) != 1)
                 {
                     addr += $", {list[i].Adress}";
                 }

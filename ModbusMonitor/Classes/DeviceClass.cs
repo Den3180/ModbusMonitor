@@ -135,6 +135,7 @@ namespace ModbusMonitor.Classes
                 item.NameDevice = device.DeviceName_DC;
             }
             device.ConvertConnectData();//Выборка объедененной информации карты.
+            NumberSortList(device);
             return device;
         }
         /// <summary>
@@ -185,10 +186,10 @@ namespace ModbusMonitor.Classes
                 else if (cell.Type == "AO") listAO.Add(cell);
                 else if (cell.Type == "None") listNone.Add(cell);  
             }
-            listDO.Sort();
-            listDI.Sort();
-            listAI.Sort();
-            listAO.Sort();
+            listDO?.Sort();
+            listDI?.Sort();
+            listAI?.Sort();
+            listAO?.Sort();
             device.CellsArray.Clear();
             device.CellsArray.AddRange(listDO);
             device.CellsArray.AddRange(listDI);
