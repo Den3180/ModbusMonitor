@@ -129,9 +129,9 @@ namespace ModbusMonitor.Classes
                 
                 return tempData;
             }
-            catch 
+            catch (Exception ex)
             {                
-               RequestStatusMessage = $"Чтение регистров АО.Таймаут превышен!";
+               RequestStatusMessage = ex.Message;
             }
             return null;
         }
@@ -149,9 +149,10 @@ namespace ModbusMonitor.Classes
                 ushort[] tempData = MasterRTU.ReadInputRegisters(adresDevice, startAdress, numOfPoint);
                 return tempData;
             }
-            catch 
+            catch (Exception ex)
             {
-                RequestStatusMessage = "Чтение регистров AI.Таймаут превышен!";
+                RequestStatusMessage = ex.Message;
+                //RequestStatusMessage = "Чтение регистров AI.Таймаут превышен!";
             }
             return null;
         }
@@ -175,9 +176,10 @@ namespace ModbusMonitor.Classes
                 }
                 return dataCoils;
             }
-            catch 
+            catch(Exception ex) 
             {
-                RequestStatusMessage = "Чтение регистров DO.Таймаут превышен!";
+                RequestStatusMessage = ex.Message;
+                //RequestStatusMessage = "Чтение регистров DO.Таймаут превышен!";
             }
             return null;
         }
@@ -202,9 +204,10 @@ namespace ModbusMonitor.Classes
                 }
                 return dataCoils;
             }
-            catch 
+            catch (Exception ex)
             {
-                RequestStatusMessage = "Чтение регистров DI.Таймаут превышен!";
+                RequestStatusMessage = ex.Message;
+                //RequestStatusMessage = "Чтение регистров DI.Таймаут превышен!";
             }
             return null;
         }

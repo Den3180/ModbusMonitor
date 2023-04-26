@@ -21,7 +21,7 @@ namespace ModbusMonitor.Classes
         /// <param name="cellData"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static string ConvertFormatData(ushort cellData, string format)
+        public static string ConvertFormatData(int cellData, string format)
         {
             string value = format switch//Преобразование полученных данных в строку.
             {

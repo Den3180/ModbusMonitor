@@ -505,10 +505,10 @@ namespace ModbusMonitor
                 short startAdressDO = -1;
                 short startAdressAO = -1;
                 short startAdressAI = -1;
-                ushort numOfDI = device.NumOfDI;
-                ushort numOfDO = device.NumOfDO;
-                ushort numOfAO = device.NumOfAO;
-                ushort numOfAI = device.NumOfAI;
+                ushort numOfDI = 0; 
+                ushort numOfDO = 0;
+                ushort numOfAO = 0;
+                ushort numOfAI = 0;
                 string[] tempDI = null;
                 string[] tempDO = null;
                 ushort[] tempAO = null;
@@ -516,11 +516,26 @@ namespace ModbusMonitor
                 //Ищем первый адрес каждого типа регистров.
                 foreach(var item in device.CellsArray)
                 {
-                    if (startAdressDI < 0 && item.Type == "DI") startAdressDI = (short)item.Adress;
-                    if (startAdressDO < 0 && item.Type == "DO") startAdressDO = (short)item.Adress;
-                    if (startAdressAI < 0 && item.Type == "AI") startAdressAI = (short)item.Adress;
-                    if (startAdressAO < 0 && item.Type == "AO") startAdressAO = (short)item.Adress;
-                    
+                    if (item.Type == "DI")
+                    {
+                        startAdressDI = startAdressDI < 0 ? (short)item.Adress : startAdressDI;
+                        numOfDI = item.Adress >= numOfDI ? (ushort)(item.Adress + 1) : numOfDI;
+                    }
+                    if (item.Type == "DO")
+                    {                       
+                       startAdressDO = startAdressDO < 0?(short)item.Adress:startAdressDO;                       
+                       numOfDO = item.Adress >= numOfDO ? (ushort)(item.Adress+1) : numOfDO;
+                    }
+                    if (item.Type == "AI")
+                    {
+                        startAdressAI = startAdressAI < 0 ? (short)item.Adress : startAdressAI;
+                        numOfAI = item.Adress >= numOfAI ? (ushort)(item.Adress + 1) : numOfAI;
+                    }
+                    if (item.Type == "AO")
+                    {
+                        startAdressAO = startAdressAO < 0 ? (short)item.Adress : startAdressAO;
+                        numOfAO = item.Adress >= numOfAO ? (ushort)(item.Adress + 1) : numOfAO;
+                    }                      
                 }
                     if (numOfDI>0)
                     {                    
@@ -558,7 +573,7 @@ namespace ModbusMonitor
                             dispatcher.Invoke(() => logItemSource.Add(modbusRTU.RequestStatusMessage));
                          }
                     }
-                    if (viewMode == EnumView.Table)//Считывание закончено.
+                    if (viewMode == EnumView.Table)//Передача пакетов в таблицу.
                     {
                         FillCells(tempDI, tempDO, tempAO, tempAI);                        
                         answerRequest = false;
@@ -618,33 +633,23 @@ namespace ModbusMonitor
             {
                 if (item.Type == "DI" && tempDI!=null)
                 {
-                    item.Value = tempDO[iDI++];
+                    item.Value = item.Adress == iDI ? tempDI[iDI++] : item.Value;
                 }
                 else if (item.Type == "DO" && tempDO!=null)
                 {
-                    item.Value = tempDO[iDO++];
+                    item.Value = item.Adress == iDO? tempDO[iDO++]:item.Value;
                 }
                 else if (item.Type == "AO" && tempAO!=null)
-                {
-                    //Если отрицательное значение.
-                    var val = tempAO[iAO++];
-                    item.Value = val.ToString();
-                    if (ushort.TryParse(item.Value, out ushort res) && res > 32767)
-                    {
-                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
-                        continue;
-                    }
+                {                                     
+                    var val = tempAO[iAO] > 32767 ? tempAO[iAO] - 65535 - 1 : tempAO[iAO];
                     item.Value = ValueConverter.ConvertFormatData(val, item.Format);
+                    iAO++;  
                 }
                 else if (item.Type == "AI" && tempAI!=null)
-                {
-                    //Если отрицательное значение.
-                    if (ushort.TryParse(item.Value, out ushort res) && res > 32767)
-                    {
-                        item.Value = (Convert.ToInt32(item.Value) - 65535 - 1).ToString();
-                        continue;
-                    }
-                    item.Value = ValueConverter.ConvertFormatData(tempAI[iAI++], item.Format);
+                {                   
+                    var val = tempAO[iAI] > 32767 ? tempAO[iAI] - 65535 - 1 : tempAO[iAI];
+                    item.Value = ValueConverter.ConvertFormatData(val, item.Format);
+                    iAI++;
                 }                
             }
         }      

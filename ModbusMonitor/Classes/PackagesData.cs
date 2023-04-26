@@ -29,7 +29,7 @@ namespace ModbusMonitor.Classes
         {
             string tempData = string.Empty;
             string tempFcode;
-            byte[] y=null;
+            byte[] y;
             if (dataArray.GetType().Name == "UInt16[]")
             {
                 ushort[] arrtemp = dataArray as ushort[];
@@ -64,7 +64,7 @@ namespace ModbusMonitor.Classes
                 FunctionalCode = tempFcode,
                 AddressRegister = GetAddressesString(device.CellsArray, type),
                 Data = tempData.ToUpper(),
-                CRC = GetCRC(y).ToUpper()
+                CRC = GetCRC(y)
             };
         }
         /// <summary>
@@ -119,7 +119,8 @@ namespace ModbusMonitor.Classes
             {
                 tempCRC += Convert.ToString(item, 16);
             }
-            return tempCRC;
+                if(tempCRC.Length<4) tempCRC = "0" + tempCRC;
+            return "0x"+tempCRC.ToUpper();
         }
     }
 }
