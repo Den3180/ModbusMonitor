@@ -579,41 +579,53 @@ namespace ModbusMonitor
                         answerRequest = false;
                     }
                     else if (viewMode == EnumView.Packages)//Передача пакетов в окно просмотра пакетов.
-                    {                    
-                    DataStruct dataPackage=new DataStruct();
-                    if (tempDO != null)
                     {
-                        dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
-                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                    }
-                    if (tempDI != null)
-                    {
-                        dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
-                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                    }
-                    if (tempAO != null) 
-                    { 
-                        dataPackage = PackagesData.GetDataStruct(tempAO,"AO",device);
-                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-                    }
-                    if (tempAI != null)
-                    {
-                        dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
-                        dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                    }
-                        //dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
-                        answerRequest = false;
-                    }
-                    if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
-                        || (numOfDI > 0 && tempDI != null))
-                    {
-                        CorrectRequest = (++countReqgood).ToString();
-                    }
+                        FillPackage(tempDI, tempDO, tempAO, tempAI);                       
+                    }                        
+                        if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
+                            || (numOfDI > 0 && tempDI != null))
+                        {
+                            CorrectRequest = (++countReqgood).ToString();
+                        }
             }       
         }
+        /// <summary>
+        /// Заполнение окна пакетов.
+        /// </summary>
+        /// <param name="tempDI"></param>
+        /// <param name="tempDO"></param>
+        /// <param name="tempAO"></param>
+        /// <param name="tempAI"></param>
+        private void FillPackage(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI)
+        {            
+                DataStruct dataPackage = new DataStruct();
+                if (tempDO != null)
+                {
+                    dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
+                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+
+                }
+                if (tempDI != null)
+                {
+                    dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
+                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+
+                }
+                if (tempAO != null)
+                {
+                    dataPackage = PackagesData.GetDataStruct(tempAO, "AO", device);
+                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+                }
+                if (tempAI != null)
+                {
+                    dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
+                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
+
+                }
+                //dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
+                answerRequest = false;           
+        }
+
         /// <summary>
         /// Заполнить таблицу.
         /// </summary>
@@ -641,13 +653,13 @@ namespace ModbusMonitor
                 }
                 else if (item.Type == "AO" && tempAO!=null)
                 {                                     
-                    var val = tempAO[iAO] > 32767 ? tempAO[iAO] - 65535 - 1 : tempAO[iAO];
+                    var val = tempAO[iAO] > short.MaxValue ? tempAO[iAO] - ushort.MaxValue - 1 : tempAO[iAO];
                     item.Value = ValueConverter.ConvertFormatData(val, item.Format);
                     iAO++;  
                 }
                 else if (item.Type == "AI" && tempAI!=null)
                 {                   
-                    var val = tempAI[iAI] > 32767 ? tempAI[iAI] - 65535 - 1 : tempAI[iAI];
+                    var val = tempAI[iAI] > short.MaxValue ? tempAI[iAI] - ushort.MaxValue - 1 : tempAI[iAI];
                     item.Value = ValueConverter.ConvertFormatData(val, item.Format);
                     iAI++;
                 }                
@@ -825,8 +837,9 @@ namespace ModbusMonitor
                 //Установка параметров порта из данных карты устройства.
                 if (ModbusRTUASCII.PortsEnabled.Count > 0)
                 {
-                    //Ставим первый доступный порт.
-                    ModbusRTUASCII.SettingPortStart.PortType = ModbusRTUASCII.PortsEnabled.FirstOrDefault();
+                    //Ставим первый доступный порт, если никакого порта нет.
+                    ModbusRTUASCII.SettingPortStart.PortType = string.IsNullOrEmpty(ModbusRTUASCII.SettingPortStart.PortType)?
+                        ModbusRTUASCII.PortsEnabled.FirstOrDefault(): ModbusRTUASCII.SettingPortStart.PortType;                    
                 }
                 else
                 {
