@@ -9,21 +9,14 @@ using System.Threading.Tasks;
 
 namespace ModbusMonitor.ViewModel
 {
-   public class ViewingPackagesViewModel:ChangePropertyClass
+   public class ViewingPackagesViewModel
    {
-        private string temp = string.Empty;
         public ICollection<DataStruct> sourceData = new ObservableCollection<DataStruct>();
 
         public ViewingPackagesViewModel()
         {
             
-        }        
-        
-        public IEnumerable<DataStruct> SourceData => sourceData;
-        public string Temp
-        {
-            get => temp;
-            set => SetOptions(nameof(Temp), ref temp, value);
-        }
+        }      
+        public IEnumerable<DataStruct> SourceData => sourceData;       
     }
 }

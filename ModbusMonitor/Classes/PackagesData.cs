@@ -64,7 +64,7 @@ namespace ModbusMonitor.Classes
                 FunctionalCode = tempFcode,
                 AddressRegister = GetAddressesString(device.CellsArray, type),
                 Data = tempData.ToUpper(),
-                CRC = GetCRC(y)
+                CRC = GetCRC(y,device.DeviceAdress_DC,tempFcode)
             };
         }
         /// <summary>
@@ -111,10 +111,24 @@ namespace ModbusMonitor.Classes
             }
             return addr;
         }
-        private static string GetCRC(byte[] y)
+        /// <summary>
+        /// Вычисление контрольной суммы.
+        /// </summary>
+        /// <param name="y"></param>
+        /// <param name="address"></param>
+        /// <param name="fCode"></param>
+        /// <returns></returns>
+        private static string GetCRC(byte[] y, int address,string fCode)
         {
-            string tempCRC = string.Empty;
-            var arrCRC = Modbus.Utility.ModbusUtility.CalculateCrc(y);
+            string tempCRC = string.Empty;            
+            byte[] addrByte = BitConverter.GetBytes(address);
+            byte[] fCodeByte = BitConverter.GetBytes(Convert.ToUInt16(fCode.Substring(fCode.Length-1)));
+            byte[] tempData = new byte[y.Length + addrByte.Length + fCodeByte.Length];
+            addrByte.CopyTo(tempData,0);
+            fCodeByte.CopyTo(tempData, addrByte.Length);
+            y.CopyTo(tempData, addrByte.Length + fCodeByte.Length);
+
+            var arrCRC = Modbus.Utility.ModbusUtility.CalculateCrc(tempData);
             foreach (var item in arrCRC)
             {
                 tempCRC += Convert.ToString(item, 16);

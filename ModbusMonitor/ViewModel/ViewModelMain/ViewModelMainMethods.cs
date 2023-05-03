@@ -647,7 +647,7 @@ namespace ModbusMonitor
                 }
                 else if (item.Type == "AI" && tempAI!=null)
                 {                   
-                    var val = tempAO[iAI] > 32767 ? tempAO[iAI] - 65535 - 1 : tempAO[iAI];
+                    var val = tempAI[iAI] > 32767 ? tempAI[iAI] - 65535 - 1 : tempAI[iAI];
                     item.Value = ValueConverter.ConvertFormatData(val, item.Format);
                     iAI++;
                 }                

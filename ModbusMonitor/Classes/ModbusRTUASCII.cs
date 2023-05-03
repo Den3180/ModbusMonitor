@@ -125,8 +125,7 @@ namespace ModbusMonitor.Classes
         {
             try
             {
-                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
-                
+                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);                
                 return tempData;
             }
             catch (Exception ex)
