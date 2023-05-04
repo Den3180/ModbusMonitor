@@ -575,8 +575,7 @@ namespace ModbusMonitor
                     }
                     if (viewMode == EnumView.Table)//Передача пакетов в таблицу.
                     {
-                        FillCells(tempDI, tempDO, tempAO, tempAI);                        
-                        answerRequest = false;
+                        FillCells(tempDI, tempDO, tempAO, tempAI);               
                     }
                     else if (viewMode == EnumView.Packages)//Передача пакетов в окно просмотра пакетов.
                     {
@@ -588,82 +587,6 @@ namespace ModbusMonitor
                             CorrectRequest = (++countReqgood).ToString();
                         }
             }       
-        }
-        /// <summary>
-        /// Заполнение окна пакетов.
-        /// </summary>
-        /// <param name="tempDI"></param>
-        /// <param name="tempDO"></param>
-        /// <param name="tempAO"></param>
-        /// <param name="tempAI"></param>
-        private void FillPackage(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI)
-        {            
-                DataStruct dataPackage = new DataStruct();
-                if (tempDO != null)
-                {
-                    dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
-                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                }
-                if (tempDI != null)
-                {
-                    dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
-                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                }
-                if (tempAO != null)
-                {
-                    dataPackage = PackagesData.GetDataStruct(tempAO, "AO", device);
-                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-                }
-                if (tempAI != null)
-                {
-                    dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
-                    dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
-                }
-                //dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
-                answerRequest = false;           
-        }
-
-        /// <summary>
-        /// Заполнить таблицу.
-        /// </summary>
-        /// <param name="tempDI"></param>
-        /// <param name="tempDO"></param>
-        /// <param name="tempAO"></param>
-        /// <param name="numOfDI"></param>
-        /// <param name="numOfDO"></param>
-        /// <param name="numOfAO"></param>
-        private void FillCells(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI)
-        {           
-            int iDI = 0;
-            int iDO = 0;
-            int iAI = 0;
-            int iAO = 0;
-            foreach (var item in device.CellsArray)
-            {
-                if (item.Type == "DI" && tempDI!=null)
-                {
-                    item.Value = item.Adress == iDI ? tempDI[iDI++] : item.Value;
-                }
-                else if (item.Type == "DO" && tempDO!=null)
-                {
-                    item.Value = item.Adress == iDO? tempDO[iDO++]:item.Value;
-                }
-                else if (item.Type == "AO" && tempAO!=null)
-                {                                     
-                    var val = tempAO[iAO] > short.MaxValue ? tempAO[iAO] - ushort.MaxValue - 1 : tempAO[iAO];
-                    item.Value = ValueConverter.ConvertFormatData(val, item.Format);
-                    iAO++;  
-                }
-                else if (item.Type == "AI" && tempAI!=null)
-                {                   
-                    var val = tempAI[iAI] > short.MaxValue ? tempAI[iAI] - ushort.MaxValue - 1 : tempAI[iAI];
-                    item.Value = ValueConverter.ConvertFormatData(val, item.Format);
-                    iAI++;
-                }                
-            }
         }      
         /// <summary>
         /// Открыть лог ошибок.
