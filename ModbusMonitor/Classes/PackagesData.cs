@@ -68,11 +68,17 @@ namespace ModbusMonitor.Classes
                 CRC = GetCRC(y,device.DeviceAdress_DC,tempFcode)
             };
         }
-
+        /// <summary>
+        /// Формирование данных для отображения пакетов запроса.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="device"></param>
+        /// <returns></returns>
         public static DataStruct GetDataStruct(string type, DeviceClass device)
         {
             List<byte> dataRequest = new List<byte>();           
             int countReg = 0;
+            string tempData = string.Empty;
             //Код команды в строке.
             string tempFcodeStr = type switch
             {
@@ -90,13 +96,19 @@ namespace ModbusMonitor.Classes
             dataRequest.Add(Convert.ToByte(Char.ToString(tempFcodeStr[^1])));
             dataRequest.Add(((byte)device.CellsArray.First(x=>x.Type==type).Adress));
             dataRequest.Add(((byte)countReg));
+            byte[] arrByte = dataRequest.ToArray();
+            dataRequest.ForEach(delegate (byte bt)
+            {
+                tempData+= " " + Convert.ToString(bt, 16);
+            });
+
             return new DataStruct
             {
                 DataTransmissionDirection = "Запрос",
                 Type = type,
                 FunctionalCode = tempFcodeStr,
                 AddressRegister = GetAddressesString(device.CellsArray, type),
-                Data = Convert.ToHexString(dataRequest.ToArray()),
+                Data = tempData,
                 CRC = GetCRC(dataRequest.ToArray(), device.DeviceAdress_DC, tempFcodeStr)
             };
         }
