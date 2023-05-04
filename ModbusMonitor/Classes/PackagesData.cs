@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace ModbusMonitor.Classes
@@ -65,6 +66,38 @@ namespace ModbusMonitor.Classes
                 AddressRegister = GetAddressesString(device.CellsArray, type),
                 Data = tempData.ToUpper(),
                 CRC = GetCRC(y,device.DeviceAdress_DC,tempFcode)
+            };
+        }
+
+        public static DataStruct GetDataStruct(string type, DeviceClass device)
+        {
+            List<byte> dataRequest = new List<byte>();           
+            int countReg = 0;
+            //Код команды в строке.
+            string tempFcodeStr = type switch
+            {
+                "DI" => "0x02",
+                "DO" => "0x01",
+                "AI" => "0x04",
+                "AO" => "0x03",
+                _ => string.Empty
+            };
+            device.CellsArray.ForEach(delegate(CellData cell)
+            {
+                if (cell.Type == type) countReg++;
+            });
+            dataRequest.Add(((byte)device.DeviceAdress_DC));
+            dataRequest.Add(Convert.ToByte(Char.ToString(tempFcodeStr[^1])));
+            dataRequest.Add(((byte)device.CellsArray.First(x=>x.Type==type).Adress));
+            dataRequest.Add(((byte)countReg));
+            return new DataStruct
+            {
+                DataTransmissionDirection = "Запрос",
+                Type = type,
+                FunctionalCode = tempFcodeStr,
+                AddressRegister = GetAddressesString(device.CellsArray, type),
+                Data = Convert.ToHexString(dataRequest.ToArray()),
+                CRC = GetCRC(dataRequest.ToArray(), device.DeviceAdress_DC, tempFcodeStr)
             };
         }
         /// <summary>
@@ -135,6 +168,6 @@ namespace ModbusMonitor.Classes
             }
                 if(tempCRC.Length<4) tempCRC = "0" + tempCRC;
             return "0x"+tempCRC.ToUpper();
-        }
+        }       
     }
 }

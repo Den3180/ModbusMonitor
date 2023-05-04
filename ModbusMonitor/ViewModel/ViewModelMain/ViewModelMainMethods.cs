@@ -695,7 +695,7 @@ namespace ModbusMonitor
             CanRefreshTree = true;
             CanColorType = true;
             CanClearAllCells = true;
-            SetSelectedDevice();//Синхронизуция выбранного элемента в дереве.
+            SetSelectedDevice();//Синхронизация выбранного элемента в дереве.
             if (ModbusRTUASCII.PortsEnabled.Count == 0)
             {
                 Task.Run(() => modbusRTU.SendResponsePort(ModbusRTUASCII.SettingPortStart, device.DeviceAdress_DC));

@@ -31,7 +31,6 @@ namespace ModbusMonitor.Classes
             };           
             return value;
         }
-
         /// <summary>
         /// Сменить формат.
         /// </summary>
@@ -74,7 +73,6 @@ namespace ModbusMonitor.Classes
                 _ => Convert.ToString(BitConverter.ToInt16(dataArr))
             };
         } 
-
         /// <summary>
         /// Сменить формат.
         /// </summary>

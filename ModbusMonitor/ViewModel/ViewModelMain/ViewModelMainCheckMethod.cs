@@ -28,7 +28,6 @@ namespace ModbusMonitor
                 return itemTree as SubGroupsTree;//Младший узел.
             }
         }
-
         /// <summary>
         /// Проверка на совпадение узлов дерева с добавляемым новым элементом.
         /// </summary>
@@ -47,7 +46,6 @@ namespace ModbusMonitor
             }
             return false;
         }
-
         /// <summary>
         /// Есть ли устройство в списке устройств.
         /// </summary>
@@ -64,7 +62,6 @@ namespace ModbusMonitor
             }
             return false;
         }
-
         /// <summary>
         /// Получить выбранную ячейку или первую если ничего не выбрано.
         /// </summary>
@@ -101,28 +98,35 @@ namespace ModbusMonitor
         /// <param name="tempAI"></param>
         private void FillPackage(string[] tempDI, string[] tempDO, ushort[] tempAO, ushort[] tempAI)
         {
-            DataStruct dataPackage = new DataStruct();
+            DataStruct dataPackage = new DataStruct();            
             if (tempDO != null)
             {
+                dataPackage = PackagesData.GetDataStruct("DO", device);
+                dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
                 tempDO = CheckDataArray(tempDO, device.CellsArray, "DO");
                 dataPackage = PackagesData.GetDataStruct(tempDO, "DO", device);
                 dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
             }
             if (tempDI != null)
             {
+                dataPackage = PackagesData.GetDataStruct("DI", device);
+                dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
                 tempDI = CheckDataArray(tempDI, device.CellsArray, "DI");
                 dataPackage = PackagesData.GetDataStruct(tempDI, "DI", device);
                 dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
             }
             if (tempAO != null)
             {
+                dataPackage = PackagesData.GetDataStruct("AO", device);
+                dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
                 tempAO = CheckDataArray(tempAO, device.CellsArray, "AO");
                 dataPackage = PackagesData.GetDataStruct(tempAO, "AO", device);
                 dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
             }
             if (tempAI != null)
             {
+                dataPackage = PackagesData.GetDataStruct("AI", device);
+                dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
                 tempAI = CheckDataArray(tempAI, device.CellsArray, "AI");
                 dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
                 dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
