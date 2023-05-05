@@ -125,12 +125,14 @@ namespace ModbusMonitor.Classes
         {
             try
             {
-                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);                
+                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
+                
                 return tempData;
             }
             catch (Exception ex)
             {                
                RequestStatusMessage ="Тип регистра:AO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
+
             }
             return null;
         }

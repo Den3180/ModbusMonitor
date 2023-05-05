@@ -130,7 +130,6 @@ namespace ModbusMonitor
                 tempAI = CheckDataArray(tempAI, device.CellsArray, "AI");
                 dataPackage = PackagesData.GetDataStruct(tempAI, "AI", device);
                 dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel)?.sourceData.Add(dataPackage));
-
             }
             //dispatcher.Invoke(() => (Usercontrol.DataContext as ViewingPackagesViewModel).sourceData.Add(dataPackage));
             answerRequest = false;

@@ -460,8 +460,8 @@ namespace ModbusMonitor
         /// </summary>
         private void EditFormat()
         {
-            var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
-            ValueConverter.ChangeFormatData(cellData); 
+            //var cellData = ((ControlDeviceView)Usercontrol.DataContext).SelectedCell;
+            //ValueConverter.ChangeFormatData(cellData); 
         }
         /// <summary>
         /// Цвета для типов.
@@ -565,7 +565,7 @@ namespace ModbusMonitor
                     }
                     if (numOfAO>0)
                     {
-                        tempAO = modbusRTU.ReadHoldingRegs(adressDev, (ushort)startAdressAO, numOfAO);
+                        tempAO = modbusRTU.ReadHoldingRegs(adressDev, (ushort)startAdressAO, numOfAO);                    
                          if (tempAO == null)
                          {
                             answerRequest = false;
@@ -579,12 +579,11 @@ namespace ModbusMonitor
                     else if (viewMode == EnumView.Packages)//Передача пакетов в окно просмотра пакетов.
                     {
                         FillPackage(tempDI, tempDO, tempAO, tempAI);                       
-                    }                        
-                        if((numOfAO>0 && tempAO!=null) || (numOfDO > 0 && tempDO != null) || (numOfAI > 0 && tempAI != null)
-                            || (numOfDI > 0 && tempDI != null))
-                        {
-                            CorrectRequest = (++countReqgood).ToString();
-                        }
+                    }
+                if ((numOfAO > 0 && tempAO != null)||(numOfDO > 0 && tempDO != null)||(numOfAI > 0 && tempAI != null)||(numOfDI > 0 && tempDI != null))
+                {
+                    CorrectRequest = (++countReqgood).ToString();
+                }
             }       
         }      
         /// <summary>
