@@ -39,7 +39,6 @@ namespace ModbusMonitor
 
         public ObservableCollection<GroupsTreeNode> treeNodes;//Источник данных для дерева.
         public ObservableCollection<string> logItemSource;//Источник данных для listbox.
-
         public IEnumerable<GroupsTreeNode> TreeNodes => treeNodes;//Свойство данных дерева.
         public IEnumerable<string> LogItemSource => logItemSource;//Свойство данных лога listbox.
 
@@ -104,6 +103,14 @@ namespace ModbusMonitor
             set
             {
                 SetOptions(nameof(Usercontrol), ref userControl, value);
+                if (value == null)
+                {
+                    CanClearAllCells = false;
+                }
+                else
+                {
+                    CanClearAllCells = true;
+                }
             }
         }
         /// <summary>

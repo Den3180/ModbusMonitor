@@ -19,15 +19,15 @@
         </Style>       
     </UserControl.Resources>
     <Grid>        
-        <DataGrid AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
+        <DataGrid x:Name="datTemp" AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
                   ItemsSource="{Binding Cells, UpdateSourceTrigger=PropertyChanged}"
                   SelectionUnit="FullRow"               
                   FontSize="14"                  
                   SelectedItem="{Binding SelectedCell}" 
                   CanUserSortColumns="False" 
                   CurrentColumn="{Binding GridColumn, Mode=TwoWay}" 
-                  Width="auto" 
-                  MouseDoubleClick="DataGrid_MouseDoubleClick" HorizontalAlignment="Left" BorderThickness="1">            
+                  Width="auto" HorizontalAlignment="Left" BorderThickness="1" 
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"  >            
                        <!--Контексное меню-->
             <DataGrid.ContextMenu>
                 <ContextMenu>                   

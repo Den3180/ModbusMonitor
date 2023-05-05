@@ -15,6 +15,10 @@ using System.Windows.Shapes;
 using ModbusMonitor;
 using ModbusMonitor.ViewModel;
 using ModbusMonitor.Classes;
+using Microsoft.Win32;
+using System.IO;
+using Microsoft.Office.Interop.Excel;
+using System.Windows.Automation;
 
 namespace ModbusMonitor.Controls
 {
@@ -28,7 +32,6 @@ namespace ModbusMonitor.Controls
             InitializeComponent();           
             DataContext = new ControlDeviceView(objects);
         }
-
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var sen = (DataGrid)sender;

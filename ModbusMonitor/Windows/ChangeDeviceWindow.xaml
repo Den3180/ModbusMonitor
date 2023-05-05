@@ -33,7 +33,7 @@
                     <TextBox Text="{Binding Name_ChD, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="1"/>
                     <Label Content="Имя порта:"/>
                     <ComboBox ItemsSource="{Binding TypePortList}" SelectedIndex="0" Margin="5" 
-                              SelectedItem="{Binding SelectedItem}" Text="{Binding SelectedItem}"/>
+                              SelectedItem="{Binding SelectedItem}" Text="{Binding TypePortList[0]}"/>
                     <UniformGrid Columns="2">
                         <Button Content="Принять" Command="{Binding CloseChangeCommand}" Margin="5"/>
                         <Button Content="Отмена" Margin="5" IsCancel="True" IsDefault="True"/>

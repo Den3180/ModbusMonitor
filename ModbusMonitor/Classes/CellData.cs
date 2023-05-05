@@ -55,7 +55,6 @@ namespace ModbusMonitor.Classes
             throw new NotImplementedException();
         }
     }
-
     /// <summary>
     /// Класс ячеек для регистров из карты TikModbus.
     /// </summary>

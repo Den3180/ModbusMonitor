@@ -21,7 +21,7 @@ namespace ModbusMonitor.Classes
     public class PackagesData
     {
         /// <summary>
-        /// Формирование данных для отображения пакетов.
+        /// Формирование данных для отображения пакетов ответов.
         /// </summary>
         /// <param name="dataArray"></param>
         /// <param name="startAddress"></param>

@@ -18,8 +18,7 @@
                 <Setter Property="Background" Value="#FFDAD1CE" />
             </DataTrigger>
             <DataTrigger Binding="{Binding DataTransmissionDirection}" Value="Запрос">
-                <Setter Property="Background" Value="#FF1F9208" />
-                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="#FFACCEF3" />
             </DataTrigger>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="#FFACCEF3"/>

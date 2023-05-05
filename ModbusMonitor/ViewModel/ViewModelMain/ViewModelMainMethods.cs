@@ -34,8 +34,7 @@ namespace ModbusMonitor
         private GroupsTreeNode treeNode;//Дерево устройств.
         public static List<DeviceClass> listDevices;
         private List<(string, string)> listMaps;//Хранение загруженных карт.
-        public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.     
-
+        public List<CellData> Cells { get; set; }//Свойство привязки к DataGrid.
         public UserControl UserTemp { get; set; }
 
         #region[Обработчики комманд]

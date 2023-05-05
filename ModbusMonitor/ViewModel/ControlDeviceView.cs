@@ -10,6 +10,7 @@ using System.Windows.Input;
 using ModbusMonitor.Windows;
 using ModbusMonitor.Controls;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace ModbusMonitor.ViewModel
 {
@@ -53,7 +54,7 @@ namespace ModbusMonitor.ViewModel
             addCellsCommand = new Command(AddCells, () => CanAddCells);
             deleteLineCommand = new Command(DeleteLine, () => CanDeleteLine);
             showPropertiesCommand = new Command(ShowProperties,()=>CanShowProperties);
-            PropertyChanged += ControlDeviceView_PropertyChanged;
+            PropertyChanged += ControlDeviceView_PropertyChanged; 
         }
 
         public ICommand WriteRegisterCommand => writeRegisterCommand;

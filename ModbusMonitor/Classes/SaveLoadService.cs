@@ -12,13 +12,12 @@ namespace ModbusMonitor.Classes
 {
     internal class SaveLoadService : IDialogService
     {
-        public string FilePath { get; set; } = string.Empty;
-        
+        public string FilePath { get; set; } = string.Empty;        
         /// <summary>
         /// Открывает диалог загрузки карт.
         /// </summary>
         /// <returns></returns>
-        public DeviceClass OpenFileDialog()//fff.
+        public DeviceClass OpenFileDialog()
         {
             FileInfo file = new FileInfo("ModbusMonitor.exe");
             string dir = file.DirectoryName + @"\Maps";
@@ -62,7 +61,6 @@ namespace ModbusMonitor.Classes
             }
             return false;
         }
-
         /// <summary>
         /// Проверка и сохранение не сохраненных карт.
         /// </summary>
@@ -99,7 +97,6 @@ namespace ModbusMonitor.Classes
             directory.Delete(true);//Удаляем директорию временных файлов.
             listMaps.Clear();
         }
-
         /// <summary>
         /// Проверка и сохранение не сохраненных карт.
         /// </summary>
@@ -113,8 +110,7 @@ namespace ModbusMonitor.Classes
                 return;
             }
                 FileInfo fileMap = new FileInfo(pathFile);
-            if (MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
-                 MessageBoxResult.Yes)
+            if (MessageBox.Show("Сохранить карты?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var fPaph = file.DirectoryName + FileNameMap.MapsOrigin + "\\" + fileMap.Name;
                 fileMap.CopyTo(fPaph);

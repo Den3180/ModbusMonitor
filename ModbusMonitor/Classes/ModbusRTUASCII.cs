@@ -130,7 +130,7 @@ namespace ModbusMonitor.Classes
             }
             catch (Exception ex)
             {                
-               RequestStatusMessage = ex.Message;
+               RequestStatusMessage ="Тип регистра:AO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
             return null;
         }
@@ -150,8 +150,7 @@ namespace ModbusMonitor.Classes
             }
             catch (Exception ex)
             {
-                RequestStatusMessage = ex.Message;
-                //RequestStatusMessage = "Чтение регистров AI.Таймаут превышен!";
+                RequestStatusMessage = "Тип регистра:AI " + ex.Message+" "+DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
             return null;
         }
@@ -177,8 +176,7 @@ namespace ModbusMonitor.Classes
             }
             catch(Exception ex) 
             {
-                RequestStatusMessage = ex.Message;
-                //RequestStatusMessage = "Чтение регистров DO.Таймаут превышен!";
+                RequestStatusMessage = "Тип регистра:DO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
             return null;
         }
@@ -205,8 +203,7 @@ namespace ModbusMonitor.Classes
             }
             catch (Exception ex)
             {
-                RequestStatusMessage = ex.Message;
-                //RequestStatusMessage = "Чтение регистров DI.Таймаут превышен!";
+                RequestStatusMessage = "Тип регистра:DI " +ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
             return null;
         }
@@ -225,9 +222,9 @@ namespace ModbusMonitor.Classes
             {
                 MasterRTU.WriteSingleCoil(ID, coilAddr, value);
             }
-            catch
+            catch(Exception ex)
             {
-                RequestStatusMessage = "Запись регистров DO.Таймаут превышен!";
+                RequestStatusMessage = "Тип регистра:DO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
         }
 
@@ -243,9 +240,9 @@ namespace ModbusMonitor.Classes
             {
                 MasterRTU.WriteSingleRegister(ID, regAddr, val);
             }
-            catch
+            catch(Exception ex)
             {
-                RequestStatusMessage = "Запись регистров АО.Таймаут превышен!";
+                RequestStatusMessage = "Тип регистра:AO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             }
         }
 
