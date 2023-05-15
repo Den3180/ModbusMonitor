@@ -158,7 +158,7 @@ namespace ModbusMonitor.Classes
                 }
             }
             ConnectFromMap.DeviceAdress = Convert.ToInt32(strings[0]);
-            ConnectFromMap.PortType = strings[1];
+            ConnectFromMap.PortType ??= strings[1];
             ConnectFromMap.SpeedPort = Convert.ToInt32(strings[2]);
             ConnectFromMap.Parity = Convert.ToInt32(strings[3]);
             ConnectFromMap.Stop_Bit = Convert.ToInt32(strings[4]);

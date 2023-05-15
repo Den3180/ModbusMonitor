@@ -37,9 +37,31 @@ namespace ModbusMonitor
         {
             var dContext = DataContext as ViewModelMain;
             if (dContext.treeNodes.Count == 0) return;
-            if(MessageBox.Show("Сохранить карту?", string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes)          {
+            if(MessageBox.Show("Сохранить карту?", string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes)          
+            {
                 dContext.SaveMapcomman.Execute(null);
             }
+        }
+
+        private void ListBox_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+            listBox.SelectedItem = listBox.Items.Count - 1;
+            listBox.ScrollIntoView(listBox.SelectedItem);
+        }
+
+        private void ListBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+            listBox.SelectedItem = listBox.Items.IndexOf(listBox.Items.Count - 1);
+            listBox.ScrollIntoView(listBox.SelectedItem);
+        }
+
+        private void tempList_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+            listBox.SelectedItem = listBox.Items.IndexOf(listBox.Items.Count - 1);
+            listBox.ScrollIntoView(listBox.SelectedItem);
         }
     }
 }

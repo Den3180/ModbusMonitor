@@ -320,11 +320,11 @@
                     </Border>
                     <GridSplitter Grid.Row="2" Height="2" 
                                   HorizontalAlignment="Stretch"/>
-                        <ListBox Grid.Row="3" VerticalAlignment="Stretch" ItemsSource="{Binding LogItemSource}"
-                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"                             
-                             MinHeight="100" Height="{Binding ElementName=RegAdd, Path=ActualHeight}">                           
-                        </ListBox>
+                        <ListBox Grid.Row="3" VerticalAlignment="Stretch" 
+                            ItemsSource="{Binding LogItemSource}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"                                 
+                             MinHeight="100" Height="{Binding ElementName=RegAdd, Path=ActualHeight}"/>
                     </Grid>
             </Border>
         </Grid>

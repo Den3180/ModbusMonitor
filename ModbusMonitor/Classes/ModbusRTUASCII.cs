@@ -28,6 +28,7 @@ namespace ModbusMonitor.Classes
         public event PortErrorEventHandler PortErrorEvent; //Событие ошибки.
         private SerialPort serialPort;//Создание порта.       
         private ModbusSerialMaster masterRTU;
+        private readonly ushort maxReadRegistry = 125;
         
         public ModbusRTUASCII()
         {
@@ -123,16 +124,29 @@ namespace ModbusMonitor.Classes
         /// <param name="numOfPoint"></param>
         public ushort[] ReadHoldingRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
         {
+            ushort[] tempData= Array.Empty<ushort>();           
+            ushort tempNumReg;
             try
             {
-                ushort[] tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
-                
+                if (numOfPoint <= maxReadRegistry)
+                {
+                    tempData = MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, numOfPoint);
+                }
+                else
+                {                    
+                    while (numOfPoint > 0)
+                    {
+                        tempNumReg = numOfPoint >= maxReadRegistry ? maxReadRegistry : numOfPoint;
+                        tempData = tempData.Concat(MasterRTU.ReadHoldingRegisters(adresDevice, startAdress, tempNumReg)) as ushort[];
+                        numOfPoint = numOfPoint >= maxReadRegistry ? (ushort)(numOfPoint - maxReadRegistry) : (ushort)0;
+                        startAdress += (ushort)maxReadRegistry;
+                    }
+                }
                 return tempData;
             }
             catch (Exception ex)
             {                
                RequestStatusMessage ="Тип регистра:AO " + ex.Message + " " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
-
             }
             return null;
         }
@@ -145,9 +159,28 @@ namespace ModbusMonitor.Classes
         /// <param name="numOfPoint"></param>
         public ushort[] ReadInputRegs(byte adresDevice, ushort startAdress, ushort numOfPoint)
         {
+            ushort[] tempData = Array.Empty<ushort>();
+            ushort tempNumReg;
             try
             {
-                ushort[] tempData = MasterRTU.ReadInputRegisters(adresDevice, startAdress, numOfPoint);
+                if(numOfPoint <= maxReadRegistry)
+                {
+                    tempData = MasterRTU.ReadInputRegisters(adresDevice, startAdress, numOfPoint);
+                }
+                else
+                {
+                    while (numOfPoint > 0)
+                    {
+                        //Партия адресов, не превышающая максимума.
+                        tempNumReg = numOfPoint >= maxReadRegistry ? maxReadRegistry : numOfPoint;
+                        //Добавление в массив считываемых данных.
+                        tempData = tempData.Concat(MasterRTU.ReadInputRegisters(adresDevice, startAdress, tempNumReg)) as ushort[];
+                        //Вычисление оставшихся непрочитанных регистров.
+                        numOfPoint = numOfPoint >= maxReadRegistry ? (ushort)(numOfPoint - maxReadRegistry) : (ushort)0;
+                        //Вычесление стартового адреса для каждой новой итерации.
+                        startAdress += (ushort)maxReadRegistry;
+                    }
+                }
                 return tempData;
             }
             catch (Exception ex)
