@@ -32,7 +32,6 @@ namespace ModbusMonitor.Classes
                 item.SetValue(TreeViewItem.IsSelectedProperty, true);
             }
         }
-
         #endregion
 
         protected override void OnAttached()

@@ -253,7 +253,8 @@
                                     </Style>                                    
                                 </TreeView.Resources>                                  
                                 <i:Interaction.Behaviors>
-                                    <src:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItemTree, Mode=TwoWay}" />
+                                    <src:BindableSelectedItemBehavior 
+                                        SelectedItem="{Binding SelectedItemTree, Mode=TwoWay}" />
                                 </i:Interaction.Behaviors>                               
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="MouseDoubleClick">
