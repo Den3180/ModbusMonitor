@@ -19,7 +19,10 @@
         </Style>       
     </UserControl.Resources>
     <Grid>        
-        <DataGrid x:Name="datTemp" AutoGenerateColumns="False" SelectionMode="Extended" CanUserAddRows="False"
+        <DataGrid x:Name="datTemp" 
+                  AutoGenerateColumns="False" 
+                  SelectionMode="Extended" 
+                  CanUserAddRows="False"
                   ItemsSource="{Binding Cells, UpdateSourceTrigger=PropertyChanged}"
                   SelectionUnit="FullRow"               
                   FontSize="14"                  

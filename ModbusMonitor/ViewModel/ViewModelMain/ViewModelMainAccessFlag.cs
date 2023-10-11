@@ -186,7 +186,7 @@ namespace ModbusMonitor
         /// </summary>
         public bool CanDisconnection
         {
-            get => canConnection;
+            get => canDisconnection;
             set => SetOptions(nameof(CanDisconnection), ref canDisconnection, value);
         }
         /// <summary>
